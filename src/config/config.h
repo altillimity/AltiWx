@@ -19,6 +19,7 @@ struct ConfigData
     std::string station_name;
     SatelliteStation station;
     std::vector<SatelliteConfig> satelliteConfigs;
+    std::string tle_update;
 };
 
 void initConfig();

@@ -16,6 +16,8 @@ ConfigData getDefaultConfig()
     SatelliteConfig meteorConfig = {40069, 10.0f, 1, 137.100f};
     config.satelliteConfigs.push_back(meteorConfig);
 
+    config.tle_update = "\"0 0 * * *\n";
+
     return config;
 }
 
@@ -69,6 +71,7 @@ void ConfigManager::loadConfigFile()
     config_m.station_name = configFile["station_name"].as<std::string>();
     config_m.station = configFile["station"].as<SatelliteStation>();
     config_m.satelliteConfigs = configFile["satellites"].as<std::vector<SatelliteConfig>>();
+    config_m.tle_update = configFile["tle_update"].as<std::string>();
 }
 
 void ConfigManager::saveConfigFile()
@@ -76,6 +79,7 @@ void ConfigManager::saveConfigFile()
     configFile["station_name"] = (std::string)config_m.station_name;
     configFile["station"] = (SatelliteStation)config_m.station;
     configFile["satellites"] = (std::vector<SatelliteConfig>)config_m.satelliteConfigs;
+    configFile["tle_update"] = (std::string)config_m.tle_update;
 
     std::ofstream outFile(filename_m);
     outFile << configFile << '\n';

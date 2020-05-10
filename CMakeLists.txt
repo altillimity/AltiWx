@@ -39,6 +39,12 @@ add_subdirectory(external/libpredict)
 target_include_directories(autowx PUBLIC ${LIBPREDICT_INCLUDE_DIR})
 target_link_libraries(autowx PUBLIC predict)
 
+find_package(Threads REQUIRED)
+target_link_libraries(autowx PUBLIC Threads::Threads)
+
+target_include_directories(autowx PUBLIC external/ctpl)
+target_include_directories(autowx PUBLIC external)
+
 add_subdirectory(external/curlpp)
 #target_include_directories(autowx PUBLIC ${LIBPREDICT_INCLUDE_DIR})
 target_link_libraries(autowx PUBLIC curlpp)
