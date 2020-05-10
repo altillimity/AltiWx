@@ -44,29 +44,8 @@ SatellitePass OrbitPredictor::getNextPassOver(std::time_t time, float elevation)
 
     do
     {
-        predict_julian_date_t predict_time = predict_to_julian(time);
-
-        predict_observation predict_aos, predict_los;
-        predict_aos = predict_next_aos(predict_observer, predict_satellite, predict_time);
-        predict_los = predict_next_los(predict_observer, predict_satellite, predict_time);
-
-        std::time_t aosTime = predict_from_julian(predict_aos.time);
-        std::time_t losTime = predict_from_julian(predict_los.time);
-
-        for (std::time_t current_time = aosTime; current_time < losTime; current_time++)
-        {
-            predict_observation predict_observation;
-            predict_position predict_orbit_obj;
-            predict_orbit(predict_satellite, &predict_orbit_obj, predict_to_julian(current_time));
-            predict_observe_orbit(predict_observer, &predict_orbit_obj, &predict_observation);
-
-            float current_elevation = predict_observation.elevation * 180.0 / M_PI;
-            if (current_elevation > elevation)
-                pass_elevation = current_elevation;
-        }
-
-        time = losTime + 1;
-        pass = {norad_m, tle_m, aosTime, losTime, elevation};
+        pass = getNextPass(time);
+        time = pass.los + 1;
     } while (pass_elevation < elevation);
 
     return pass;

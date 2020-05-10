@@ -1,22 +1,24 @@
 #include "logger/logger.h"
 #include "orbit/orbit_predictor.h"
 #include "orbit/tle_manager.h"
+#include "config/config.h"
 
 int main(int argc, char *argv[])
 {
     initLogger();
     logger->info("Starting AutoWx...");
-
-    //logger->info("Predicting passes for METEOR-M 2");
+    initConfig();
 
     std::vector<int> norads;
-    norads.push_back(40069);
+    for(SatelliteConfig satConfig : configManager->getConfig().satelliteConfigs)
+        norads.push_back(satConfig.norad);
 
     startTLEManager(norads);
 
-    SatelliteStation station = {0.0, 0.0, 0.0};
+    logger->info("Predicting passes for " + getTLEFromNORAD(configManager->getConfig().satelliteConfigs[0].norad).name);
 
-    OrbitPredictor predictor(40069, getTLEFromNORAD(40069), station);
+    OrbitPredictor predictor(configManager->getConfig().satelliteConfigs[0].norad, getTLEFromNORAD(configManager->getConfig().satelliteConfigs[0].norad), configManager->getConfig().station);
+
     std::vector<SatellitePass> nextPasses = predictor.getPassesBetweenOver(time(NULL), time(NULL) + 24 * 60 * 60, 10.0f);
 
     for (SatellitePass nextPass : nextPasses)
