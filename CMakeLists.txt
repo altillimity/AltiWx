@@ -21,8 +21,18 @@ find_package(Volk REQUIRED)
 target_include_directories(autowx PUBLIC ${VOLK_INCLUDE_DIR})
 target_link_libraries(autowx PUBLIC ${VOLK_LIBRARIES})
 
+#find_package(CURL REQUIRED)
+#target_include_directories(autowx PUBLIC ${CURL_INCLUDE_DIR})
+#target_link_libraries(autowx PUBLIC ${CURL_LIBRARIES})
+
 find_package(Spdlog REQUIRED)
 target_include_directories(autowx PUBLIC ${SPDLOG_INCLUDE_DIR})
 target_link_libraries(autowx PUBLIC Spdlog::Spdlog)
 
-target_link_libraries(autowx PUBLIC m)
+add_subdirectory(external/libpredict)
+target_include_directories(autowx PUBLIC ${LIBPREDICT_INCLUDE_DIR})
+target_link_libraries(autowx PUBLIC predict)
+
+add_subdirectory(external/curlpp)
+#target_include_directories(autowx PUBLIC ${LIBPREDICT_INCLUDE_DIR})
+target_link_libraries(autowx PUBLIC curlpp)
