@@ -8,15 +8,13 @@ class ModemFM : public Modem
 {
 protected:
     freqdem demodulatorFM;
-    resamp_rrrf audioResamp;
+    msresamp_rrrf audioResamp;
     int audioRate_m;
     float audioResampRate;
     TinyWav outWavFile;
-    int i, j;
     float kf;
 
 protected:
-    void initResamp(long inputRate, long inputFrequency);
     void process(liquid_float_complex *buffer, unsigned int &length);
 
 public:

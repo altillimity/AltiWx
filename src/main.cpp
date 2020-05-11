@@ -56,9 +56,9 @@ int main(int argc, char *argv[])
     lua["logger"] = logger;
     lua.script_file("script.lua");
 
-    DSP mainDSP(1e6, 100.0 * 1e6, 0);
+    DSP mainDSP(1e6, 98.0 * 1e6, 0);
     mainDSP.start();
-    std::shared_ptr<ModemFM> fmModem = std::make_shared<ModemFM>(100.298 * 1e6, 200000, 48000, "test.wav");
+    std::shared_ptr<ModemFM> fmModem = std::make_shared<ModemFM>(98.4 * 1e6, 200000, 48000, "test.wav");
     mainDSP.attachModem("test", fmModem);
 
     std::cin.get();
