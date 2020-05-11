@@ -1,10 +1,12 @@
 #include "modem.h"
 #include <complex>
+#include "logger/logger.h"
 
 void Modem::initResamp(long inputRate, long inputFrequency)
 {
     freqResampRate = (double)bandwidth_m / (double)inputRate;
     freqResampler = msresamp_crcf_create(freqResampRate, 60.0f);
+    logger->debug("Modem resample rate " + std::to_string(freqResampRate));
 }
 
 void Modem::init(long inputRate, long inputFrequency)
@@ -14,6 +16,9 @@ void Modem::init(long inputRate, long inputFrequency)
     {
         freqShifter = nco_crcf_create(LIQUID_VCO);
         shiftFrequency = frequency_m - inputFrequency;
+        if (abs(shiftFrequency) > inputFrequency / 2)
+            logger->critical("Modem frequency shift exceeds sample rate!");
+        logger->debug("Modem frequency shifting of " + std::to_string(shiftFrequency));
         nco_crcf_set_frequency(freqShifter, (2.0 * M_PI) * (((double)abs(shiftFrequency)) / ((double)inputRate)));
     }
 
