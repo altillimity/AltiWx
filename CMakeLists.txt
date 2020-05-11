@@ -23,10 +23,6 @@ find_package(Volk REQUIRED)
 target_include_directories(autowx PUBLIC ${VOLK_INCLUDE_DIR})
 target_link_libraries(autowx PUBLIC ${VOLK_LIBRARIES})
 
-#find_package(CURL REQUIRED)
-#target_include_directories(autowx PUBLIC ${CURL_INCLUDE_DIR})
-#target_link_libraries(autowx PUBLIC ${CURL_LIBRARIES})
-
 find_package(Spdlog REQUIRED)
 target_include_directories(autowx PUBLIC ${SPDLOG_INCLUDE_DIR})
 target_link_libraries(autowx PUBLIC Spdlog::Spdlog)
@@ -42,9 +38,17 @@ target_link_libraries(autowx PUBLIC predict)
 find_package(Threads REQUIRED)
 target_link_libraries(autowx PUBLIC Threads::Threads)
 
-target_include_directories(autowx PUBLIC external/ctpl)
-target_include_directories(autowx PUBLIC external)
-
 add_subdirectory(external/curlpp)
-#target_include_directories(autowx PUBLIC ${LIBPREDICT_INCLUDE_DIR})
 target_link_libraries(autowx PUBLIC curlpp)
+
+find_package(Lua REQUIRED)
+target_link_libraries(autowx PUBLIC ${LUA_LIBRARIES})
+target_include_directories(autowx PUBLIC ${LUA_INCLUDE_DIR})
+
+find_package(RTLSDR REQUIRED)
+target_include_directories(autowx PUBLIC ${RTLSDR_INCLUDE_DIR})
+target_link_libraries(autowx PUBLIC ${RTLSDR_LIBRARIES})
+
+find_package(Liquid REQUIRED)
+target_include_directories(autowx PUBLIC ${LIQUID_INCLUDE_DIR})
+target_link_libraries(autowx PUBLIC ${LIQUID_LIBRARIES})

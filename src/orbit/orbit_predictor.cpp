@@ -59,7 +59,7 @@ std::vector<SatellitePass> OrbitPredictor::getPassesBetweenOver(std::time_t star
     while (time < end_time)
     {
         SatellitePass pass = getNextPass(time);
-        if (pass.elevation >= elevation)
+        if (pass.elevation >= elevation && pass.aos <= end_time)
             passes.push_back(pass);
         time = pass.los + 1;
     }

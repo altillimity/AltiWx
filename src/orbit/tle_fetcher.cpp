@@ -43,7 +43,8 @@ void TLEFetcher::fetch()
 
     std::string contentString = requestContent.str();
 
-    std::string name = contentString.substr(0, contentString.find('\n'));
+    std::string name = contentString.substr(0, contentString.find('\n') - 1);
+    name.erase(std::find_if(name.rbegin(), name.rend(), std::bind1st(std::not_equal_to<char>(), ' ')).base(), name.end());
     contentString.erase(0, contentString.find('\n') + 1);
     std::string tle_1 = contentString.substr(0, contentString.find('\n'));
     contentString.erase(0, contentString.find('\n') + 1);
