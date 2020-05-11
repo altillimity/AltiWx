@@ -109,7 +109,7 @@ SatelliteConfig ConfigData::getSatelliteConfigFromNORAD(int norad)
         return SatelliteConfig();
 }
 
-std::string SatelliteConfig::getName(int norad)
+std::string SatelliteConfig::getName()
 {
     return getTLEFromNORAD(norad).name;
 }

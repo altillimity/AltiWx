@@ -32,7 +32,7 @@ struct SatelliteConfig
     float min_elevation;
     int priority;
     std::vector<DownlinkConfig> downlinkConfigs;
-    std::string getName(int norad);
+    std::string getName();
 };
 
 struct ConfigData

@@ -6,7 +6,7 @@
 
 DownlinkRecorder::DownlinkRecorder(std::shared_ptr<DSP> dsp, DownlinkConfig &downlink, SatelliteConfig satelliteConfig, std::string fileName) : dsp_m(dsp), downlink_m(downlink), satelliteConfig_m(satelliteConfig), running(true)
 {
-    logger->info("Recording " + downlink_m.name + " downlink on " + std::to_string(downlink_m.frequency) + " Hz. Bandwidth " + std::to_string(downlink_m.bandwidth) + " Hz");
+    logger->debug("Setting up recorder for " + downlink_m.name + " downlink on " + std::to_string(downlink_m.frequency) + " Hz. Bandwidth " + std::to_string(downlink_m.bandwidth) + " Hz");
 
     modemID = downlink_m.name + "-" + std::to_string(downlink.frequency);
 
@@ -23,6 +23,7 @@ DownlinkRecorder::DownlinkRecorder(std::shared_ptr<DSP> dsp, DownlinkConfig &dow
 
 void DownlinkRecorder::start()
 {
+    logger->info("Recording " + downlink_m.name + " downlink on " + std::to_string(downlink_m.frequency) + " Hz. Bandwidth " + std::to_string(downlink_m.bandwidth) + " Hz");
     dsp_m->attachModem(modemID, modem);
     if (downlink_m.dopplerCorrection)
         dopplerThread = std::thread(&DownlinkRecorder::doDoppler, this);

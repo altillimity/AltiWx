@@ -1,26 +1,47 @@
 #include "pass_processing.h"
 #include "logger/logger.h"
-#include "dsp/dsp_manager.h"
 #include "config/config.h"
-#include "dsp/modem/modem_fm.h"
+#include "downlink_recorder.h"
+#include "dsp/dsp_manager.h"
+
+std::string generateFilepath(SatellitePass &satellitePass, SatelliteConfig &satelliteConfig, DownlinkConfig &downlinkConfig)
+{
+    std::tm *timeReadable = gmtime(&satellitePass.aos);
+
+    return satelliteConfig.getName() + "_" + downlinkConfig.name + "_" + std::to_string(timeReadable->tm_year) + 
+    "-" + std::to_string(timeReadable->tm_mon) + "-" + std::to_string(timeReadable->tm_mday) + 
+    "---" + std::to_string(timeReadable->tm_hour) + ":" + (timeReadable->tm_min > 9 ? std::to_string(timeReadable->tm_min) : "0" + std::to_string(timeReadable->tm_min)) +
+    ".wav";
+}
 
 void processPass(SatellitePass pass)
 {
     SatelliteConfig satelliteConfig = configManager->getConfig().getSatelliteConfigFromNORAD(pass.norad);
     logger->info("AOS " + pass.tle.name);
 
-    for (DownlinkConfig downlinkConfig : satelliteConfig.downlinkConfigs)
+    std::vector<std::string> filePaths;
+
+    std::vector<std::shared_ptr<DownlinkRecorder>> downlinkRecoders;
+    for (DownlinkConfig &downlinkConfig : satelliteConfig.downlinkConfigs)
     {
-        logger->info("Recording " + downlinkConfig.name + " downlink on " + std::to_string(downlinkConfig.frequency) + " Hz");
+        logger->debug("Adding recorder for " + downlinkConfig.name + " downlink on " + std::to_string(downlinkConfig.frequency) + " Hz");
+
+        std::string filePath = generateFilepath(pass, satelliteConfig, downlinkConfig);
+        filePaths.push_back(filePath);
+        logger->debug("Using file path " + filePath);
+
+        std::shared_ptr<DownlinkRecorder> recorder = std::make_shared<DownlinkRecorder>(rtlDSP, downlinkConfig, satelliteConfig, filePath);
+        downlinkRecoders.push_back(recorder);
     }
 
-    std::shared_ptr<ModemFM> modem = std::make_shared<ModemFM>(satelliteConfig.downlinkConfigs[0].frequency, 60000, 11025, "sat.wav");
-    rtlDSP->attachModem("name", modem);
+    for (std::shared_ptr<DownlinkRecorder> &recorder : downlinkRecoders)
+        recorder->start();
+
     while (time(NULL) <= pass.los)
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    rtlDSP->detachModem("name");
-    modem->stop();
+    for (std::shared_ptr<DownlinkRecorder> &recorder : downlinkRecoders)
+        recorder->stop();
 
     logger->info("LOS " + pass.tle.name);
 }

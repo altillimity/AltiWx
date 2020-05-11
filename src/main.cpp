@@ -57,15 +57,6 @@ int main(int argc, char *argv[])
     lua["logger"] = logger;
     lua.script_file("script.lua");*/
 
-    DopplerCorrector doppler(getTLEFromNORAD(33591), configManager->getConfig().station);
-    long freq = 137.100e6;
-
-    while (1)
-    {
-        logger->info(doppler.correctDoppler(freq));
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
-
     std::cin.get();
 
     stopDSP();
