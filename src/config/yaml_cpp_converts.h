@@ -11,7 +11,7 @@ struct convert<SatelliteConfig>
         node["norad"] = (int)satelliteConfig.norad;
         node["min_elevation"] = (float)satelliteConfig.min_elevation;
         node["priority"] = (int)satelliteConfig.priority;
-        node["frequency"] = (long)satelliteConfig.frequency;
+        node["downlinks"] = (std::vector<DownlinkConfig>)satelliteConfig.downlinkConfigs;
         return node;
     }
 
@@ -25,7 +25,7 @@ struct convert<SatelliteConfig>
         satelliteConfig.norad = node["norad"].as<int>();
         satelliteConfig.min_elevation = node["min_elevation"].as<float>();
         satelliteConfig.priority = node["priority"].as<int>();
-        satelliteConfig.frequency = node["frequency"].as<long>();
+        satelliteConfig.downlinkConfigs = node["downlinks"].as<std::vector<DownlinkConfig>>();
 
         return true;
     }
@@ -80,6 +80,76 @@ struct convert<SDRConfig>
         sdrConfig.centerFrequency = node["frequency"].as<long>();
         sdrConfig.sampleRate = node["sample_rate"].as<long>();
         sdrConfig.gain = node["gain"].as<int>();
+
+        return true;
+    }
+};
+
+template <>
+struct convert<DownlinkConfig>
+{
+    static Node encode(const DownlinkConfig &downlinkConfig)
+    {
+        Node node;
+        node["name"] = (std::string)downlinkConfig.name;
+        node["frequency"] = (long)downlinkConfig.frequency;
+        node["bandwidth"] = (long)downlinkConfig.bandwidth;
+        node["doppler"] = (bool)downlinkConfig.dopplerCorrection;
+        node["post_processing_script"] = (std::string)downlinkConfig.postProcessingScript;
+        node["type"] = (ModemType)downlinkConfig.modemType;
+        switch (downlinkConfig.modemType)
+        {
+        case FM:
+            node["modem_audio_sample_rate"] = (long)downlinkConfig.modem_audioSamplerate;
+        }
+        return node;
+    }
+
+    static bool decode(const Node &node, DownlinkConfig &downlinkConfig)
+    {
+        if (!node.IsMap() || node.size() < 7)
+        {
+            return false;
+        }
+
+        downlinkConfig.name = node["name"].as<std::string>();
+        downlinkConfig.frequency = node["frequency"].as<long>();
+        downlinkConfig.bandwidth = node["bandwidth"].as<long>();
+        downlinkConfig.dopplerCorrection = node["doppler"].as<bool>();
+        downlinkConfig.postProcessingScript = node["bandwidth"].as<std::string>();
+        downlinkConfig.modemType = node["type"].as<ModemType>();
+        switch (downlinkConfig.modemType)
+        {
+        case FM:
+            downlinkConfig.modem_audioSamplerate = node["modem_audio_sample_rate"].as<long>();
+        }
+
+        return true;
+    }
+};
+
+template <>
+struct convert<ModemType>
+{
+    static Node encode(const ModemType &modemType)
+    {
+        Node node;
+        switch (modemType)
+        {
+        case FM:
+            node = (std::string) "FM";
+            break;
+        }
+        return node;
+    }
+
+    static bool decode(const Node &node, ModemType &modemType)
+    {
+        std::string type = node.as<std::string>();
+        if (type == "FM")
+            modemType = ModemType::FM;
+        else
+            return false;
 
         return true;
     }

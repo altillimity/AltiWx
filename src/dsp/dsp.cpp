@@ -94,6 +94,7 @@ void DSP::attachModem(std::string id, std::shared_ptr<Modem> modem)
 {
     modemsMutex.lock();
     activeModems.emplace(std::make_pair(id, modem));
+    logger->debug("Attaching modem id " + id + " to DSP");
     modem->init(sampleRate_m, centerFrequency_m);
     modemsMutex.unlock();
 }
@@ -102,5 +103,6 @@ void DSP::detachModem(std::string id)
 {
     modemsMutex.lock();
     activeModems.erase(id);
+    logger->debug("Detaching modem id " + id + " from DSP");
     modemsMutex.unlock();
 }

@@ -11,15 +11,18 @@ void Modem::initResamp(long inputRate, long inputFrequency)
 
 void Modem::init(long inputRate, long inputFrequency)
 {
+    inputFrequency_m = inputFrequency;
+    inputRate_m = inputRate;
+
     shiftFrequency = 0;
-    if (frequency_m != inputFrequency)
+    if (frequency_m != inputFrequency_m)
     {
         freqShifter = nco_crcf_create(LIQUID_VCO);
-        shiftFrequency = frequency_m - inputFrequency;
-        if (abs(shiftFrequency) > inputFrequency / 2)
+        shiftFrequency = frequency_m - inputFrequency_m;
+        if (abs(shiftFrequency) > inputFrequency_m / 2)
             logger->critical("Modem frequency shift exceeds sample rate!");
         logger->debug("Modem frequency shifting of " + std::to_string(shiftFrequency));
-        nco_crcf_set_frequency(freqShifter, (2.0 * M_PI) * (((double)abs(shiftFrequency)) / ((double)inputRate)));
+        nco_crcf_set_frequency(freqShifter, (2.0 * M_PI) * (((double)abs(shiftFrequency)) / ((double)inputRate_m)));
     }
 
     initResamp(inputRate, inputFrequency);
@@ -27,6 +30,7 @@ void Modem::init(long inputRate, long inputFrequency)
 
 void Modem::demod(int8_t *buffer, uint32_t &length)
 {
+    modemMutex.lock();
     uint sdr_buffer_length = length / 2;
     uint resamp_buffer_length = ceil(freqResampRate * (float)sdr_buffer_length);
     liquid_float_complex sdr_buffer[sdr_buffer_length];
@@ -48,4 +52,25 @@ void Modem::demod(int8_t *buffer, uint32_t &length)
     msresamp_crcf_execute(freqResampler, sdr_buffer, sdr_buffer_length, resamp_buffer, &resamp_buffer_length);
 
     process(resamp_buffer, resamp_buffer_length);
+    modemMutex.unlock();
+}
+
+void Modem::setFrequency(long frequency) {
+    modemMutex.lock();
+
+    frequency_m = frequency;
+
+    if (frequency_m != inputFrequency_m)
+    {
+        if(!freqShifter)
+            freqShifter = nco_crcf_create(LIQUID_VCO);
+        
+        shiftFrequency = frequency_m - inputFrequency_m;
+        if (abs(shiftFrequency) > inputFrequency_m / 2)
+            logger->critical("Modem frequency shift exceeds sample rate!");
+
+        nco_crcf_set_frequency(freqShifter, (2.0 * M_PI) * (((double)abs(shiftFrequency)) / ((double)inputRate_m)));
+    }
+
+    modemMutex.unlock();
 }

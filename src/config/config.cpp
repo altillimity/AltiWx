@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include "logger/logger.h"
+#include "orbit/tle_manager.h"
 
 std::shared_ptr<ConfigManager> configManager;
 
@@ -13,12 +14,22 @@ ConfigData getDefaultConfig()
     config.station_name = "My Station";
     config.station = {0.0, 0.0, 0.0};
 
-    SatelliteConfig meteorConfig = {(int) 40069, (float) 10.0f, (int) 1, (long) 137.100e6};
-    config.satelliteConfigs.push_back(meteorConfig);
+    SatelliteConfig noaa15Config = {(int)25338,
+                                    (float)10.0f,
+                                    (int)1,
+                                    (std::vector<DownlinkConfig>){
+                                        {(std::string) "APT",
+                                         (long)137.620e6,
+                                         (long)50e3,
+                                         (bool)false,
+                                         (std::string) "apt-noaa.lua",
+                                         (ModemType)ModemType::FM,
+                                         11025}}};
+    config.satelliteConfigs.push_back(noaa15Config);
 
     config.tle_update = "0 0 * * *";
 
-    config.sdrConfig = {(long) 137.500e6, (long) 1e6, (int) 0};
+    config.sdrConfig = {(long)137.500e6, (long)1e6, (int)0};
 
     return config;
 }
@@ -87,4 +98,18 @@ void ConfigManager::saveConfigFile()
 
     std::ofstream outFile(filename_m);
     outFile << configFile << '\n';
+}
+
+SatelliteConfig ConfigData::getSatelliteConfigFromNORAD(int norad)
+{
+    std::vector<SatelliteConfig>::iterator value = std::find_if(satelliteConfigs.begin(), satelliteConfigs.end(), [&](const SatelliteConfig &c) { return c.norad == norad; });
+    if (value != satelliteConfigs.end())
+        return *value;
+    else
+        return SatelliteConfig();
+}
+
+std::string SatelliteConfig::getName(int norad)
+{
+    return getTLEFromNORAD(norad).name;
 }

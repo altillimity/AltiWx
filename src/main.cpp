@@ -8,6 +8,7 @@
 #include "orbit/pass_manager.h"
 #include <sol.hpp>
 #include "dsp/dsp_manager.h"
+#include "orbit/doppler_correction.h"
 
 void debug(std::string log)
 {
@@ -55,6 +56,15 @@ int main(int argc, char *argv[])
     lua.new_usertype<spdlog::logger>("spdlogger", "debug", &debug, "info", &info, "warn", &warn, "error", &error, "critical", &critical);
     lua["logger"] = logger;
     lua.script_file("script.lua");*/
+
+    DopplerCorrector doppler(getTLEFromNORAD(33591), configManager->getConfig().station);
+    long freq = 137.100e6;
+
+    while (1)
+    {
+        logger->info(doppler.correctDoppler(freq));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 
     std::cin.get();
 

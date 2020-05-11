@@ -5,6 +5,7 @@
 #include <memory>
 #include <yaml-cpp/yaml.h>
 #include "orbit/satellite_station.h"
+#include "dsp/modem/modem_enum.h"
 
 struct SDRConfig
 {
@@ -13,12 +14,25 @@ struct SDRConfig
     int gain;
 };
 
+struct DownlinkConfig
+{
+    std::string name;
+    long frequency;
+    long bandwidth;
+    bool dopplerCorrection;
+    std::string postProcessingScript;
+    ModemType modemType;
+    
+    long modem_audioSamplerate;
+};
+
 struct SatelliteConfig
 {
     int norad;
     float min_elevation;
     int priority;
-    long frequency;
+    std::vector<DownlinkConfig> downlinkConfigs;
+    std::string getName(int norad);
 };
 
 struct ConfigData
@@ -28,6 +42,7 @@ struct ConfigData
     std::vector<SatelliteConfig> satelliteConfigs;
     std::string tle_update;
     SDRConfig sdrConfig;
+    SatelliteConfig getSatelliteConfigFromNORAD(int norad);
 };
 
 void initConfig();

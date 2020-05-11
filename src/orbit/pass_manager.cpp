@@ -6,7 +6,7 @@
 #include "scheduler/scheduler.h"
 #include "orbit_predictor.h"
 #include "tle_manager.h"
-#include "processing/processing.h"
+#include "processing/pass_processing.h"
 
 void schedulePasses()
 {
