@@ -13,10 +13,12 @@ ConfigData getDefaultConfig()
     config.station_name = "My Station";
     config.station = {0.0, 0.0, 0.0};
 
-    SatelliteConfig meteorConfig = {40069, 10.0f, 1, 137.100f};
+    SatelliteConfig meteorConfig = {(int) 40069, (float) 10.0f, (int) 1, (long) 137.100e6};
     config.satelliteConfigs.push_back(meteorConfig);
 
-    config.tle_update = "\"0 0 * * *\n";
+    config.tle_update = "0 0 * * *";
+
+    config.sdrConfig = {(long) 137.500e6, (long) 1e6, (int) 0};
 
     return config;
 }
@@ -72,6 +74,7 @@ void ConfigManager::loadConfigFile()
     config_m.station = configFile["station"].as<SatelliteStation>();
     config_m.satelliteConfigs = configFile["satellites"].as<std::vector<SatelliteConfig>>();
     config_m.tle_update = configFile["tle_update"].as<std::string>();
+    config_m.sdrConfig = configFile["rtlsdr"].as<SDRConfig>();
 }
 
 void ConfigManager::saveConfigFile()
@@ -80,6 +83,7 @@ void ConfigManager::saveConfigFile()
     configFile["station"] = (SatelliteStation)config_m.station;
     configFile["satellites"] = (std::vector<SatelliteConfig>)config_m.satelliteConfigs;
     configFile["tle_update"] = (std::string)config_m.tle_update;
+    configFile["rtlsdr"] = (SDRConfig)config_m.sdrConfig;
 
     std::ofstream outFile(filename_m);
     outFile << configFile << '\n';

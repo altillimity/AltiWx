@@ -7,8 +7,7 @@
 #include <algorithm>
 #include "orbit/pass_manager.h"
 #include <sol.hpp>
-#include "dsp/dsp.h"
-#include "dsp/modem/modem_fm.h"
+#include "dsp/dsp_manager.h"
 
 void debug(std::string log)
 {
@@ -48,20 +47,16 @@ int main(int argc, char *argv[])
 
     startTLEManager(norads);
     initPassManager();
+    initDSP();
 
-    sol::state lua;
+    /*sol::state lua;
     // open some common libraries
     lua.open_libraries(sol::lib::base, sol::lib::package);
     lua.new_usertype<spdlog::logger>("spdlogger", "debug", &debug, "info", &info, "warn", &warn, "error", &error, "critical", &critical);
     lua["logger"] = logger;
-    lua.script_file("script.lua");
-
-    DSP mainDSP(1e6, 98.0 * 1e6, 0);
-    mainDSP.start();
-    std::shared_ptr<ModemFM> fmModem = std::make_shared<ModemFM>(98.4 * 1e6, 200000, 48000, "test.wav");
-    mainDSP.attachModem("test", fmModem);
+    lua.script_file("script.lua");*/
 
     std::cin.get();
 
-    mainDSP.stop();
+    stopDSP();
 }

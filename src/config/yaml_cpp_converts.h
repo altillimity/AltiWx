@@ -11,7 +11,7 @@ struct convert<SatelliteConfig>
         node["norad"] = (int)satelliteConfig.norad;
         node["min_elevation"] = (float)satelliteConfig.min_elevation;
         node["priority"] = (int)satelliteConfig.priority;
-        node["frequency"] = (float)satelliteConfig.frequency;
+        node["frequency"] = (long)satelliteConfig.frequency;
         return node;
     }
 
@@ -25,7 +25,7 @@ struct convert<SatelliteConfig>
         satelliteConfig.norad = node["norad"].as<int>();
         satelliteConfig.min_elevation = node["min_elevation"].as<float>();
         satelliteConfig.priority = node["priority"].as<int>();
-        satelliteConfig.frequency = node["frequency"].as<float>();
+        satelliteConfig.frequency = node["frequency"].as<long>();
 
         return true;
     }
@@ -53,6 +53,33 @@ struct convert<SatelliteStation>
         satelliteStation.latitude = node["latitude"].as<double>();
         satelliteStation.longitude = node["longitude"].as<double>();
         satelliteStation.altitude = node["altitude"].as<double>();
+
+        return true;
+    }
+};
+
+template <>
+struct convert<SDRConfig>
+{
+    static Node encode(const SDRConfig &sdrConfig)
+    {
+        Node node;
+        node["frequency"] = (long)sdrConfig.centerFrequency;
+        node["sample_rate"] = (long)sdrConfig.sampleRate;
+        node["gain"] = (int)sdrConfig.gain;
+        return node;
+    }
+
+    static bool decode(const Node &node, SDRConfig &sdrConfig)
+    {
+        if (!node.IsMap() || node.size() != 3)
+        {
+            return false;
+        }
+
+        sdrConfig.centerFrequency = node["frequency"].as<long>();
+        sdrConfig.sampleRate = node["sample_rate"].as<long>();
+        sdrConfig.gain = node["gain"].as<int>();
 
         return true;
     }

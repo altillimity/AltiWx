@@ -6,12 +6,19 @@
 #include <yaml-cpp/yaml.h>
 #include "orbit/satellite_station.h"
 
+struct SDRConfig
+{
+    long centerFrequency;
+    long sampleRate;
+    int gain;
+};
+
 struct SatelliteConfig
 {
     int norad;
     float min_elevation;
     int priority;
-    float frequency;
+    long frequency;
 };
 
 struct ConfigData
@@ -20,6 +27,7 @@ struct ConfigData
     SatelliteStation station;
     std::vector<SatelliteConfig> satelliteConfigs;
     std::string tle_update;
+    SDRConfig sdrConfig;
 };
 
 void initConfig();

@@ -6,14 +6,7 @@
 #include "scheduler/scheduler.h"
 #include "orbit_predictor.h"
 #include "tle_manager.h"
-
-void testPass(SatellitePass pass)
-{
-    logger->info("AOS " + pass.tle.name);
-    while (time(NULL) <= pass.los)
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    logger->info("LOS " + pass.tle.name);
-}
+#include "processing/processing.h"
 
 void schedulePasses()
 {
@@ -33,7 +26,7 @@ void schedulePasses()
     {
         std::tm *timeReadable = gmtime(&pass.aos);
         logger->info("Scheduling pass of " + pass.tle.name + " at " + std::to_string(timeReadable->tm_hour) + ":" + (timeReadable->tm_min > 9 ? std::to_string(timeReadable->tm_min) : "0" + std::to_string(timeReadable->tm_min)) + " with " + std::to_string(std::round(pass.elevation * 10) / 10) + "° elevation");
-        globalScheduler->in(std::chrono::system_clock::from_time_t(pass.aos), testPass, pass);
+        globalScheduler->in(std::chrono::system_clock::from_time_t(pass.aos), processPass, pass);
     }
 }
 
