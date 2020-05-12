@@ -103,7 +103,8 @@ void processPass(SatellitePass pass)
             lua.set_function("file_exists", &os_exists);
             lua["logger"] = logger;
             lua.script_file("scripts/" + fileToProcess.first);
-            finalFiles.push_back((std::string)lua["output_file"]);
+            std::string output_file = lua["output_file"];
+            finalFiles.push_back(output_file);
         } catch (std::exception& e) {
             logger->error(e.what());
         }

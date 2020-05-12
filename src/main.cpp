@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     initDSP();
 
     //processPass({33591, getTLEFromNORAD(33591), time(NULL), time(NULL) + 40, 10.0f});
-    processPass({40069, getTLEFromNORAD(40069), time(NULL), time(NULL) + 20, 10.0f});
+    //processPass({40069, getTLEFromNORAD(40069), time(NULL), time(NULL) + 20, 10.0f});
 
     std::cin.get();
 
