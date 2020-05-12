@@ -9,7 +9,7 @@ ModemFM::ModemFM(long frequency, long bandwidth, int audioRate, std::string outp
     demodulatorFM = freqdem_create(kf);
     audioResampRate = (double)audioRate_m / (double)bandwidth_m;
     audioResamp = msresamp_rrrf_create(audioResampRate, 60.0f);
-    tinywav_open_write(&outWavFile, 1, audioRate, TW_FLOAT32, TW_INLINE, outputFile.c_str());
+    tinywav_open_write(&outWavFile, 1, audioRate, TW_INT16, TW_INLINE, outputFile.c_str());
 }
 
 void ModemFM::stop()

@@ -10,6 +10,7 @@ std::shared_ptr<spdlog::logger> logger;
 
 void initLogger()
 {
+    freopen("/dev/null", "w", stderr);
 
     console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     file_sink = std::make_shared<spdlog::sinks::daily_file_sink_mt>("logs/logs.txt", 0, 0);

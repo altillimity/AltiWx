@@ -20,6 +20,7 @@ struct DownlinkConfig
     long frequency;
     long bandwidth;
     bool dopplerCorrection;
+    std::string outputExtension;
     std::string postProcessingScript;
     ModemType modemType;
     
@@ -43,6 +44,7 @@ struct ConfigData
     std::string tle_update;
     SDRConfig sdrConfig;
     SatelliteConfig getSatelliteConfigFromNORAD(int norad);
+    std::string dataDirectory;
 };
 
 void initConfig();

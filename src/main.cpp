@@ -6,40 +6,15 @@
 #include <iostream>
 #include <algorithm>
 #include "orbit/pass_manager.h"
-#include <sol.hpp>
 #include "dsp/dsp_manager.h"
-#include "orbit/doppler_correction.h"
-
-void debug(std::string log)
-{
-    logger->debug("[Lua] " + log);
-}
-
-void info(std::string log)
-{
-    logger->info("[Lua] " + log);
-}
-
-void warn(std::string log)
-{
-    logger->warn("[Lua] " + log);
-}
-
-void error(std::string log)
-{
-    logger->error("[Lua] " + log);
-}
-
-void critical(std::string log)
-{
-    logger->critical("[Lua] " + log);
-}
+#include "processing/pass_processing.h"
 
 int main(int argc, char *argv[])
 {
     initLogger();
     logger->info("Starting AutoWx...");
     initConfig();
+    logger->debug("Using data directory " + configManager->getConfig().dataDirectory);
     initScheduler();
 
     std::vector<int> norads;
@@ -50,12 +25,7 @@ int main(int argc, char *argv[])
     initPassManager();
     initDSP();
 
-    /*sol::state lua;
-    // open some common libraries
-    lua.open_libraries(sol::lib::base, sol::lib::package);
-    lua.new_usertype<spdlog::logger>("spdlogger", "debug", &debug, "info", &info, "warn", &warn, "error", &error, "critical", &critical);
-    lua["logger"] = logger;
-    lua.script_file("script.lua");*/
+    processPass({33591, getTLEFromNORAD(33591), time(NULL), time(NULL) + 20, 10.0f});
 
     std::cin.get();
 

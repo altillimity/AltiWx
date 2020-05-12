@@ -23,6 +23,7 @@ ConfigData getDefaultConfig()
                                          (long)50e3,
                                          (bool)false,
                                          (std::string) "apt-noaa.lua",
+                                         (std::string) "wav",
                                          (ModemType)ModemType::FM,
                                          11025}}};
     config.satelliteConfigs.push_back(noaa15Config);
@@ -30,6 +31,8 @@ ConfigData getDefaultConfig()
     config.tle_update = "0 0 * * *";
 
     config.sdrConfig = {(long)137.500e6, (long)1e6, (int)0};
+
+    config.dataDirectory = "data";
 
     return config;
 }
@@ -86,6 +89,7 @@ void ConfigManager::loadConfigFile()
     config_m.satelliteConfigs = configFile["satellites"].as<std::vector<SatelliteConfig>>();
     config_m.tle_update = configFile["tle_update"].as<std::string>();
     config_m.sdrConfig = configFile["rtlsdr"].as<SDRConfig>();
+    config_m.dataDirectory = configFile["data_directory"].as<std::string>();
 }
 
 void ConfigManager::saveConfigFile()
@@ -95,6 +99,7 @@ void ConfigManager::saveConfigFile()
     configFile["satellites"] = (std::vector<SatelliteConfig>)config_m.satelliteConfigs;
     configFile["tle_update"] = (std::string)config_m.tle_update;
     configFile["rtlsdr"] = (SDRConfig)config_m.sdrConfig;
+    configFile["data_directory"] = (std::string)config_m.dataDirectory;
 
     std::ofstream outFile(filename_m);
     outFile << configFile << '\n';

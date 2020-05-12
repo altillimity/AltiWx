@@ -52,3 +52,5 @@ target_link_libraries(autowx PUBLIC ${RTLSDR_LIBRARIES})
 find_package(Liquid REQUIRED)
 target_include_directories(autowx PUBLIC ${LIQUID_INCLUDE_DIR})
 target_link_libraries(autowx PUBLIC ${LIQUID_LIBRARIES})
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/scripts DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

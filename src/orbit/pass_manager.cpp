@@ -32,7 +32,7 @@ void schedulePasses()
 
 void initPassManager()
 {
-    logger->info("Start pass scheduler...");
+    logger->info("Starting pass scheduler...");
     schedulePasses();
     globalScheduler->every(std::chrono::system_clock::duration(std::chrono::seconds(24 * 60 * 60)), schedulePasses);
 }

@@ -96,6 +96,7 @@ struct convert<DownlinkConfig>
         node["bandwidth"] = (long)downlinkConfig.bandwidth;
         node["doppler"] = (bool)downlinkConfig.dopplerCorrection;
         node["post_processing_script"] = (std::string)downlinkConfig.postProcessingScript;
+        node["output_extension"] = (std::string)downlinkConfig.outputExtension;
         node["type"] = (ModemType)downlinkConfig.modemType;
         switch (downlinkConfig.modemType)
         {
@@ -107,7 +108,7 @@ struct convert<DownlinkConfig>
 
     static bool decode(const Node &node, DownlinkConfig &downlinkConfig)
     {
-        if (!node.IsMap() || node.size() < 7)
+        if (!node.IsMap() || node.size() < 8)
         {
             return false;
         }
@@ -116,7 +117,8 @@ struct convert<DownlinkConfig>
         downlinkConfig.frequency = node["frequency"].as<long>();
         downlinkConfig.bandwidth = node["bandwidth"].as<long>();
         downlinkConfig.dopplerCorrection = node["doppler"].as<bool>();
-        downlinkConfig.postProcessingScript = node["bandwidth"].as<std::string>();
+        downlinkConfig.postProcessingScript = node["post_processing_script"].as<std::string>();
+        downlinkConfig.outputExtension = node["output_extension"].as<std::string>();
         downlinkConfig.modemType = node["type"].as<ModemType>();
         switch (downlinkConfig.modemType)
         {

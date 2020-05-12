@@ -15,6 +15,8 @@ DownlinkRecorder::DownlinkRecorder(std::shared_ptr<DSP> dsp, DownlinkConfig &dow
     case FM:
         modem = std::make_shared<ModemFM>(downlink_m.frequency, downlink_m.bandwidth, downlink_m.modem_audioSamplerate, fileName);
         break;
+    default:
+        logger->critical("Invalid modem type!");
     }
 
     if (downlink_m.dopplerCorrection)
@@ -35,6 +37,7 @@ void DownlinkRecorder::stop()
     if (dopplerThread.joinable())
         dopplerThread.join();
     dsp_m->detachModem(modemID);
+    modem->stop();
 }
 
 void DownlinkRecorder::doDoppler()
