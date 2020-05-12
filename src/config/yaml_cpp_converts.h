@@ -108,7 +108,7 @@ struct convert<DownlinkConfig>
 
     static bool decode(const Node &node, DownlinkConfig &downlinkConfig)
     {
-        if (!node.IsMap() || node.size() < 8)
+        if (!node.IsMap() || node.size() < 7)
         {
             return false;
         }
@@ -124,6 +124,8 @@ struct convert<DownlinkConfig>
         {
         case FM:
             downlinkConfig.modem_audioSamplerate = node["modem_audio_sample_rate"].as<long>();
+        default:
+            break;
         }
 
         return true;
@@ -141,6 +143,9 @@ struct convert<ModemType>
         case FM:
             node = (std::string) "FM";
             break;
+        case IQ:
+            node = (std::string) "IQ";
+            break;
         }
         return node;
     }
@@ -150,6 +155,8 @@ struct convert<ModemType>
         std::string type = node.as<std::string>();
         if (type == "FM")
             modemType = ModemType::FM;
+        else if (type == "IQ")
+            modemType = ModemType::IQ;
         else
             return false;
 

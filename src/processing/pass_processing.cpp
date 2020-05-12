@@ -31,9 +31,14 @@ void critical(std::string log)
     logger->critical("[Lua] " + log);
 }
 
+bool os_exists(std::string file)
+{
+    return std::filesystem::exists(file);
+}
+
 std::string generateFilepath(SatellitePass &satellitePass, SatelliteConfig &satelliteConfig, DownlinkConfig &downlinkConfig)
 {
-    std::string workdDir = configManager->getConfig().dataDirectory + "/" + satelliteConfig.getName();
+    std::string workdDir = configManager->getConfig().dataDirectory + "/" + satelliteConfig.getName() + "/" + downlinkConfig.name;
 
     std::filesystem::create_directories(workdDir);
 
@@ -81,14 +86,27 @@ void processPass(SatellitePass pass)
     for (std::pair<std::string, std::pair<std::string, std::string>> fileToProcess : filePaths)
     {
         logger->debug("Processing " + fileToProcess.second.first + " with " + fileToProcess.first);
-        sol::state lua;
-        lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::os, sol::lib::io, sol::lib::string);
-        lua["filename"] = fileToProcess.second.first;
-        lua["input_file"] = fileToProcess.second.second;
-        lua.new_usertype<spdlog::logger>("spdlogger", "debug", &debug, "info", &info, "warn", &warn, "error", &error, "critical", &critical);
-        lua["logger"] = logger;
-        lua.script_file("scripts/" + fileToProcess.first);
-        finalFiles.push_back((std::string)lua["output_file"]);
+
+        if (!std::filesystem::exists("scripts/" + fileToProcess.first))
+        {
+            logger->critical("Script " + (std::string) "scripts/" + fileToProcess.first + " does not exist!");
+            continue;
+        }
+
+        try
+        {
+            sol::state lua;
+            lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::os, sol::lib::io, sol::lib::string);
+            lua["filename"] = fileToProcess.second.first;
+            lua["input_file"] = fileToProcess.second.second;
+            lua.new_usertype<spdlog::logger>("spdlogger", "debug", &debug, "info", &info, "warn", &warn, "error", &error, "critical", &critical);
+            lua.set_function("file_exists", &os_exists);
+            lua["logger"] = logger;
+            lua.script_file("scripts/" + fileToProcess.first);
+            finalFiles.push_back((std::string)lua["output_file"]);
+        } catch (std::exception& e) {
+            logger->error(e.what());
+        }
     }
 
     logger->info("LOS " + pass.tle.name);
