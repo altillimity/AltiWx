@@ -5,6 +5,7 @@
 #include "dsp/dsp_manager.h"
 #include <filesystem>
 #include "sol/sol.hpp"
+#include "lua/lua_logger.h"
 
 void debug(std::string log)
 {
@@ -97,15 +98,16 @@ void processPass(SatellitePass pass)
         {
             sol::state lua;
             lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::os, sol::lib::io, sol::lib::string);
+            bindLogger(lua, fileToProcess.first);
             lua["filename"] = fileToProcess.second.first;
             lua["input_file"] = fileToProcess.second.second;
-            lua.new_usertype<spdlog::logger>("spdlogger", "debug", &debug, "info", &info, "warn", &warn, "error", &error, "critical", &critical);
             lua.set_function("file_exists", &os_exists);
-            lua["logger"] = logger;
             lua.script_file("scripts/" + fileToProcess.first);
             std::string output_file = lua["output_file"];
             finalFiles.push_back(output_file);
-        } catch (std::exception& e) {
+        }
+        catch (std::exception &e)
+        {
             logger->error(e.what());
         }
     }
