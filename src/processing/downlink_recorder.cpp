@@ -48,6 +48,7 @@ void DownlinkRecorder::doDoppler()
 {
     while (running)
     {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         modem->setFrequency(dopplerCorrector->correctDoppler(downlink_m.frequency));
     }
 }
