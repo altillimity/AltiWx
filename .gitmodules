@@ -1,6 +1,0 @@
-[submodule "external/libpredict"]
-	path = external/libpredict
-	url = https://github.com/la1k/libpredict.git
-[submodule "external/curlpp"]
-	path = external/curlpp
-	url = https://github.com/jpbarrette/curlpp.git

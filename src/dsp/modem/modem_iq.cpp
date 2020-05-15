@@ -22,7 +22,7 @@ void ModemIQ::process(liquid_float_complex *buffer, unsigned int &length)
         //outIQFile.write((char *)&buffer[i].real, 4);
         iqToConvert[0] = buffer[i].imag;
         iqToConvert[1] = buffer[i].real;
-        volk_32f_s32f_convert_16i(finalIQ, iqToConvert, 1.0f, 4);
-        outIQFile.write((char *)&finalIQ[0], 4);
+        volk_32f_s32f_convert_16i(finalIQ, iqToConvert, 1.0f, 8);
+        outIQFile.write((char *)&finalIQ[0], sizeof(iqToConvert) / 2);
     }
 }

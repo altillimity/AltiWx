@@ -11,6 +11,8 @@ add_executable(altiwx ${ALTIWX_CPPS})
 
 target_include_directories(altiwx PUBLIC src)
 
+find_package(PkgConfig REQUIRED) 
+
 find_package(Liquid REQUIRED)
 target_include_directories(altiwx PUBLIC ${LIQUID_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC ${LIQUID_LIBRARIES})
@@ -31,14 +33,19 @@ find_package(yaml-cpp REQUIRED)
 target_include_directories(altiwx PUBLIC ${YAML_CPP_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC ${YAML_CPP_LIBRARIES})
 
-add_subdirectory(external/libpredict)
-target_include_directories(altiwx PUBLIC ${LIBPREDICT_INCLUDE_DIR})
+pkg_check_modules(predict REQUIRED predict)
+target_include_directories(altiwx PUBLIC ${PREDICT_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC predict)
 
 find_package(Threads REQUIRED)
 target_link_libraries(altiwx PUBLIC Threads::Threads)
 
-add_subdirectory(external/curlpp)
+find_package(CURL REQUIRED)
+target_link_libraries(altiwx PUBLIC ${CURL_LIBRARIES})
+target_include_directories(altiwx PUBLIC ${CURL_INCLUDE_DIR})
+
+pkg_check_modules(curlpp REQUIRED curlpp)
+target_include_directories(altiwx PUBLIC ${CURLPP_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC curlpp)
 
 find_package(Lua REQUIRED)
