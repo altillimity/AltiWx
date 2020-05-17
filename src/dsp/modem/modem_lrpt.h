@@ -4,17 +4,17 @@
 #include <string>
 #include <fstream>
 
-class ModemIQ : public Modem
+class ModemLRPT : public Modem
 {
 protected:
-    std::ofstream outIQFile;
-    unsigned int i;
-    int16_t imag, real;
+    std::ofstream outDemodFile;
+    agc_crcf agc_m;
+    firinterp_crcf rrc_m;
 
 protected:
     void process(liquid_float_complex *buffer, unsigned int &length);
 
 public:
-    ModemIQ(long frequency, long bandwidth, std::string outputFile);
+    ModemLRPT(long frequency, long bandwidth, std::string outputFile);
     void stop();
 };

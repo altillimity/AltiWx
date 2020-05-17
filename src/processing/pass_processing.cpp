@@ -65,6 +65,12 @@ void processPass(SatellitePass pass)
             continue;
         }
 
+        if (fileToProcess.first == "none")
+        {
+            logger->debug("No processing script! Skipping...");
+            continue;
+        }
+
         try
         {
             sol::state lua;

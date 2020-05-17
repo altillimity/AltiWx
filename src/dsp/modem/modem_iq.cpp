@@ -1,6 +1,5 @@
 #include "modem_iq.h"
 #include <math.h>
-#include <volk/volk.h>
 
 ModemIQ::ModemIQ(long frequency, long bandwidth, std::string outputFile)
 {
@@ -18,11 +17,9 @@ void ModemIQ::process(liquid_float_complex *buffer, unsigned int &length)
 {
     for (i = 0; i < length; i++)
     {
-        //outIQFile.write((char *)&buffer[i].imag, 4);
-        //outIQFile.write((char *)&buffer[i].real, 4);
-        iqToConvert[0] = buffer[i].imag;
-        iqToConvert[1] = buffer[i].real;
-        volk_32f_s32f_convert_16i(finalIQ, iqToConvert, 1.0f, 8);
-        outIQFile.write((char *)&finalIQ[0], sizeof(iqToConvert) / 2);
+        imag = (int16_t)buffer[i].imag;
+        real = (int16_t)buffer[i].real;
+        outIQFile.write((char *)&imag, 2);
+        outIQFile.write((char *)&real, 2);
     }
 }

@@ -1,5 +1,5 @@
 #pragma once
 
 enum ModemType {
-    FM, IQ,
+    FM, IQ, LRPT
 };

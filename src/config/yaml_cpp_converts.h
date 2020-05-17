@@ -146,6 +146,9 @@ struct convert<ModemType>
         case IQ:
             node = (std::string) "IQ";
             break;
+        case LRPT:
+            node = (std::string) "LRPT";
+            break;
         }
         return node;
     }
@@ -157,6 +160,8 @@ struct convert<ModemType>
             modemType = ModemType::FM;
         else if (type == "IQ")
             modemType = ModemType::IQ;
+        else if (type == "LRPT")
+            modemType = ModemType::LRPT;
         else
             return false;
 

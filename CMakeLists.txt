@@ -21,10 +21,6 @@ find_package(RTLSDR REQUIRED)
 target_include_directories(altiwx PUBLIC ${RTLSDR_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC ${RTLSDR_LIBRARIES})
 
-find_package(Volk REQUIRED)
-target_include_directories(altiwx PUBLIC ${VOLK_INCLUDE_DIR})
-target_link_libraries(altiwx PUBLIC ${VOLK_LIBRARIES})
-
 find_package(Spdlog REQUIRED)
 target_include_directories(altiwx PUBLIC ${SPDLOG_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC Spdlog::Spdlog)
