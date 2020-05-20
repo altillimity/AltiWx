@@ -12,6 +12,8 @@ struct SDRConfig
     long centerFrequency;
     long sampleRate;
     int gain;
+    bool soapy;
+    std::string soapySocket;
 };
 
 struct DownlinkConfig

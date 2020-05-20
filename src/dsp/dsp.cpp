@@ -1,7 +1,7 @@
 #include "dsp.h"
 #include "logger/logger.h"
 
-DSP::DSP(long sampleRate, long centerFrequency, int gain) : sampleRate_m(sampleRate), centerFrequency_m(centerFrequency), gain_m(gain)
+DSP::DSP(long sampleRate, long centerFrequency, int gain, bool soapy, std::string soapySocket) : sampleRate_m(sampleRate), centerFrequency_m(centerFrequency), gain_m(gain), soapy_m(soapy), socketString(soapySocket)
 {
 }
 
@@ -42,6 +42,14 @@ void DSP::start()
             logger->info("Tuner gain set to " + std::to_string(gain_m) + " dB");
         else
             logger->warn("Failed to set gain to " + std::to_string(gain_m) + "dB!");
+    }
+
+    if (soapy_m)
+    {
+        logger->info("Binding soapy to " + socketString);
+        zmqContext = zmq::context_t(1);
+        zmqSocket = zmq::socket_t(zmqContext, zmq::socket_type::dealer);
+        zmqSocket.bind(socketString);
     }
 
     r = rtlsdr_reset_buffer(device);
@@ -86,6 +94,9 @@ void DSP::rtlsdrCallback(unsigned char *buf, uint32_t len, void *ctx)
 
     for (std::pair<std::string, std::shared_ptr<Modem>> currentModem : sourceDSP->activeModems)
         currentModem.second->demod(sourceDSP->sdr_buffer, len);
+
+    if (sourceDSP->soapy_m)
+        sourceDSP->zmqSocket.send(zmq::message_t(buf, len), zmq::send_flags::dontwait);
 
     sourceDSP->modemsMutex.unlock();
 }

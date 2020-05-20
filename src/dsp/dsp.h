@@ -5,6 +5,7 @@
 #include <mutex>
 #include <thread>
 #include "modem/modem.h"
+#include "zmq.hpp"
 
 #define RTL_DEFAULT_BUFFER_LENGTH 16384
 #define RTL_MAX_OVERSAMPLE 16
@@ -22,13 +23,18 @@ private:
     long sampleRate_m;
     long centerFrequency_m;
     int gain_m;
+    bool soapy_m;
+    std::string socketString;
+    
+    zmq::context_t zmqContext;
+    zmq::socket_t zmqSocket;
 
 private:
     static void rtlsdrCallback(unsigned char *buf, uint32_t len, void *ctx);
     void dongleThread();
 
 public:
-    DSP(long sampleRate, long centerFrequency, int gain);
+    DSP(long sampleRate, long centerFrequency, int gain, bool soapy, std::string soapySocket);
     void start();
     void stop();
     void attachModem(std::string id, std::shared_ptr<Modem> modem);

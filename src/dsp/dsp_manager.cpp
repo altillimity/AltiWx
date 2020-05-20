@@ -10,7 +10,7 @@ void initDSP() {
     logger->debug("Frequency  (Hz)  : " + std::to_string(sdrConfig.centerFrequency));
     logger->debug("Samplerate (S/s) : " + std::to_string(sdrConfig.sampleRate));
     logger->debug("Gain       (dB)  : " + std::to_string(sdrConfig.gain));
-    rtlDSP = std::make_shared<DSP>(sdrConfig.sampleRate, sdrConfig.centerFrequency, sdrConfig.gain);
+    rtlDSP = std::make_shared<DSP>(sdrConfig.sampleRate, sdrConfig.centerFrequency, sdrConfig.gain, sdrConfig.soapy, sdrConfig.soapySocket);
     rtlDSP->start();
 }
 
