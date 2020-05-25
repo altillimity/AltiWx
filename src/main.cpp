@@ -18,9 +18,10 @@ int main(int argc, char *argv[])
     logger->info(" / __ |/ / __/ /| |/ |/ /\\ \\ /");
     logger->info("/_/ |_/_/\\__/_/ |__/|__//_\\_\\ ");
     logger->info("                              ");
-    
+
     logger->info("Starting AltiWx...");
     initConfig();
+    setConsoleLevel(configManager->getConfig().logLevel);
     logger->debug("Using data directory " + configManager->getConfig().dataDirectory);
     initScheduler();
 

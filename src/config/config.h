@@ -6,6 +6,7 @@
 #include <yaml-cpp/yaml.h>
 #include "orbit/satellite_station.h"
 #include "dsp/modem/modem_enum.h"
+#include <spdlog/spdlog.h>
 
 struct SDRConfig
 {
@@ -47,6 +48,7 @@ struct ConfigData
     SDRConfig sdrConfig;
     SatelliteConfig getSatelliteConfigFromNORAD(int norad);
     std::string dataDirectory;
+    spdlog::level::level_enum logLevel;
 };
 
 void initConfig();

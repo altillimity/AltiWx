@@ -24,3 +24,7 @@ void initLogger()
 
     logger->set_level(spdlog::level::trace);
 }
+
+void setConsoleLevel(spdlog::level::level_enum level) {
+    console_sink->set_level(level);
+}

@@ -30,9 +30,11 @@ ConfigData getDefaultConfig()
 
     config.tle_update = "0 0 * * *";
 
-    config.sdrConfig = {(long)137.500e6, (long)1e6, (int)0, (bool) false, "ipc:///tmp/altiwx"};
+    config.sdrConfig = {(long)137.500e6, (long)1e6, (int)0, (bool)false, "ipc:///tmp/altiwx"};
 
     config.dataDirectory = "data";
+
+    config.logLevel = spdlog::level::trace;
 
     return config;
 }
@@ -90,6 +92,7 @@ void ConfigManager::loadConfigFile()
     config_m.tle_update = configFile["tle_update"].as<std::string>();
     config_m.sdrConfig = configFile["rtlsdr"].as<SDRConfig>();
     config_m.dataDirectory = configFile["data_directory"].as<std::string>();
+    config_m.logLevel = configFile["logger_level"].as<spdlog::level::level_enum>();
 }
 
 void ConfigManager::saveConfigFile()
@@ -100,6 +103,7 @@ void ConfigManager::saveConfigFile()
     configFile["tle_update"] = (std::string)config_m.tle_update;
     configFile["rtlsdr"] = (SDRConfig)config_m.sdrConfig;
     configFile["data_directory"] = (std::string)config_m.dataDirectory;
+    configFile["logger_level"] = (spdlog::level::level_enum)config_m.logLevel;
 
     std::ofstream outFile(filename_m);
     outFile << configFile << '\n';
