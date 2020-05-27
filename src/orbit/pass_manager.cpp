@@ -25,7 +25,7 @@ void schedulePasses()
     for (SatellitePass pass : passes)
     {
         std::tm *timeReadable = gmtime(&pass.aos);
-        logger->info("Scheduling pass of " + pass.tle.name + " at " + std::to_string(timeReadable->tm_hour) + ":" + (timeReadable->tm_min > 9 ? std::to_string(timeReadable->tm_min) : "0" + std::to_string(timeReadable->tm_min)) + " with " + std::to_string(std::round(pass.elevation * 10) / 10) + "° elevation");
+        logger->info("Scheduling pass of " + pass.tle.name + " at " + std::to_string(timeReadable->tm_hour) + ":" + (timeReadable->tm_min > 9 ? std::to_string(timeReadable->tm_min) : "0" + std::to_string(timeReadable->tm_min)) + " with " + std::to_string(std::round(pass.elevation * 10) / 10) + "° elevation, " + (pass.northbound ? "Northbound" : "Southbound"));
         globalScheduler->in(std::chrono::system_clock::from_time_t(pass.aos), processPass, pass);
     }
 }

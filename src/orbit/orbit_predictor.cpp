@@ -21,6 +21,8 @@ SatellitePass OrbitPredictor::getNextPass(std::time_t time)
     std::time_t losTime = predict_from_julian(predict_los.time);
 
     float elevation = 0.0f;
+    bool northbound = false, southboud = false;
+
 
     for (std::time_t current_time = aosTime; current_time < losTime; current_time++)
     {
@@ -32,9 +34,17 @@ SatellitePass OrbitPredictor::getNextPass(std::time_t time)
         float current_elevation = predict_observation.elevation * 180.0 / M_PI;
         if (current_elevation > elevation)
             elevation = current_elevation;
+
+        if (current_time == aosTime)
+        {
+            if (predict_orbit_obj.latitude > predict_observer->latitude)
+                northbound = true;
+            else
+                southboud = false;
+        }
     }
 
-    return {norad_m, tle_m, aosTime, losTime, elevation};
+    return {norad_m, tle_m, aosTime, losTime, elevation, northbound, southboud};
 }
 
 SatellitePass OrbitPredictor::getNextPassOver(std::time_t time, float elevation)

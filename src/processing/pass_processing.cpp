@@ -79,6 +79,8 @@ void processPass(SatellitePass pass)
             bindCustomLuaFunctions(lua);
             lua["filename"] = fileToProcess.second.first;
             lua["input_file"] = fileToProcess.second.second;
+            lua["northbound"] = pass.northbound;
+            lua["southbound"] = pass.southbound;
             lua.script_file("scripts/" + fileToProcess.first);
             std::string output_file = lua["output_file"];
             finalFiles.push_back(output_file);
