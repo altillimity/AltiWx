@@ -5,7 +5,7 @@ output_file = filename .. ".png"
 outflag = ""
 if (northbound) then
     outflag = "-N"
-else if (southbound) then
+else if (southbound)
     outflag = "-S"
 end
 
