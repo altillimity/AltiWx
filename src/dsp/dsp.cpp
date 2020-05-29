@@ -95,8 +95,8 @@ void DSP::rtlsdrCallback(unsigned char *buf, uint32_t len, void *ctx)
     for (const std::pair<std::string, std::shared_ptr<Modem>>& currentModem : sourceDSP->activeModems)
         currentModem.second->demod(sourceDSP->sdr_buffer, len);
 
-    //if (sourceDSP->soapy_m)
-    //    sourceDSP->zmqSocket.send(zmq::message_t(buf, len), zmq::send_flags::dontwait);
+    if (sourceDSP->soapy_m)
+        sourceDSP->zmqSocket.send(zmq::message_t(buf, len), zmq::send_flags::dontwait);
 
     sourceDSP->modemsMutex.unlock();
 }
