@@ -1,7 +1,15 @@
 logger:info("Processing NOAA APT data...")
 
 output_file = filename .. ".png"
-command = "wxtoimg -q -A " .. (southbound and "-S" or "-N") .. " -e HVCT '" .. input_file .. "' '" .. output_file .. "'"
+
+outflag = ""
+if (northbound) then
+    outflag = "-N"
+else if (southbound) then
+    outflag = "-S"
+end
+
+command = "wxtoimg -q -A " .. outflag .. " -e HVCT '" .. input_file .. "' '" .. output_file .. "'"
 
 logger:debug(command)
 local cmd_output = os.execute(command)
