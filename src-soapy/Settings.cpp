@@ -4,7 +4,7 @@
 
 SoapyAltiWx::SoapyAltiWx(const SoapySDR::Kwargs &args) : deviceId(-1),
                                                          dev(nullptr),
-                                                         sampleRate(1e6),
+                                                         sampleRate(2.4e6),
                                                          centerFrequency(137.5e6),
                                                          numBuffers(DEFAULT_NUM_BUFFERS),
                                                          bufferLength(DEFAULT_BUFFER_LENGTH),

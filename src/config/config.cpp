@@ -30,7 +30,7 @@ ConfigData getDefaultConfig()
 
     config.tle_update = "0 0 * * *";
 
-    config.sdrConfig = {(long)137.500e6, (long)1e6, (int)0, (bool)false, "ipc:///tmp/altiwx"};
+    config.sdrConfig = {(long)137.500e6, (long)2.4e6, (int)0, (bool)false, "ipc:///tmp/altiwx"};
 
     config.dataDirectory = "data";
 
