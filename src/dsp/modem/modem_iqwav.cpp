@@ -3,6 +3,8 @@
 
 ModemIQWav::ModemIQWav(long frequency, long bandwidth, std::string outputFile)
 {
+    frequency_m = frequency;
+    bandwidth_m = bandwidth;
     tinywav_open_write(&outWavFile, 2, bandwidth, TW_INT16, TW_INTERLEAVED, outputFile.c_str());
 }
 
