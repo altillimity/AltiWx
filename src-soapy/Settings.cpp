@@ -40,7 +40,7 @@ std::string SoapyAltiWx::getHardwareKey(void) const
 SoapySDR::Kwargs SoapyAltiWx::getHardwareInfo(void) const
 {
     SoapySDR::Kwargs args;
-    args["origin"] = "https://gitlab.altillimity.com/altimmity/altiwx";
+    args["origin"] = "https://gitlab.altillimity.com/altillimity/altiwx";
     args["index"] = "0";
     return args;
 }

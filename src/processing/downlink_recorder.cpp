@@ -2,6 +2,7 @@
 #include "logger/logger.h"
 #include "dsp/modem/modem_fm.h"
 #include "dsp/modem/modem_iq.h"
+#include "dsp/modem/modem_iqwav.h"
 #include "orbit/orbit_predictor.h"
 #include "orbit/tle_manager.h"
 #include "dsp/modem/modem_lrpt.h"
@@ -19,6 +20,9 @@ DownlinkRecorder::DownlinkRecorder(std::shared_ptr<DSP> dsp, DownlinkConfig &dow
         break;
     case IQ:
         modem = std::make_shared<ModemIQ>(downlink_m.frequency, downlink_m.bandwidth, fileName);
+        break;
+    case IQWAV:
+        modem = std::make_shared<ModemIQWav>(downlink_m.frequency, downlink_m.bandwidth, fileName);
         break;
     case LRPT:
         modem = std::make_shared<ModemLRPT>(downlink_m.frequency, downlink_m.bandwidth, fileName);

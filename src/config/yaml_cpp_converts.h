@@ -151,6 +151,9 @@ namespace YAML
             case IQ:
                 node = (std::string) "IQ";
                 break;
+            case IQWAV:
+                node = (std::string) "IQWAV";
+                break;
             case LRPT:
                 node = (std::string) "LRPT";
                 break;
@@ -165,6 +168,8 @@ namespace YAML
                 modemType = ModemType::FM;
             else if (type == "IQ")
                 modemType = ModemType::IQ;
+            else if (type == "IQWAV")
+                modemType = ModemType::IQWAV;
             else if (type == "LRPT")
                 modemType = ModemType::LRPT;
             else
