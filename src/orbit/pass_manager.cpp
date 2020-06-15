@@ -16,7 +16,7 @@ void schedulePasses()
     {
         logger->info("Predicting passes for " + getTLEFromNORAD(satellite.norad).name);
         OrbitPredictor predictor(satellite.norad, getTLEFromNORAD(satellite.norad), configManager->getConfig().station);
-        std::vector<SatellitePass> predictedPasses = predictor.getPassesBetweenOver(time(NULL), time(NULL) + 24 * 60 * 60, 10.0f);
+        std::vector<SatellitePass> predictedPasses = predictor.getPassesBetweenOver(time(NULL), time(NULL) + 24 * 60 * 60, satellite.min_elevation);
         passes.insert(passes.end(), predictedPasses.begin(), predictedPasses.end());
     }
 

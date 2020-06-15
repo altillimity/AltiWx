@@ -56,7 +56,7 @@ SatellitePass OrbitPredictor::getNextPassOver(std::time_t time, float elevation)
     {
         pass = getNextPass(time);
         time = pass.los + 1;
-    } while (pass_elevation < elevation);
+    } while (pass_elevation <= elevation);
 
     return pass;
 }
