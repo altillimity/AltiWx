@@ -22,7 +22,7 @@ void ModemIQ::process(liquid_float_complex *buffer, unsigned int &length)
     {
         imag = (int16_t)buffer[i].imag;
         real = (int16_t)buffer[i].real;
-        outIQFile.write((char *)&imag, 2);
         outIQFile.write((char *)&real, 2);
+        outIQFile.write((char *)&imag, 2);
     }
 }
