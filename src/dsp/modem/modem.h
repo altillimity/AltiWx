@@ -15,7 +15,6 @@ protected:
     long frequency_m;
     long shiftFrequency;
     float freqResampRate;
-    int resampI;
 
 protected:
     virtual void process(liquid_float_complex *buffer, unsigned int &length) = 0;
@@ -23,7 +22,7 @@ protected:
 
 public:
     void init(long inputRate, long inputFrequency);
-    void demod(int8_t *buffer, uint32_t &length);
+    void demod(liquid_float_complex *buffer, uint32_t &length);
     virtual void stop() = 0;
     void setFrequency(long frequency);
 };

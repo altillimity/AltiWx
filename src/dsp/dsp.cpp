@@ -1,5 +1,6 @@
 #include "dsp.h"
 #include "logger/logger.h"
+#include <complex>
 
 DSP::DSP(long sampleRate, long centerFrequency, int gain, bool soapy, std::string soapySocket) : sampleRate_m(sampleRate), centerFrequency_m(centerFrequency), gain_m(gain), soapy_m(soapy), socketString(soapySocket)
 {
@@ -92,8 +93,18 @@ void DSP::rtlsdrCallback(unsigned char *buf, uint32_t len, void *ctx)
     for (int i = 0; i < len; i++)
         sourceDSP->sdr_buffer[i] = ((int8_t)buf[i]) + 128;
 
-    for (const std::pair<std::string, std::shared_ptr<Modem>>& currentModem : sourceDSP->activeModems)
-        currentModem.second->demod(sourceDSP->sdr_buffer, len);
+    uint sdr_buffer_length = len / 2;
+    liquid_float_complex sdr_buffer[sdr_buffer_length];
+
+    for (sourceDSP->convertI = 0; sourceDSP->convertI < sdr_buffer_length; sourceDSP->convertI++)
+    {
+        using namespace std::complex_literals;
+        std::complex<float> value = ((float)sourceDSP->sdr_buffer[2 * sourceDSP->convertI]) + ((float)sourceDSP->sdr_buffer[2 * sourceDSP->convertI + 1]) * 1if;
+        sdr_buffer[sourceDSP->convertI] = reinterpret_cast<liquid_float_complex(&)>(value);
+    }
+
+    for (const std::pair<std::string, std::shared_ptr<Modem>> &currentModem : sourceDSP->activeModems)
+        currentModem.second->demod(sdr_buffer, sdr_buffer_length);
 
     if (sourceDSP->soapy_m)
         sourceDSP->zmqSocket.send(zmq::message_t(buf, len), zmq::send_flags::dontwait);

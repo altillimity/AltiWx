@@ -25,7 +25,8 @@ private:
     int gain_m;
     bool soapy_m;
     std::string socketString;
-    
+    int convertI;
+
     zmq::context_t zmqContext;
     zmq::socket_t zmqSocket;
 

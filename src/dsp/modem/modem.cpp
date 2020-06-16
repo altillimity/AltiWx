@@ -28,28 +28,20 @@ void Modem::init(long inputRate, long inputFrequency)
     initResamp(inputRate, inputFrequency);
 }
 
-void Modem::demod(int8_t *buffer, uint32_t &length)
+void Modem::demod(liquid_float_complex *buffer, uint32_t &length)
 {
     modemMutex.lock();
-    uint sdr_buffer_length = length / 2;
-    uint resamp_buffer_length = ceil(freqResampRate * (float)sdr_buffer_length);
-    liquid_float_complex sdr_buffer[sdr_buffer_length];
-    liquid_float_complex resamp_buffer[sdr_buffer_length];
-
-    for (resampI = 0; resampI < sdr_buffer_length; resampI++)
-    {
-        using namespace std::complex_literals;
-        std::complex<float> value = ((float)buffer[2 * resampI]) + ((float)buffer[2 * resampI + 1]) * 1if;
-        sdr_buffer[resampI] = reinterpret_cast<liquid_float_complex(&)>(value);
-    }
+    liquid_float_complex sdr_buffer[length];
+    uint resamp_buffer_length = ceil(freqResampRate * (float)length);
+    liquid_float_complex resamp_buffer[resamp_buffer_length];
 
     if (shiftFrequency != 0)
         if (shiftFrequency > 0)
-            nco_crcf_mix_block_down(freqShifter, sdr_buffer, sdr_buffer, sdr_buffer_length);
+            nco_crcf_mix_block_down(freqShifter, buffer, sdr_buffer, length);
         else
-            nco_crcf_mix_block_up(freqShifter, sdr_buffer, sdr_buffer, sdr_buffer_length);
+            nco_crcf_mix_block_up(freqShifter, buffer, sdr_buffer, length);
 
-    msresamp_crcf_execute(freqResampler, sdr_buffer, sdr_buffer_length, resamp_buffer, &resamp_buffer_length);
+    msresamp_crcf_execute(freqResampler, sdr_buffer, length, resamp_buffer, &resamp_buffer_length);
 
     process(resamp_buffer, resamp_buffer_length);
     modemMutex.unlock();
