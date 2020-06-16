@@ -3,6 +3,7 @@
 #include "processing/sol/sol.hpp"
 #include <spdlog/spdlog.h>
 
+// Custom logger usable in scripts
 class LuaLogger
 {
 private:

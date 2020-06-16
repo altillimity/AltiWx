@@ -5,6 +5,7 @@ LuaLogger::LuaLogger(std::shared_ptr<spdlog::logger> logger, std::string name) :
 {
 }
 
+// Logger functions
 void LuaLogger::debug(std::string log)
 {
     logger_m->debug("[" + name_m + "] " + log);
@@ -32,6 +33,7 @@ void LuaLogger::critical(std::string log)
 
 void bindLogger(sol::state &lua, std::string name)
 {
+    // Bing the logger to provided lua instance
     lua.new_usertype<LuaLogger>("lua_logger", "debug", &LuaLogger::debug, "info", &LuaLogger::info, "warn", &LuaLogger::warn, "error", &LuaLogger::error, "critical", &LuaLogger::critical);
     lua["logger"] = std::make_shared<LuaLogger>(logger, name);
 }

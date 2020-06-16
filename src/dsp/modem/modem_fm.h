@@ -4,6 +4,7 @@
 #include <string>
 #include "tinywav/tinywav.h"
 
+// Simple FM modem writing to a wav file
 class ModemFM : public Modem
 {
 protected:

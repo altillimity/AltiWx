@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 
+// Modem recording raw baseband
 class ModemIQ : public Modem
 {
 protected:

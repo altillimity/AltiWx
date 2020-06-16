@@ -4,6 +4,7 @@
 #include "tle.h"
 #include <ctime>
 
+// Struct holding a satellite pass' data
 struct SatellitePass
 {
     int norad;

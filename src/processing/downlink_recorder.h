@@ -6,6 +6,7 @@
 #include <memory>
 #include "orbit/doppler_correction.h"
 
+// Class recording a satellite downlink (single)
 class DownlinkRecorder
 {
 private:

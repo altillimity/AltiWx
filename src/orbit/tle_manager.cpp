@@ -7,13 +7,17 @@
 #include "scheduler/scheduler.h"
 #include "tle_fetcher.h"
 
+// Mutex to prevent conflicts
 std::mutex tleManagerMutex;
+// Map holding TLE data
 std::unordered_map<int, TLE> satelliteTLEs;
 
+// Fetch TLEs for all satellites
 void updateTLEs()
 {
     for (std::pair<const int, TLE> &currentNorad : satelliteTLEs)
     {
+        // Fetch TLEs, update if the update was sucessful
         int norad = currentNorad.first;
         TLE &tle = currentNorad.second;
 
@@ -24,6 +28,7 @@ void updateTLEs()
 
         if (tleFetcher.containsData())
         {
+            // Mutex used to prevent getTLEFromNORAD to fetch data at the same time
             tleManagerMutex.lock();
             tle = tleFetcher.getTLE();
             tleManagerMutex.unlock();
@@ -36,6 +41,7 @@ void updateTLEs()
 
 void startTLEManager(std::vector<int> &norads)
 {
+    // Initial TLE fetching, start the scheduler task
     logger->info("Starting TLE manager...");
     for (int &norad : norads)
         satelliteTLEs.emplace(norad, TLE());
@@ -47,8 +53,10 @@ void startTLEManager(std::vector<int> &norads)
 
 TLE getTLEFromNORAD(int norad)
 {
+    // Lock mutex again
     tleManagerMutex.lock();
 
+    // Simply return the appropriate TLE object
     TLE tle;
     if (satelliteTLEs.find(norad) != satelliteTLEs.end())
         tle = satelliteTLEs[norad];

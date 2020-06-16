@@ -11,6 +11,7 @@
 #define RTL_MAX_OVERSAMPLE 16
 #define RTL_MAX_BUFFER_LENGTH (RTL_MAX_OVERSAMPLE * RTL_DEFAULT_BUFFER_LENGTH)
 
+// Class performing all the DSP work, currently only supporting rtl-sdr
 class DSP
 {
 private:
@@ -25,19 +26,23 @@ private:
     int gain_m;
     bool soapy_m;
     std::string socketString;
-    int convertI;
 
+    // Zmq stuff
     zmq::context_t zmqContext;
     zmq::socket_t zmqSocket;
 
 private:
+    // rtlsdr callback
     static void rtlsdrCallback(unsigned char *buf, uint32_t len, void *ctx);
+    // Thread running the dongle work
     void dongleThread();
 
 public:
     DSP(long sampleRate, long centerFrequency, int gain, bool soapy, std::string soapySocket);
     void start();
     void stop();
-    void attachModem(std::string id, std::shared_ptr<Modem> modem);
+    // Attach a modem
+    void attachModem(std::string id, std::shared_ptr<Modem> modem); 
+    // Detach a modem
     void detachModem(std::string id);
 };

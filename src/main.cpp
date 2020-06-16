@@ -11,8 +11,10 @@
 
 int main(int argc, char *argv[])
 {
+    // Start logger first
     initLogger();
 
+    // Nice graphics!
     logger->info("   ___   ____  _ _      __    ");
     logger->info("  / _ | / / /_(_) | /| / /_ __");
     logger->info(" / __ |/ / __/ /| |/ |/ /\\ \\ /");
@@ -20,17 +22,24 @@ int main(int argc, char *argv[])
     logger->info("                              ");
 
     logger->info("Starting AltiWx...");
+    // Init config
     initConfig();
+    // Set custom log level
     setConsoleLevel(configManager->getConfig().logLevel);
     logger->debug("Using data directory " + configManager->getConfig().dataDirectory);
+    // Start scheduler
     initScheduler();
 
+    // Create a NORAD list
     std::vector<int> norads;
     for (SatelliteConfig satConfig : configManager->getConfig().satelliteConfigs)
         norads.push_back(satConfig.norad);
 
+    // Start TLE manager
     startTLEManager(norads);
+    // Start pass manager
     initPassManager();
+    // FInally, start DSP
     initDSP();
 
     //processPass({33591, getTLEFromNORAD(33591), time(NULL), time(NULL) + 10, 10.0f, false, true});

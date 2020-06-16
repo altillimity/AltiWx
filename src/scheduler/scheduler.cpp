@@ -5,6 +5,7 @@ std::shared_ptr<Bosma::Scheduler> globalScheduler;
 
 void initScheduler()
 {
+    // Start the scheduler
     int thread_num = 10;
     logger->debug("Starting scheduler with " + std::to_string(thread_num) + " workers");
     globalScheduler = std::make_shared<Bosma::Scheduler>(thread_num);

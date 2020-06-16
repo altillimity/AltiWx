@@ -11,8 +11,10 @@ DownlinkRecorder::DownlinkRecorder(std::shared_ptr<DSP> dsp, DownlinkConfig &dow
 {
     logger->debug("Setting up recorder for " + downlink_m.name + " downlink on " + std::to_string(downlink_m.frequency) + " Hz. Bandwidth " + std::to_string(downlink_m.bandwidth) + " Hz");
 
+    // Generate a unique ModemID
     modemID = downlink_m.name + "-" + std::to_string(downlink.frequency);
 
+    // Init our Modem object
     switch (downlink_m.modemType)
     {
     case FM:
@@ -31,12 +33,14 @@ DownlinkRecorder::DownlinkRecorder(std::shared_ptr<DSP> dsp, DownlinkConfig &dow
         logger->critical("Invalid modem type!");
     }
 
+    // If dopper is enabled, set it up
     if (downlink_m.dopplerCorrection)
         dopplerCorrector = std::make_shared<DopplerCorrector>(getTLEFromNORAD(satelliteConfig.norad), configManager->getConfig().station);
 }
 
 void DownlinkRecorder::start()
 {
+    // Attach modem to DSP and start doppler if enabled
     logger->info("Recording " + downlink_m.name + " downlink on " + std::to_string(downlink_m.frequency) + " Hz. Bandwidth " + std::to_string(downlink_m.bandwidth) + " Hz");
     dsp_m->attachModem(modemID, modem);
     if (downlink_m.dopplerCorrection)
@@ -45,6 +49,7 @@ void DownlinkRecorder::start()
 
 void DownlinkRecorder::stop()
 {
+    // Detach modem and stop doppler thread
     running = false;
     if (dopplerThread.joinable())
         dopplerThread.join();
@@ -54,6 +59,7 @@ void DownlinkRecorder::stop()
 
 void DownlinkRecorder::doDoppler()
 {
+    // Perform doppler correction every 100ms.
     while (running)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));

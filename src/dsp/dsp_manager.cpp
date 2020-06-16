@@ -5,6 +5,7 @@
 std::shared_ptr<DSP> rtlDSP;
 
 void initDSP() {
+    // Log everything and start DSP
     logger->info("Starting DSP...");
     SDRConfig sdrConfig = configManager->getConfig().sdrConfig;
     logger->debug("Frequency  (Hz)  : " + std::to_string(sdrConfig.centerFrequency));

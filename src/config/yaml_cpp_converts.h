@@ -1,6 +1,10 @@
 #include "config.h"
 #include <spdlog/spdlog.h>
 
+/* 
+   File containing functions to support custom classes in YamlCPP
+*/
+
 namespace YAML
 {
     template <>

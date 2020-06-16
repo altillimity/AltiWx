@@ -2,6 +2,7 @@
 
 #include <string>
 
+// Just a class holding a TLE object
 struct TLE
 {
     std::string name;

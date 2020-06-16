@@ -3,6 +3,7 @@
 
 ModemIQWav::ModemIQWav(long frequency, long bandwidth, std::string outputFile)
 {
+    // Wav output & local variables
     frequency_m = frequency;
     bandwidth_m = bandwidth;
     tinywav_open_write(&outWavFile, 2, bandwidth, TW_INT16, TW_INTERLEAVED, outputFile.c_str());
@@ -10,11 +11,13 @@ ModemIQWav::ModemIQWav(long frequency, long bandwidth, std::string outputFile)
 
 void ModemIQWav::stop()
 {
+    // Close wav
     tinywav_close_write(&outWavFile);
 }
 
 void ModemIQWav::process(liquid_float_complex *buffer, unsigned int &length)
 {
+    // Write samples to output file
     unsigned int bufferOutSize = length * 2;
     float outputBuffer[bufferOutSize];
 

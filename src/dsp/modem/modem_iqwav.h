@@ -4,6 +4,7 @@
 #include <string>
 #include "tinywav/tinywav.h"
 
+// Modem recording raw baseband into a wav file
 class ModemIQWav : public Modem
 {
 protected:

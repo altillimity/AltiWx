@@ -8,6 +8,7 @@
 #include "dsp/modem/modem_enum.h"
 #include <spdlog/spdlog.h>
 
+// SDR Config struct
 struct SDRConfig
 {
     long centerFrequency;
@@ -17,6 +18,7 @@ struct SDRConfig
     std::string soapySocket;
 };
 
+// Downlink config struct
 struct DownlinkConfig
 {
     std::string name;
@@ -30,6 +32,7 @@ struct DownlinkConfig
     long modem_audioSamplerate;
 };
 
+// Satellite config struct
 struct SatelliteConfig
 {
     int norad;
@@ -39,6 +42,7 @@ struct SatelliteConfig
     std::string getName();
 };
 
+// Main config struct
 struct ConfigData
 {
     std::string station_name;
@@ -51,13 +55,18 @@ struct ConfigData
     spdlog::level::level_enum logLevel;
 };
 
+// Initialize config
 void initConfig();
 
+// ConfigManager class
 class ConfigManager
 {
 private:
+    // Yaml object
     YAML::Node configFile;
+    // Config filename
     std::string filename_m;
+    // Holds our config
     ConfigData config_m;
 
 public:
@@ -68,4 +77,5 @@ public:
     ConfigData &getConfig();
 };
 
+// Main config object
 extern std::shared_ptr<ConfigManager> configManager;

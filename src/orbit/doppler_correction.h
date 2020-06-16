@@ -6,6 +6,7 @@
 #include <vector>
 #include <predict/predict.h>
 
+// Class including everything necessary to perform doppler correction
 class DopplerCorrector
 {
 private:

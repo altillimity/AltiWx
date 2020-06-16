@@ -7,6 +7,7 @@
 #include <vector>
 #include <predict/predict.h>
 
+// OrbitPredictor class used to predict satellite orbits
 class OrbitPredictor
 {
 private:
@@ -18,7 +19,10 @@ private:
 
 public:
     OrbitPredictor(int norad, TLE tle, SatelliteStation station);
+    // Return next pass
     SatellitePass getNextPass(std::time_t time);
+    // Return next pass over a certain elevation
     SatellitePass getNextPassOver(std::time_t time, float elevation);
+    // Return all pases above asked elevation in the given timespan
     std::vector<SatellitePass> getPassesBetweenOver(std::time_t start_time, std::time_t end_time, float elevation);
 };
