@@ -10,7 +10,6 @@ class ModemIQ : public Modem
 protected:
     std::ofstream outIQFile;
     unsigned int i;
-    int16_t imag, real;
 
 protected:
     void process(liquid_float_complex *buffer, unsigned int &length);

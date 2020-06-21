@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     // FInally, start DSP
     initDSP();
 
-    //processPass({25338, getTLEFromNORAD(25338), time(NULL), time(NULL) + 10000, 10.0f, false, true});
+    processPass({25338, getTLEFromNORAD(25338), time(NULL), time(NULL) + 10000, 10.0f, false, true});
     //processPass({40069, getTLEFromNORAD(40069), time(NULL), time(NULL) + 20, 10.0f});
 
     std::cin.get();
