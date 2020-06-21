@@ -20,8 +20,8 @@ void ModemIQ::process(liquid_float_complex *buffer, unsigned int &length)
     // Write all samples to output file
     for (i = 0; i < length; i++)
     {
-        imag = (int16_t)buffer[i].imag;
-        real = (int16_t)buffer[i].real;
+        imag = (int16_t)buffer[i].imag();
+        real = (int16_t)buffer[i].real();
         outIQFile.write((char *)&real, 2);
         outIQFile.write((char *)&imag, 2);
     }

@@ -23,15 +23,15 @@ ConfigData getDefaultConfig()
                                          (long)137.620e6,
                                          (long)50e3,
                                          (bool)false,
-                                         (std::string) "apt-noaa.lua",
                                          (std::string) "wav",
+                                         (std::string) "apt-noaa.lua",
                                          (ModemType)ModemType::FM,
                                          11025}}};
     config.satelliteConfigs.push_back(noaa15Config);
 
     config.tle_update = "0 0 * * *";
 
-    config.sdrConfig = {(long)137.500e6, (long)2.4e6, (int)0, (bool)false, "ipc:///tmp/altiwx"};
+    config.sdrConfig = {(long)137.500e6, (long)2.4e6, (int)0, (std::string) "driver=rtlsdr", (bool)false, "ipc:///tmp/altiwx"};
 
     config.dataDirectory = "data";
 

@@ -328,7 +328,7 @@ int SoapyAltiWx::readStream(
     //convert into user's buff0
     if (rxFormat == RTL_RX_FORMAT_FLOAT32)
     {
-        float *ftarget = (float *)buff0;
+        /*float *ftarget = (float *)buff0;
         std::complex<float> tmp;
         if (iqSwap)
         {
@@ -347,7 +347,11 @@ int SoapyAltiWx::readStream(
                 ftarget[i * 2] = tmp.real();
                 ftarget[i * 2 + 1] = tmp.imag();
             }
-        }
+        }*/
+        std::complex<float> *ftarget = (std::complex<float> *)buff0;
+         std::complex<float> *source = (std::complex<float> *)_currentBuff;
+         for(int i = 0; i < returnedElems; i++)
+        ftarget[i] = source[i];
     }
     else if (rxFormat == RTL_RX_FORMAT_INT16)
     {

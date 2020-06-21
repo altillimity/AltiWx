@@ -14,6 +14,7 @@ struct SDRConfig
     long centerFrequency;
     long sampleRate;
     int gain;
+    std::string soapyDeviceString;
     bool soapy;
     std::string soapySocket;
 };

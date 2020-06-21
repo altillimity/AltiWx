@@ -4,18 +4,20 @@
 
 std::shared_ptr<DSP> rtlDSP;
 
-void initDSP() {
+void initDSP()
+{
     // Log everything and start DSP
     logger->info("Starting DSP...");
     SDRConfig sdrConfig = configManager->getConfig().sdrConfig;
     logger->debug("Frequency  (Hz)  : " + std::to_string(sdrConfig.centerFrequency));
     logger->debug("Samplerate (S/s) : " + std::to_string(sdrConfig.sampleRate));
     logger->debug("Gain       (dB)  : " + std::to_string(sdrConfig.gain));
-    rtlDSP = std::make_shared<DSP>(sdrConfig.sampleRate, sdrConfig.centerFrequency, sdrConfig.gain, sdrConfig.soapy, sdrConfig.soapySocket);
+    rtlDSP = std::make_shared<DSP>(sdrConfig.soapyDeviceString, sdrConfig.sampleRate, sdrConfig.centerFrequency, sdrConfig.gain, sdrConfig.soapy, sdrConfig.soapySocket);
     rtlDSP->start();
 }
 
-void stopDSP() {
+void stopDSP()
+{
     logger->info("Stopping DSP...");
     rtlDSP->stop();
 }

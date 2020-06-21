@@ -23,8 +23,8 @@ void ModemIQWav::process(liquid_float_complex *buffer, unsigned int &length)
 
     for (size_t i = 0; i < length; i++)
     {
-        outputBuffer[i * 2] = buffer[i].real;
-        outputBuffer[i * 2 + 1] = buffer[i].imag;
+        outputBuffer[i * 2] = buffer[i].real();
+        outputBuffer[i * 2 + 1] = buffer[i].imag();
     }
 
     tinywav_write_f(&outWavFile, outputBuffer, bufferOutSize);

@@ -72,6 +72,7 @@ namespace YAML
             node["frequency"] = (long)sdrConfig.centerFrequency;
             node["sample_rate"] = (long)sdrConfig.sampleRate;
             node["gain"] = (int)sdrConfig.gain;
+            node["device"] = (std::string)sdrConfig.soapyDeviceString;
             node["soapy"] = (bool)sdrConfig.soapy;
             node["soapy_socket"] = (std::string)sdrConfig.soapySocket;
             return node;
@@ -79,7 +80,7 @@ namespace YAML
 
         static bool decode(const Node &node, SDRConfig &sdrConfig)
         {
-            if (!node.IsMap() || node.size() > 5 || node.size() < 4)
+            if (!node.IsMap() || node.size() > 6 || node.size() < 5)
             {
                 return false;
             }
@@ -87,6 +88,7 @@ namespace YAML
             sdrConfig.centerFrequency = node["frequency"].as<long>();
             sdrConfig.sampleRate = node["sample_rate"].as<long>();
             sdrConfig.gain = node["gain"].as<int>();
+            sdrConfig.soapyDeviceString = node["device"].as<std::string>();
             sdrConfig.soapy = node["soapy"].as<bool>();
             sdrConfig.soapySocket = node["soapy_socket"].as<std::string>();
 

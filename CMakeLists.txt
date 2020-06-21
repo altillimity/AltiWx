@@ -17,6 +17,10 @@ find_package(Liquid REQUIRED)
 target_include_directories(altiwx PUBLIC ${LIQUID_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC ${LIQUID_LIBRARIES})
 
+find_package(SoapySDR "0.6.0" NO_MODULE REQUIRED)
+include_directories(${SOAPY_SDR_INCLUDE_DIR})
+target_link_libraries(altiwx PUBLIC ${SOAPY_SDR_LIBRARY})  
+
 find_package(RTLSDR REQUIRED)
 target_include_directories(altiwx PUBLIC ${RTLSDR_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC ${RTLSDR_LIBRARIES})
