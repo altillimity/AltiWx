@@ -31,7 +31,7 @@ void Modem::init(long inputRate, long inputFrequency)
     initResamp(inputRate, inputFrequency);
 }
 
-void Modem::demod(liquid_float_complex *buffer, uint32_t &length)
+void Modem::demod(liquid_float_complex *buffer, uint32_t length)
 {
     modemMutex.lock(); // Lock mutex
     // Create buffers
@@ -54,8 +54,7 @@ void Modem::demod(liquid_float_complex *buffer, uint32_t &length)
     modemMutex.unlock(); // Unlock mutex
 }
 
-void Modem::setFrequency(long frequency)
-{
+void Modem::setFrequency(long frequency) {
     modemMutex.lock(); // Lock mutex
 
     frequency_m = frequency;
@@ -63,9 +62,9 @@ void Modem::setFrequency(long frequency)
     // Change frequency shifting settings
     if (frequency_m != inputFrequency_m)
     {
-        if (!freqShifter)
+        if(!freqShifter)
             freqShifter = nco_crcf_create(LIQUID_VCO);
-
+        
         shiftFrequency = frequency_m - inputFrequency_m;
         if (abs(shiftFrequency) > inputFrequency_m / 2)
             logger->critical("Modem frequency shift exceeds sample rate!");

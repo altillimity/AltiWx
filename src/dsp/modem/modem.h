@@ -4,6 +4,7 @@
 #include <complex>
 #include <liquid/liquid.h>
 #include <mutex>
+#include <thread>
 
 // Modem object, that can be attached onto a DSP chain to decode something in the sampled spectrum
 class Modem
@@ -25,10 +26,13 @@ protected:
     virtual void initResamp(long inputRate, long inputFrequency);
 
 public:
+    std::thread workThread;
+
+public:
     // Init when added into a DSP chain
     void init(long inputRate, long inputFrequency);
     // Perform resampling / shifting work
-    void demod(liquid_float_complex *buffer, uint32_t &length);
+    void demod(liquid_float_complex *buffer, uint32_t length);
     // Stop before dettaching
     virtual void stop() = 0;
     // Change effective frequency, live (doppler as an example)

@@ -32,8 +32,6 @@ void DSP::start()
     else
     {
         device->setGainMode(SOAPY_SDR_RX, 0, false);
-        logger->warn("Failed to enable manual tuner gain!");
-
         device->setGain(SOAPY_SDR_RX, 0, gain_m);
         logger->info("Tuner gain set to " + std::to_string(gain_m) + " dB");
     }
@@ -108,8 +106,11 @@ void DSP::sdrThread()
 
         // Feed demodulators
         for (const std::pair<std::string, std::shared_ptr<Modem>> &currentModem : activeModems)
-            currentModem.second->demod(sdr_buffer, length);
+            currentModem.second->workThread = std::thread(&Modem::demod, currentModem.second.get(), sdr_buffer, length);
 
+        for (const std::pair<std::string, std::shared_ptr<Modem>> &currentModem : activeModems)
+            currentModem.second->workThread.join();
+        
         // Forward to SoapySDR if that's enabled
         if (soapy_m)
             zmqSocket.send(zmq::message_t(sdr_buffer, length), zmq::send_flags::dontwait);
