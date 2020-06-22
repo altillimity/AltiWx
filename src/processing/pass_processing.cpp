@@ -30,7 +30,7 @@ void processPass(SatellitePass pass)
     logger->info("AOS " + pass.tle.name);
 
     // Save every recorded file
-    std::unordered_map<std::string, std::pair<std::string, std::string>> filePaths;
+    std::unordered_map<std::string, std::pair<std::string, std::pair<std::string, long>>> filePaths;
 
     // Attach all downlink recorders
     std::vector<std::shared_ptr<DownlinkRecorder>> downlinkRecoders;
@@ -41,7 +41,7 @@ void processPass(SatellitePass pass)
         // Generate filename / path, store them and setup recorder
         std::string fileName = generateFilepath(pass, satelliteConfig, downlinkConfig);
         std::string filePath = fileName + +"." + downlinkConfig.outputExtension;
-        filePaths.emplace(std::make_pair(downlinkConfig.postProcessingScript, std::make_pair(fileName, filePath)));
+        filePaths.emplace(std::make_pair(downlinkConfig.postProcessingScript, std::make_pair(fileName, std::make_pair(filePath, downlinkConfig.bandwidth))));
         logger->debug("Using file path " + filePath);
 
         std::shared_ptr<DownlinkRecorder> recorder = std::make_shared<DownlinkRecorder>(rtlDSP, downlinkConfig, satelliteConfig, filePath);
@@ -66,7 +66,7 @@ void processPass(SatellitePass pass)
 
     // Run processing scripts
     std::vector<std::string> finalFiles;
-    for (std::pair<std::string, std::pair<std::string, std::string>> fileToProcess : filePaths)
+    for (std::pair<std::string, std::pair<std::string, std::pair<std::string, long>>> fileToProcess : filePaths)
     {
         logger->debug("Processing " + fileToProcess.second.first + " with " + fileToProcess.first);
 
@@ -87,15 +87,16 @@ void processPass(SatellitePass pass)
         // Setup a lua environment, run the script, get the result out
         try
         {
-            sol::state lua; // sol instance
+            sol::state lua;                                                                                      // sol instance
             lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::os, sol::lib::io, sol::lib::string); // Open most library that may be used
-            bindLogger(lua, fileToProcess.first); // Add specific logger
-            bindCustomLuaFunctions(lua); // Add custom functions
+            bindLogger(lua, fileToProcess.first);                                                                // Add specific logger
+            bindCustomLuaFunctions(lua);                                                                         // Add custom functions
             // Variables
             lua["filename"] = fileToProcess.second.first;
-            lua["input_file"] = fileToProcess.second.second;
+            lua["input_file"] = fileToProcess.second.second.first;
             lua["northbound"] = pass.northbound;
             lua["southbound"] = pass.southbound;
+            lua["samplerate"] = fileToProcess.second.second.second;
             lua.script_file("scripts/" + fileToProcess.first); // Run the script
             std::string output_file = lua["output_file"];
             finalFiles.push_back(output_file); // Store outputs

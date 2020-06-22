@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     startTLEManager(norads);
     // Start pass manager
     initPassManager();
-    // FInally, start DSP
+    // Finally, start DSP
     initDSP();
 
     //processPass({25338, getTLEFromNORAD(25338), time(NULL), time(NULL) + 10000, 10.0f, false, true});
