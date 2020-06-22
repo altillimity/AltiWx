@@ -5,7 +5,8 @@ output_file = filename .. ".txt"
 outflag = ""
 if (northbound) then
     outflag = "-N"
-else if (southbound)
+end
+if (southbound) then
     outflag = "-S"
 end
 

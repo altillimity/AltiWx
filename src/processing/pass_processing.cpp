@@ -23,6 +23,13 @@ std::string generateFilepath(SatellitePass &satellitePass, SatelliteConfig &sate
            "--" + std::to_string(timeReadable->tm_hour) + ":" + (timeReadable->tm_min > 9 ? std::to_string(timeReadable->tm_min) : "0" + std::to_string(timeReadable->tm_min));
 }
 
+struct ToProcess {
+    std::string filename;
+    std::string filePath;
+    std::string script;
+    long samplerate;
+};
+
 void processPass(SatellitePass pass)
 {
     // Get SatelliteConfig
@@ -30,7 +37,7 @@ void processPass(SatellitePass pass)
     logger->info("AOS " + pass.tle.name);
 
     // Save every recorded file
-    std::unordered_map<std::string, std::pair<std::string, std::pair<std::string, long>>> filePaths;
+    std::vector<ToProcess> filePaths;
 
     // Attach all downlink recorders
     std::vector<std::shared_ptr<DownlinkRecorder>> downlinkRecoders;
@@ -41,7 +48,7 @@ void processPass(SatellitePass pass)
         // Generate filename / path, store them and setup recorder
         std::string fileName = generateFilepath(pass, satelliteConfig, downlinkConfig);
         std::string filePath = fileName + +"." + downlinkConfig.outputExtension;
-        filePaths.emplace(std::make_pair(downlinkConfig.postProcessingScript, std::make_pair(fileName, std::make_pair(filePath, downlinkConfig.bandwidth))));
+        filePaths.push_back({fileName, filePath, downlinkConfig.postProcessingScript, downlinkConfig.bandwidth});
         logger->debug("Using file path " + filePath);
 
         std::shared_ptr<DownlinkRecorder> recorder = std::make_shared<DownlinkRecorder>(rtlDSP, downlinkConfig, satelliteConfig, filePath);
@@ -64,23 +71,25 @@ void processPass(SatellitePass pass)
 
     logger->info("Processing data for " + satelliteConfig.getName());
 
+    logger->info(filePaths.size());
+
     // Run processing scripts
     std::vector<std::string> finalFiles;
-    for (std::pair<std::string, std::pair<std::string, std::pair<std::string, long>>> fileToProcess : filePaths)
+    for (ToProcess fileToProcess : filePaths)
     {
-        logger->debug("Processing " + fileToProcess.second.first + " with " + fileToProcess.first);
+        logger->debug("Processing " + fileToProcess.filename + " with " + fileToProcess.script);
 
         // Maybe nothing has to be processed? Then skip!
-        if (fileToProcess.first == "none")
+        if (fileToProcess.script == "none")
         {
             logger->debug("No processing script! Skipping...");
             continue;
         }
 
         // Check the script exists
-        if (!std::filesystem::exists("scripts/" + fileToProcess.first))
+        if (!std::filesystem::exists("scripts/" + fileToProcess.script))
         {
-            logger->critical("Script " + (std::string) "scripts/" + fileToProcess.first + " does not exist!");
+            logger->critical("Script " + (std::string) "scripts/" + fileToProcess.script + " does not exist!");
             continue;
         }
 
@@ -89,15 +98,15 @@ void processPass(SatellitePass pass)
         {
             sol::state lua;                                                                                      // sol instance
             lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::os, sol::lib::io, sol::lib::string); // Open most library that may be used
-            bindLogger(lua, fileToProcess.first);                                                                // Add specific logger
+            bindLogger(lua, fileToProcess.script);                                                                // Add specific logger
             bindCustomLuaFunctions(lua);                                                                         // Add custom functions
             // Variables
-            lua["filename"] = fileToProcess.second.first;
-            lua["input_file"] = fileToProcess.second.second.first;
+            lua["filename"] = fileToProcess.filename;
+            lua["input_file"] = fileToProcess.filePath;
             lua["northbound"] = pass.northbound;
             lua["southbound"] = pass.southbound;
-            lua["samplerate"] = fileToProcess.second.second.second;
-            lua.script_file("scripts/" + fileToProcess.first); // Run the script
+            lua["samplerate"] = fileToProcess.samplerate;
+            lua.script_file("scripts/" + fileToProcess.script); // Run the script
             std::string output_file = lua["output_file"];
             finalFiles.push_back(output_file); // Store outputs
         }
