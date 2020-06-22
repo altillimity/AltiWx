@@ -1,12 +1,20 @@
 logger:info("Processing METEOR-M LRPT data...")
 
+temp_file = filename .. ".lrpt"
+command = "sox -t raw -e floating-point -b 32 -c 2 -r " .. samplerate .. " '" .. input_file .. "' -t wav -e signed-integer -b 16 -c 2 -r " .. samplerate .. " '" .. temp_file .. "'"
+
+logger:debug(command)
+cmd_output = os.execute(command)
+if (not cmd_output == 0) then logger:error("Sox command failed!") end
+
 lrpt_file = filename .. ".lrpt"
-command = "meteor_demod -q -B -s 140000 '" .. input_file .. "' -o '" ..
-              lrpt_file .. "'"
+command = "meteor_demod -q -B -s " .. samplerate .. " '" .. temp_file .. "' -o '" .. lrpt_file .. "'"
 
 logger:debug(command)
 cmd_output = os.execute(command)
 if (not cmd_output == 0) then logger:error("meteor_demod command failed!") end
+
+os.remove(temp_file)
 
 output_file = filename .. ".png"
 command = "medet '" .. lrpt_file .. "' '" .. filename ..

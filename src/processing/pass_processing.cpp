@@ -71,8 +71,6 @@ void processPass(SatellitePass pass)
 
     logger->info("Processing data for " + satelliteConfig.getName());
 
-    logger->info(filePaths.size());
-
     // Run processing scripts
     std::vector<std::string> finalFiles;
     for (ToProcess fileToProcess : filePaths)
