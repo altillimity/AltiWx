@@ -3,7 +3,6 @@
 #include <SoapySDR/Device.hpp>
 #include <SoapySDR/Logger.h>
 #include <SoapySDR/Types.h>
-#include <rtl-sdr.h>
 #include <stdexcept>
 #include <thread>
 #include <mutex>
@@ -209,11 +208,9 @@ public:
 private:
     //device handle
     int deviceId;
-    rtlsdr_dev_t *dev;
 
     //cached settings
     rtlsdrRXFormat rxFormat;
-    rtlsdr_tuner tunerType;
     uint32_t sampleRate, centerFrequency;
     int ppm, directSamplingMode;
     size_t numBuffers, bufferLength, asyncBuffs;

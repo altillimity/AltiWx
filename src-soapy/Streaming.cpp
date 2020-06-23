@@ -216,16 +216,7 @@ SoapySDR::Stream *SoapyAltiWx::setupStream(
         {
         }
     }
-    if (tunerType == RTLSDR_TUNER_E4000)
-    {
-        IFGain[0] = 6;
-        IFGain[1] = 9;
-        IFGain[2] = 3;
-        IFGain[3] = 2;
-        IFGain[4] = 3;
-        IFGain[5] = 3;
-    }
-    else
+
     {
         for (int i = 0; i < 6; i++)
         {
