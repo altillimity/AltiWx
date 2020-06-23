@@ -10,7 +10,7 @@ build-deb:
     - cmake -DCMAKE_BUILD_TYPE=Release ..
     - make -j4
     - make install
-    - cd ~
+    - cd ../..
   script:
     - mkdir build
     - cd build
