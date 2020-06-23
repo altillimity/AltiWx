@@ -12,7 +12,7 @@ DownlinkRecorder::DownlinkRecorder(std::shared_ptr<DSP> dsp, DownlinkConfig &dow
     logger->debug("Setting up recorder for " + downlink_m.name + " downlink on " + std::to_string(downlink_m.frequency) + " Hz. Bandwidth " + std::to_string(downlink_m.bandwidth) + " Hz");
 
     // Generate a unique ModemID
-    modemID = downlink_m.name + "-" + std::to_string(downlink.frequency);
+    modemID = satelliteConfig.getName() + "-" + downlink_m.name + "-" + std::to_string(downlink.frequency);
 
     // Init our Modem object
     switch (downlink_m.modemType)
