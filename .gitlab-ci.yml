@@ -4,6 +4,13 @@ build-deb:
   before_script:
     - apt-get update > /dev/null
     - apt-get install -y pkg-config build-essential cmake libliquid-dev libsoapysdr-dev libyaml-cpp-dev libcurlpp-dev libcurl4-gnutls-dev libzmq3-dev libspdlog-dev > /dev/null
+    - git clone https://github.com/la1k/libpredict.git
+    - cd libpredict
+    - mkdir build && cd build
+    - cmake -DCMAKE_BUILD_TYPE=Release ..
+    - make -j4
+    - make install
+    - cd ~
   script:
     - mkdir build
     - cd build
