@@ -25,6 +25,10 @@ find_package(Spdlog REQUIRED)
 target_include_directories(altiwx PUBLIC ${SPDLOG_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC Spdlog::Spdlog)
 
+find_package(fmt REQUIRED)
+target_include_directories(altiwx PUBLIC ${fmt_INCLUDE_DIRS})
+target_link_libraries(altiwx fmt::fmt)
+
 find_package(yaml-cpp REQUIRED)
 target_include_directories(altiwx PUBLIC ${YAML_CPP_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC ${YAML_CPP_LIBRARIES})
