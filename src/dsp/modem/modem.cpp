@@ -1,5 +1,6 @@
 #include "modem.h"
 #include "logger/logger.h"
+#include <algorithm>
 
 void Modem::initResamp(long inputRate, long inputFrequency)
 {
@@ -47,14 +48,15 @@ void Modem::demod(liquid_float_complex *buffer, uint32_t length)
             nco_crcf_mix_block_up(freqShifter, buffer, sdr_buffer, length);
 
     // Resample
-    msresamp_crcf_execute(freqResampler, sdr_buffer, length, resamp_buffer, &resamp_buffer_length);
+    msresamp_crcf_execute(freqResampler, shiftFrequency == 0 ? buffer : sdr_buffer, length, resamp_buffer, &resamp_buffer_length);
 
     // Call implemented demodulation
     process(resamp_buffer, resamp_buffer_length);
     modemMutex.unlock(); // Unlock mutex
 }
 
-void Modem::setFrequency(long frequency) {
+void Modem::setFrequency(long frequency)
+{
     modemMutex.lock(); // Lock mutex
 
     frequency_m = frequency;
@@ -62,9 +64,9 @@ void Modem::setFrequency(long frequency) {
     // Change frequency shifting settings
     if (frequency_m != inputFrequency_m)
     {
-        if(!freqShifter)
+        if (!freqShifter)
             freqShifter = nco_crcf_create(LIQUID_VCO);
-        
+
         shiftFrequency = frequency_m - inputFrequency_m;
         if (abs(shiftFrequency) > inputFrequency_m / 2)
             logger->critical("Modem frequency shift exceeds sample rate!");
