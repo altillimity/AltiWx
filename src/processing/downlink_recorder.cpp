@@ -14,8 +14,6 @@ DownlinkRecorder::DownlinkRecorder(std::shared_ptr<DSP> dsp, DownlinkConfig &dow
     // Generate a unique ModemID
     modemID = std::to_string(satelliteConfig.norad) + "-" + downlink_m.name + "-" + std::to_string(downlink.frequency);
 
-    logger->info(modemID);
-
     // Init our Modem object
     switch (downlink_m.modemType)
     {
