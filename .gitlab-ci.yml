@@ -1,0 +1,15 @@
+build-deb:
+  image: debian:buster
+  stage: build
+  before_script:
+    - apt-get update > /dev/null
+    - apt-get install -y build-essential cmake libliquid-dev libsoapysdr-dev libyaml-cpp-dev libcurlpp-dev libcurl4-gnutls-dev libzmq0-dev libspdlog-dev > /dev/null
+  script:
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_BUILD_TYPE=Release ..
+    - make -j4
+#    - make package
+#  artifacts:
+#    paths: 
+#      - build/*.deb
