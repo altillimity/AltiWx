@@ -1,9 +1,9 @@
 build-deb:
-  image: debian:buster
+  image: debian:sid
   stage: build
   before_script:
     - apt-get update > /dev/null
-    - apt-get install -y build-essential cmake libliquid-dev libsoapysdr-dev libyaml-cpp-dev libcurlpp-dev libcurl4-gnutls-dev libzmq0-dev libspdlog-dev > /dev/null
+    - apt-get install -y build-essential cmake libliquid-dev libsoapysdr-dev libyaml-cpp-dev libcurlpp-dev libcurl4-gnutls-dev libzmq3-dev libspdlog-dev > /dev/null
   script:
     - mkdir build
     - cd build
