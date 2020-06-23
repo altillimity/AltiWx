@@ -11,19 +11,21 @@
 // Generate output filename / path
 std::string generateFilepath(SatellitePass &satellitePass, SatelliteConfig &satelliteConfig, DownlinkConfig &downlinkConfig)
 {
-    std::string workdDir = configManager->getConfig().dataDirectory + "/" + satelliteConfig.getName() + "/" + downlinkConfig.name;
+    std::tm *timeReadable = gmtime(&satellitePass.aos);
+    std::string name = satelliteConfig.getName() + "_" + downlinkConfig.name + "_" + std::to_string(timeReadable->tm_year + 1900) +
+                       "-" + std::to_string(timeReadable->tm_mon) + "-" + std::to_string(timeReadable->tm_mday) +
+                       "--" + std::to_string(timeReadable->tm_hour) + ":" + (timeReadable->tm_min > 9 ? std::to_string(timeReadable->tm_min) : "0" + std::to_string(timeReadable->tm_min));
+
+    std::string workdDir = configManager->getConfig().dataDirectory + "/" + std::to_string(timeReadable->tm_year + 1900) +
+                           "-" + std::to_string(timeReadable->tm_mon) + "-" + std::to_string(timeReadable->tm_mday) + "/" + satelliteConfig.getName() + "/" + downlinkConfig.name + "/" + name;
 
     std::filesystem::create_directories(workdDir);
 
-    std::tm *timeReadable = gmtime(&satellitePass.aos);
-
-    return workdDir + "/" +
-           satelliteConfig.getName() + "_" + downlinkConfig.name + "_" + std::to_string(timeReadable->tm_year + 1900) +
-           "-" + std::to_string(timeReadable->tm_mon) + "-" + std::to_string(timeReadable->tm_mday) +
-           "--" + std::to_string(timeReadable->tm_hour) + ":" + (timeReadable->tm_min > 9 ? std::to_string(timeReadable->tm_min) : "0" + std::to_string(timeReadable->tm_min));
+    return workdDir + "/" + name;
 }
 
-struct ToProcess {
+struct ToProcess
+{
     std::string filename;
     std::string filePath;
     std::string script;
@@ -96,7 +98,7 @@ void processPass(SatellitePass pass)
         {
             sol::state lua;                                                                                      // sol instance
             lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::os, sol::lib::io, sol::lib::string); // Open most library that may be used
-            bindLogger(lua, fileToProcess.script);                                                                // Add specific logger
+            bindLogger(lua, fileToProcess.script);                                                               // Add specific logger
             bindCustomLuaFunctions(lua);                                                                         // Add custom functions
             // Variables
             lua["filename"] = fileToProcess.filename;
