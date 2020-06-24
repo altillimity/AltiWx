@@ -55,6 +55,9 @@ void DSP::start()
         logger->critical("Failed to setup device!");
     }
 
+    // Start thread pool
+    modem_pool = std::make_shared<ctpl::thread_pool>(8);
+
     // Start device thread
     running = true;
     sdrThread_m = std::thread(&DSP::sdrThread, this);
@@ -90,7 +93,7 @@ void DSP::sdrThread()
     void *sdr_buffer_ptr[] = {sdr_buffer};
     int flags;
     long long time_ns;
-    
+
     while (running)
     {
         modemsMutex.lock();
@@ -99,18 +102,20 @@ void DSP::sdrThread()
         uint32_t length = device->readStream(device_stream, sdr_buffer_ptr, BUFFER_LENGTH, flags, time_ns, 1e5);
 
         // Just in case
-        if(length > BUFFER_LENGTH) {
+        if (length > BUFFER_LENGTH)
+        {
             modemsMutex.unlock();
             continue;
         }
 
-        // Feed demodulators
+        // Feed demodulators and push to thread pool
         for (const std::pair<std::string, std::shared_ptr<Modem>> &currentModem : activeModems)
-            currentModem.second->workThread = std::thread(&Modem::demod, currentModem.second.get(), sdr_buffer, length);
+            currentModem.second->modemFuture = modem_pool->push([&](int) { currentModem.second->demod(sdr_buffer, length); });
 
+        // Wait for all of them to be done
         for (const std::pair<std::string, std::shared_ptr<Modem>> &currentModem : activeModems)
-            currentModem.second->workThread.join();
-        
+            currentModem.second->modemFuture.get();
+
         // Forward to SoapySDR if that's enabled
         if (soapy_m)
             zmqSocket.send(zmq::message_t(sdr_buffer, length), zmq::send_flags::dontwait);

@@ -5,6 +5,7 @@
 #include <liquid/liquid.h>
 #include <mutex>
 #include <thread>
+#include <future>
 
 // Modem object, that can be attached onto a DSP chain to decode something in the sampled spectrum
 class Modem
@@ -26,7 +27,7 @@ protected:
     virtual void initResamp(long inputRate, long inputFrequency);
 
 public:
-    std::thread workThread;
+    std::future<void> modemFuture;
 
 public:
     // Init when added into a DSP chain

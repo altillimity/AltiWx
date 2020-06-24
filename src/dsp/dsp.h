@@ -6,6 +6,7 @@
 #include <thread>
 #include "modem/modem.h"
 #include "zmq.hpp"
+#include "scheduler/bosma/ctpl_stl.h"
 
 #define BUFFER_LENGTH 1024
 
@@ -27,6 +28,9 @@ private:
     bool soapy_m;
     std::string socketString;
     bool running;
+
+    // Modem thread pool
+    std::shared_ptr<ctpl::thread_pool> modem_pool;
 
     // Zmq stuff
     zmq::context_t zmqContext;
