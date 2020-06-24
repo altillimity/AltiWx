@@ -8,7 +8,7 @@
 #include "zmq.hpp"
 #include "scheduler/bosma/ctpl_stl.h"
 
-#define BUFFER_LENGTH 1024
+#define BUFFER_LENGTH 8192
 
 // Class performing all the DSP work, currently only supporting rtl-sdr
 class DSP

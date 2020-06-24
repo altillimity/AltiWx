@@ -96,8 +96,6 @@ void DSP::sdrThread()
 
     while (running)
     {
-        modemsMutex.lock();
-
         // Read buffer
         uint32_t length = device->readStream(device_stream, sdr_buffer_ptr, BUFFER_LENGTH, flags, time_ns, 1e5);
 
@@ -107,6 +105,9 @@ void DSP::sdrThread()
             modemsMutex.unlock();
             continue;
         }
+
+        // We're gonna work on modems, can't modify them at the same time!
+        modemsMutex.lock();
 
         // Feed demodulators and push to thread pool
         for (const std::pair<std::string, std::shared_ptr<Modem>> &currentModem : activeModems)
@@ -120,6 +121,7 @@ void DSP::sdrThread()
         if (soapy_m)
             zmqSocket.send(zmq::message_t(sdr_buffer, length), zmq::send_flags::dontwait);
 
+        // Modems can now be modified!
         modemsMutex.unlock();
     }
 }
