@@ -111,7 +111,7 @@ void DSP::sdrThread()
 
         // Feed demodulators and push to thread pool
         for (const std::pair<std::string, std::shared_ptr<Modem>> &currentModem : activeModems)
-            currentModem.second->modemFuture = modem_pool->push([&](int) { currentModem.second->demod(sdr_buffer, length); });
+            currentModem.second->modemFuture = modem_pool->push([=](int) { currentModem.second->demod(sdr_buffer, length); });
 
         // Wait for all of them to be done
         for (const std::pair<std::string, std::shared_ptr<Modem>> &currentModem : activeModems)
