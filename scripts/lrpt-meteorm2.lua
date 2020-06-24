@@ -1,6 +1,6 @@
 logger:info("Processing METEOR-M LRPT data...")
 
-temp_file = filename .. ".lrpt"
+temp_file = filename .. ".wav"
 command = "sox -t raw -e floating-point -b 32 -c 2 -r " .. samplerate .. " '" .. input_file .. "' -t wav -e signed-integer -b 16 -c 2 -r " .. samplerate .. " '" .. temp_file .. "'"
 
 logger:debug(command)
