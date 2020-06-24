@@ -29,6 +29,7 @@ struct ToProcess
     std::string filename;
     std::string filePath;
     std::string script;
+    std::string downlink;
     long samplerate;
 };
 
@@ -50,7 +51,7 @@ void processPass(SatellitePass pass)
         // Generate filename / path, store them and setup recorder
         std::string fileName = generateFilepath(pass, satelliteConfig, downlinkConfig);
         std::string filePath = fileName + +"." + downlinkConfig.outputExtension;
-        filePaths.push_back({fileName, filePath, downlinkConfig.postProcessingScript, downlinkConfig.bandwidth});
+        filePaths.push_back({fileName, filePath, downlinkConfig.postProcessingScript, downlinkConfig.name, downlinkConfig.bandwidth});
         logger->debug("Using file path " + filePath);
 
         std::shared_ptr<DownlinkRecorder> recorder = std::make_shared<DownlinkRecorder>(rtlDSP, downlinkConfig, satelliteConfig, filePath);
@@ -103,6 +104,12 @@ void processPass(SatellitePass pass)
             // Variables
             lua["filename"] = fileToProcess.filename;
             lua["input_file"] = fileToProcess.filePath;
+            std::tm *timeReadable = gmtime(&pass.aos);
+            lua["date"] = std::to_string(timeReadable->tm_year + 1900) +
+                          "-" + std::to_string(timeReadable->tm_mon) + "-" + std::to_string(timeReadable->tm_mday) +
+                          "--" + std::to_string(timeReadable->tm_hour) + ":" + (timeReadable->tm_min > 9 ? std::to_string(timeReadable->tm_min) : "0" + std::to_string(timeReadable->tm_min));
+            lua["satname"] = pass.tle.name;
+            lua["downlink"] = fileToProcess.downlink;
             lua["northbound"] = pass.northbound;
             lua["southbound"] = pass.southbound;
             lua["samplerate"] = fileToProcess.samplerate;
