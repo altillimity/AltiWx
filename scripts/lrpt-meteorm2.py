@@ -12,7 +12,7 @@ command = "meteor_demod -q -B -s " + altiwx.samplerate + " '" + temp_file + "' -
 altiwx.debug(command)
 subprocess.Popen([command], shell=1).wait()
 
-os.remove(lrpt_file)
+os.remove(temp_file)
 
 output_file = altiwx.filename + ".png"
 command = "medet '" + lrpt_file + "' '" + altiwx.filename + "' -r 65 -g 65 -b 64 > /dev/null"
