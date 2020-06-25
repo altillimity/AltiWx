@@ -56,8 +56,39 @@ std::vector<std::string> DownlinkProcessor::getOutputs()
     return outputFiles_m;
 }
 
+void trace(std::string log)
+{
+    logger->trace(log);
+}
+
+void debug(std::string log)
+{
+    logger->debug(log);
+}
+
+void info(std::string log)
+{
+    logger->info(log);
+}
+
+void warn(std::string log)
+{
+    logger->warn(log);
+}
+
+void error(std::string log)
+{
+    logger->error(log);
+}
+
+void critical(std::string log)
+{
+    logger->critical(log);
+}
+
 PYBIND11_EMBEDDED_MODULE(altiwx, m)
 {
+    // Variables
     m.attr("input_file") = "";
     m.attr("filename") = "";
     m.attr("satellite_name") = "";
@@ -65,4 +96,12 @@ PYBIND11_EMBEDDED_MODULE(altiwx, m)
     m.attr("southbound") = 0;
     m.attr("northbound") = false;
     m.attr("southbound") = false;
+
+    // Functions
+    m.def("trace", &trace);
+    m.def("debug", &debug);
+    m.def("info", &info);
+    m.def("warn", &warn);
+    m.def("error", &error);
+    m.def("critical", &critical);
 }
