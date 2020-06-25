@@ -15,7 +15,7 @@ std::string generateFilepath(SatellitePass &satellitePass, SatelliteConfig &sate
                        "--" + std::to_string(timeReadable->tm_hour) + ":" + (timeReadable->tm_min > 9 ? std::to_string(timeReadable->tm_min) : "0" + std::to_string(timeReadable->tm_min));
 
     std::string workdDir = configManager->getConfig().dataDirectory + "/" + std::to_string(timeReadable->tm_year + 1900) +
-                           "-" + std::to_string(timeReadable->tm_mon) + "-" + std::to_string(timeReadable->tm_mday) + "/" + satelliteConfig.getName() + "/" + downlinkConfig.name + "/" + name;
+                           "-" + std::to_string(timeReadable->tm_mon + 1) + "-" + std::to_string(timeReadable->tm_mday) + "/" + satelliteConfig.getName() + "/" + downlinkConfig.name + "/" + name;
 
     std::filesystem::create_directories(workdDir);
 
