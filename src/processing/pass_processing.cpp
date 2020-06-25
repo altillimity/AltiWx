@@ -3,7 +3,6 @@
 #include "config/config.h"
 #include "downlink_recorder.h"
 #include "dsp/dsp_manager.h"
-#include "sol/sol.hpp"
 #include <filesystem>
 #include "downlink_processor.h"
 

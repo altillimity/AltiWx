@@ -10,4 +10,4 @@ if altiwx.northbound:
     outflag = "-N"
 
 command = "wxtoimg -q -A " + outflag + " -e HVCT '" + altiwx.input_file + "' '" + output_file + "'"
-subprocess.Popen([command], shell=1)
+subprocess.Popen([command], shell=1).wait()
