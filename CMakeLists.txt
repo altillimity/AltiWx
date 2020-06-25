@@ -52,6 +52,10 @@ find_package(Lua REQUIRED)
 target_link_libraries(altiwx PUBLIC ${LUA_LIBRARIES})
 target_include_directories(altiwx PUBLIC ${LUA_INCLUDE_DIR})
 
+find_package(pybind11 REQUIRED)
+target_link_libraries(altiwx PUBLIC pybind11::embed)
+target_include_directories(altiwx PUBLIC ${PYBIND11_INCLUDE_DIR})
+
 find_package(ZeroMQ REQUIRED)
 target_link_libraries(altiwx PUBLIC ${ZeroMQ_LIBRARIES})
 target_include_directories(altiwx PUBLIC ${ZeroMQ_INCLUDE_DIR})

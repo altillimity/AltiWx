@@ -5,15 +5,14 @@
 #include "dsp/dsp_manager.h"
 #include "sol/sol.hpp"
 #include <filesystem>
-#include "lua/lua_logger.h"
-#include "lua/lua_functions.h"
+#include "downlink_processor.h"
 
 // Generate output filename / path
 std::string generateFilepath(SatellitePass &satellitePass, SatelliteConfig &satelliteConfig, DownlinkConfig &downlinkConfig)
 {
     std::tm *timeReadable = gmtime(&satellitePass.aos);
     std::string name = satelliteConfig.getName() + "_" + downlinkConfig.name + "_" + std::to_string(timeReadable->tm_year + 1900) +
-                       "-" + std::to_string(timeReadable->tm_mon) + "-" + std::to_string(timeReadable->tm_mday) +
+                       "-" + std::to_string(timeReadable->tm_mon + 1) + "-" + std::to_string(timeReadable->tm_mday) +
                        "--" + std::to_string(timeReadable->tm_hour) + ":" + (timeReadable->tm_min > 9 ? std::to_string(timeReadable->tm_min) : "0" + std::to_string(timeReadable->tm_min));
 
     std::string workdDir = configManager->getConfig().dataDirectory + "/" + std::to_string(timeReadable->tm_year + 1900) +
@@ -29,7 +28,7 @@ struct ToProcess
     std::string filename;
     std::string filePath;
     std::string script;
-    std::string downlink;
+    DownlinkConfig downlink;
     long samplerate;
 };
 
@@ -51,7 +50,7 @@ void processPass(SatellitePass pass)
         // Generate filename / path, store them and setup recorder
         std::string fileName = generateFilepath(pass, satelliteConfig, downlinkConfig);
         std::string filePath = fileName + +"." + downlinkConfig.outputExtension;
-        filePaths.push_back({fileName, filePath, downlinkConfig.postProcessingScript, downlinkConfig.name, downlinkConfig.bandwidth});
+        filePaths.push_back({fileName, filePath, downlinkConfig.postProcessingScript, downlinkConfig, downlinkConfig.bandwidth});
         logger->debug("Using file path " + filePath);
 
         std::shared_ptr<DownlinkRecorder> recorder = std::make_shared<DownlinkRecorder>(rtlDSP, downlinkConfig, satelliteConfig, filePath);
@@ -94,32 +93,7 @@ void processPass(SatellitePass pass)
             continue;
         }
 
-        // Setup a lua environment, run the script, get the result out
-        try
-        {
-            sol::state lua;                                                                                      // sol instance
-            lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::os, sol::lib::io, sol::lib::string); // Open most library that may be used
-            bindLogger(lua, fileToProcess.script);                                                               // Add specific logger
-            bindCustomLuaFunctions(lua);                                                                         // Add custom functions
-            // Variables
-            lua["filename"] = fileToProcess.filename;
-            lua["input_file"] = fileToProcess.filePath;
-            std::tm *timeReadable = gmtime(&pass.aos);
-            lua["date"] = std::to_string(timeReadable->tm_year + 1900) +
-                          "-" + std::to_string(timeReadable->tm_mon) + "-" + std::to_string(timeReadable->tm_mday) +
-                          "--" + std::to_string(timeReadable->tm_hour) + ":" + (timeReadable->tm_min > 9 ? std::to_string(timeReadable->tm_min) : "0" + std::to_string(timeReadable->tm_min));
-            lua["satname"] = pass.tle.name;
-            lua["downlink"] = fileToProcess.downlink;
-            lua["northbound"] = pass.northbound;
-            lua["southbound"] = pass.southbound;
-            lua["samplerate"] = fileToProcess.samplerate;
-            lua.script_file("scripts/" + fileToProcess.script); // Run the script
-            std::string output_file = lua["output_file"];
-            finalFiles.push_back(output_file); // Store outputs
-        }
-        catch (std::exception &e)
-        {
-            logger->error(e.what());
-        }
+        DownlinkProcessor currentProcessor(pass, satelliteConfig, fileToProcess.downlink, fileToProcess.filePath, fileToProcess.filename, "scripts/" + fileToProcess.script);
+        currentProcessor.process();
     }
 }
