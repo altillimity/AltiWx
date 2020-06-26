@@ -10,7 +10,7 @@ altiwx.debug(command)
 subprocess.Popen([command], shell=1).wait()
 
 output_file = altiwx.filename + os.path.basename(altiwx.filename) + "/msa.png"
-command = "java -jar NOAA_HIRS_Decoder.jar config.ini '" + os.path.abspath(frame_file) + "'"
+command = "java -jar " + os.path.abspath("NOAA_HIRS_Decoder.jar") + " " +  os.path.abspath("config.ini") + " '" + os.path.abspath(frame_file) + "'"
 altiwx.debug(command)
 subprocess.Popen([command], shell=1, cwd=os.path.dirname(altiwx.filename)).wait()
 
