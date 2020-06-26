@@ -36,6 +36,7 @@ void DownlinkProcessor::process()
     altiWxModule.attr("northbound") = pybind11::cast<bool>(satellitePass_m.northbound);
     altiWxModule.attr("southbound") = pybind11::cast<bool>(satellitePass_m.southbound);
     altiWxModule.attr("date") = pybind11::cast<std::string>(dateString);
+    altiWxModule.attr("elevation") = pybind11::cast<float>(satellitePass_m.elevation);
 
     // Logging
     logger->trace(scriptContent_m);
@@ -96,6 +97,7 @@ PYBIND11_EMBEDDED_MODULE(altiwx, m)
     m.attr("southbound") = 0;
     m.attr("northbound") = false;
     m.attr("southbound") = false;
+    m.attr("elevation") = 0;
 
     // Functions
     m.def("trace", &trace);
