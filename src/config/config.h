@@ -11,25 +11,28 @@
 // SDR Config struct
 struct SDRConfig
 {
+    std::string name;
     long centerFrequency;
     long sampleRate;
     int gain;
     std::string soapyDeviceString;
-    bool soapy;
+    bool soapy_redirect;
     std::string soapySocket;
+    int demodThreads;
 };
 
 // Downlink config struct
 struct DownlinkConfig
 {
     std::string name;
+    std::string radio;
     long frequency;
     long bandwidth;
     bool dopplerCorrection;
     std::string outputExtension;
     std::string postProcessingScript;
     ModemType modemType;
-    
+
     long modem_audioSamplerate;
 };
 
@@ -50,7 +53,7 @@ struct ConfigData
     SatelliteStation station;
     std::vector<SatelliteConfig> satelliteConfigs;
     std::string tle_update;
-    SDRConfig sdrConfig;
+    std::vector<SDRConfig> sdrConfigs;
     SatelliteConfig getSatelliteConfigFromNORAD(int norad);
     std::string dataDirectory;
     spdlog::level::level_enum logLevel;

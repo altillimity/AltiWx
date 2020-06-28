@@ -2,22 +2,27 @@
 #include "logger/logger.h"
 #include "config/config.h"
 
-std::shared_ptr<DSP> rtlDSP;
+std::unordered_map<std::string, std::shared_ptr<DSP>> radioList;
 
 void initDSP()
 {
     // Log everything and start DSP
     logger->info("Starting DSP...");
-    SDRConfig sdrConfig = configManager->getConfig().sdrConfig;
-    logger->debug("Frequency  (Hz)  : " + std::to_string(sdrConfig.centerFrequency));
-    logger->debug("Samplerate (S/s) : " + std::to_string(sdrConfig.sampleRate));
-    logger->debug("Gain       (dB)  : " + std::to_string(sdrConfig.gain));
-    rtlDSP = std::make_shared<DSP>(sdrConfig.soapyDeviceString, sdrConfig.sampleRate, sdrConfig.centerFrequency, sdrConfig.gain, sdrConfig.soapy, sdrConfig.soapySocket);
-    rtlDSP->start();
+    for (SDRConfig currentRadioConfig : configManager->getConfig().sdrConfigs)
+    {
+        logger->info("Initializing radio " + currentRadioConfig.name);
+        logger->debug("Frequency  (Hz)  : " + std::to_string(currentRadioConfig.centerFrequency));
+        logger->debug("Samplerate (S/s) : " + std::to_string(currentRadioConfig.sampleRate));
+        logger->debug("Gain       (dB)  : " + std::to_string(currentRadioConfig.gain));
+        std::shared_ptr<DSP> currentRadioDSP = std::make_shared<DSP>(currentRadioConfig.soapyDeviceString, currentRadioConfig.sampleRate, currentRadioConfig.centerFrequency, currentRadioConfig.gain, currentRadioConfig.soapy_redirect, currentRadioConfig.soapySocket, currentRadioConfig.demodThreads);
+        radioList.emplace(currentRadioConfig.name, currentRadioDSP);
+        currentRadioDSP->start();
+    }
 }
 
 void stopDSP()
 {
     logger->info("Stopping DSP...");
-    rtlDSP->stop();
+    for (std::pair<std::string, std::shared_ptr<DSP>> currentRadio : radioList)
+        currentRadio.second->stop();
 }

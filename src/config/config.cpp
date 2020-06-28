@@ -20,6 +20,7 @@ ConfigData getDefaultConfig()
                                     (int)1,
                                     (std::vector<DownlinkConfig>){
                                         {(std::string) "APT",
+                                         (std::string) "wx2m",
                                          (long)137.620e6,
                                          (long)50e3,
                                          (bool)false,
@@ -31,7 +32,7 @@ ConfigData getDefaultConfig()
 
     config.tle_update = "0 0 * * *";
 
-    config.sdrConfig = {(long)137.500e6, (long)2.4e6, (int)0, (std::string) "driver=rtlsdr", (bool)false, "ipc:///tmp/altiwx"};
+    config.sdrConfigs.push_back({"wx2m", (long)137.500e6, (long)2.4e6, (int)0, (std::string) "driver=rtlsdr", (bool)false, "ipc:///tmp/altiwx"});
 
     config.dataDirectory = "data";
 
@@ -96,7 +97,7 @@ void ConfigManager::loadConfigFile()
     config_m.station = configFile["station"].as<SatelliteStation>();
     config_m.satelliteConfigs = configFile["satellites"].as<std::vector<SatelliteConfig>>();
     config_m.tle_update = configFile["tle_update"].as<std::string>();
-    config_m.sdrConfig = configFile["rtlsdr"].as<SDRConfig>();
+    config_m.sdrConfigs = configFile["radios"].as<std::vector<SDRConfig>>();
     config_m.dataDirectory = configFile["data_directory"].as<std::string>();
     config_m.logLevel = configFile["logger_level"].as<spdlog::level::level_enum>();
 }
@@ -108,7 +109,7 @@ void ConfigManager::saveConfigFile()
     configFile["station"] = (SatelliteStation)config_m.station;
     configFile["satellites"] = (std::vector<SatelliteConfig>)config_m.satelliteConfigs;
     configFile["tle_update"] = (std::string)config_m.tle_update;
-    configFile["rtlsdr"] = (SDRConfig)config_m.sdrConfig;
+    configFile["radios"] = (std::vector<SDRConfig>)config_m.sdrConfigs;
     configFile["data_directory"] = (std::string)config_m.dataDirectory;
     configFile["logger_level"] = (spdlog::level::level_enum)config_m.logLevel;
 

@@ -28,6 +28,7 @@ private:
     bool soapy_m;
     std::string socketString;
     bool running;
+    int demodThreads_m;
 
     // Modem thread pool
     std::shared_ptr<ctpl::thread_pool> modem_pool;
@@ -43,7 +44,7 @@ private:
     void sdrThread();
 
 public:
-    DSP(std::string deviceString, long sampleRate, long centerFrequency, int gain, bool soapy, std::string soapySocket);
+    DSP(std::string deviceString, long sampleRate, long centerFrequency, int gain, bool soapy, std::string soapySocket, int demodThreads);
     void start();
     void stop();
     // Attach a modem

@@ -89,6 +89,10 @@ amount = 0.3
 radius = 5
 out_img = cv2.addWeighted(out_img, amount+1, cv2.GaussianBlur(out_img, (0, 0), radius), -amount, 0)
 
+# Rotate if that was a southbound pass
+if altiwx.southbound:
+    out_img = cv2.rotate(out_img, cv2.ROTATE_180)
+
 # Write image
 cv2.imwrite(output_file, out_img)
 

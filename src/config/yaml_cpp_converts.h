@@ -69,28 +69,32 @@ namespace YAML
         static Node encode(const SDRConfig &sdrConfig)
         {
             Node node;
+            node["name"] = (std::string)sdrConfig.name;
             node["frequency"] = (long)sdrConfig.centerFrequency;
             node["sample_rate"] = (long)sdrConfig.sampleRate;
             node["gain"] = (int)sdrConfig.gain;
             node["device"] = (std::string)sdrConfig.soapyDeviceString;
-            node["soapy"] = (bool)sdrConfig.soapy;
+            node["soapy_redirect"] = (bool)sdrConfig.soapy_redirect;
             node["soapy_socket"] = (std::string)sdrConfig.soapySocket;
+            node["modem_threads"] = (int)sdrConfig.demodThreads;
             return node;
         }
 
         static bool decode(const Node &node, SDRConfig &sdrConfig)
         {
-            if (!node.IsMap() || node.size() > 6 || node.size() < 5)
+            if (!node.IsMap() || node.size() != 8)
             {
                 return false;
             }
 
+            sdrConfig.name = node["name"].as<std::string>();
             sdrConfig.centerFrequency = node["frequency"].as<long>();
             sdrConfig.sampleRate = node["sample_rate"].as<long>();
             sdrConfig.gain = node["gain"].as<int>();
             sdrConfig.soapyDeviceString = node["device"].as<std::string>();
-            sdrConfig.soapy = node["soapy"].as<bool>();
+            sdrConfig.soapy_redirect = node["soapy_redirect"].as<bool>();
             sdrConfig.soapySocket = node["soapy_socket"].as<std::string>();
+            sdrConfig.demodThreads = node["modem_threads"].as<int>();
 
             return true;
         }
@@ -103,6 +107,7 @@ namespace YAML
         {
             Node node;
             node["name"] = (std::string)downlinkConfig.name;
+            node["radio"] = (std::string)downlinkConfig.radio;
             node["frequency"] = (long)downlinkConfig.frequency;
             node["bandwidth"] = (long)downlinkConfig.bandwidth;
             node["doppler"] = (bool)downlinkConfig.dopplerCorrection;
@@ -119,12 +124,13 @@ namespace YAML
 
         static bool decode(const Node &node, DownlinkConfig &downlinkConfig)
         {
-            if (!node.IsMap() || node.size() < 7)
+            if (!node.IsMap() || node.size() < 8)
             {
                 return false;
             }
 
             downlinkConfig.name = node["name"].as<std::string>();
+            downlinkConfig.radio = node["radio"].as<std::string>();
             downlinkConfig.frequency = node["frequency"].as<long>();
             downlinkConfig.bandwidth = node["bandwidth"].as<long>();
             downlinkConfig.dopplerCorrection = node["doppler"].as<bool>();

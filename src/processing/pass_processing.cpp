@@ -52,7 +52,7 @@ void processPass(SatellitePass pass)
         filePaths.push_back({fileName, filePath, downlinkConfig.postProcessingScript, downlinkConfig, downlinkConfig.bandwidth});
         logger->debug("Using file path " + filePath);
 
-        std::shared_ptr<DownlinkRecorder> recorder = std::make_shared<DownlinkRecorder>(rtlDSP, downlinkConfig, satelliteConfig, filePath);
+        std::shared_ptr<DownlinkRecorder> recorder = std::make_shared<DownlinkRecorder>(radioList[downlinkConfig.radio], downlinkConfig, satelliteConfig, filePath);
         downlinkRecoders.push_back(recorder);
     }
 

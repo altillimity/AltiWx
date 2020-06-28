@@ -4,7 +4,7 @@
 #include <memory>
 
 // Main DSP object, will be more flexible later!
-extern std::shared_ptr<DSP> rtlDSP;
+extern std::unordered_map<std::string, std::shared_ptr<DSP>> radioList;
 
 // Init DSP
 void initDSP();

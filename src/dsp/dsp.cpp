@@ -2,7 +2,7 @@
 #include "logger/logger.h"
 #include <SoapySDR/Formats.hpp>
 
-DSP::DSP(std::string deviceString, long sampleRate, long centerFrequency, int gain, bool soapy, std::string soapySocket) : sampleRate_m(sampleRate), centerFrequency_m(centerFrequency), gain_m(gain), soapy_m(soapy), socketString(soapySocket), deviceString_m(deviceString)
+DSP::DSP(std::string deviceString, long sampleRate, long centerFrequency, int gain, bool soapy, std::string soapySocket, int demodThreads) : sampleRate_m(sampleRate), centerFrequency_m(centerFrequency), gain_m(gain), soapy_m(soapy), socketString(soapySocket), deviceString_m(deviceString), demodThreads_m(demodThreads)
 {
 }
 
@@ -56,7 +56,7 @@ void DSP::start()
     }
 
     // Start thread pool
-    modem_pool = std::make_shared<ctpl::thread_pool>(8);
+    modem_pool = std::make_shared<ctpl::thread_pool>(demodThreads_m);
 
     // Start device thread
     running = true;
