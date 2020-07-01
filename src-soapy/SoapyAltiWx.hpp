@@ -108,8 +108,11 @@ public:
     /*******************************************************************
      * ZMQ
      ******************************************************************/
-    zmq::context_t zmqContext;
-    zmq::socket_t zmqSocket;
     std::string socket;
     long sampleRate;
+    zmq::context_t zmqContext;
+    zmq::socket_t zmqSocket;
+    void fetchSamples();
+    long remainingInBuffer;
+    std::complex<float> *buffer;
 };

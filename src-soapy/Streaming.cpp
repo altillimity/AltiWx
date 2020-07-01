@@ -81,6 +81,9 @@ SoapySDR::Stream *SoapyAltiWx::setupStream(const int direction, const std::strin
     zmqSocket = zmq::socket_t(zmqContext, zmq::socket_type::dealer);
     zmqSocket.connect(socket);
 
+    buffer = new std::complex<float>[8192];
+    remainingInBuffer = 0;
+
     return (SoapySDR::Stream *)this;
 }
 
@@ -92,7 +95,7 @@ void SoapyAltiWx::closeStream(SoapySDR::Stream *stream)
 
 size_t SoapyAltiWx::getStreamMTU(SoapySDR::Stream *stream) const
 {
-    return 8192; //bufferLength / BYTES_PER_SAMPLE;
+    return 1024; //bufferLength / BYTES_PER_SAMPLE;
 }
 
 int SoapyAltiWx::activateStream(
@@ -115,14 +118,28 @@ int SoapyAltiWx::deactivateStream(SoapySDR::Stream *stream, const int flags, con
     return 0;
 }
 
-int SoapyAltiWx::readStream(SoapySDR::Stream *stream, void *const *buffs, const size_t numElems, int &flags, long long &timeNs, const long timeoutUs)
+void SoapyAltiWx::fetchSamples()
 {
-    //std::cout << "hello3" << std::endl;
     zmq::message_t packet;
     zmqSocket.recv(packet, zmq::recv_flags::none);
-    //std::cout << "hello4" << packet.size() / sizeof(std::complex<float>) << std::endl;
-    //for (size_t i = 0; i < packet.size() / sizeof(std::complex<float>); i++)
-    //    ((std::complex<float> *)buffs[0])[i] = ((std::complex<float> *)packet.data())[i];
-    std::memcpy(buffs[0], packet.data(), packet.size());
-    return packet.size() / sizeof(std::complex<float>);
+    std::memcpy(buffer, packet.data(), packet.size());
+    remainingInBuffer = packet.size() / sizeof(std::complex<float>);
+}
+
+int SoapyAltiWx::readStream(SoapySDR::Stream *stream, void *const *buffs, const size_t numElems, int &flags, long long &timeNs, const long timeoutUs)
+{
+    if (remainingInBuffer == 0)
+        fetchSamples();
+
+    long elementsToFetch;
+    if (remainingInBuffer >= numElems)
+        elementsToFetch = numElems;
+    else
+        elementsToFetch = remainingInBuffer;
+
+    std::memcpy(buffs[0], &buffer[8192 - remainingInBuffer], elementsToFetch * sizeof(std::complex<float>));
+
+    remainingInBuffer -= elementsToFetch;
+
+    return elementsToFetch;
 }
