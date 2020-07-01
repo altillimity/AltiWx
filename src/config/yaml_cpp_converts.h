@@ -75,14 +75,13 @@ namespace YAML
             node["gain"] = (int)sdrConfig.gain;
             node["device"] = (std::string)sdrConfig.soapyDeviceString;
             node["soapy_redirect"] = (bool)sdrConfig.soapy_redirect;
-            node["soapy_socket"] = (std::string)sdrConfig.soapySocket;
             node["modem_threads"] = (int)sdrConfig.demodThreads;
             return node;
         }
 
         static bool decode(const Node &node, SDRConfig &sdrConfig)
         {
-            if (!node.IsMap() || node.size() != 8)
+            if (!node.IsMap() || node.size() != 7)
             {
                 return false;
             }
@@ -93,8 +92,9 @@ namespace YAML
             sdrConfig.gain = node["gain"].as<int>();
             sdrConfig.soapyDeviceString = node["device"].as<std::string>();
             sdrConfig.soapy_redirect = node["soapy_redirect"].as<bool>();
-            sdrConfig.soapySocket = node["soapy_socket"].as<std::string>();
             sdrConfig.demodThreads = node["modem_threads"].as<int>();
+
+            sdrConfig.soapySocket = ((std::string)ALTIWX_SOCKET_PATH) + "-" + sdrConfig.name;
 
             return true;
         }

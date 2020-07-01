@@ -5,6 +5,7 @@
 
 SoapyAltiWx::SoapyAltiWx(const SoapySDR::Kwargs &args)
 {
+    socket = args.at("socket");
 }
 SoapyAltiWx::~SoapyAltiWx(void)
 {

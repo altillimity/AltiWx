@@ -2,18 +2,43 @@
 #include <SoapySDR/Registry.hpp>
 #include <mutex>
 #include <map>
+#include "nlohmann/json.h"
+#include <iostream>
 
 static std::vector<SoapySDR::Kwargs> findAltiWx(const SoapySDR::Kwargs &args)
 {
     std::vector<SoapySDR::Kwargs> results;
 
-    SoapySDR::Kwargs devInfo;
-    devInfo["label"] = "AltiWx";
-    devInfo["product"] = "SDR Live";
-    devInfo["serial"] = "000000000";
-    devInfo["manufacturer"] = "Altillimity";
+    zmq::context_t context(1);
+    zmq::socket_t socket(context, zmq::socket_type::req);
+    socket.connect("ipc:///tmp/altiwx");
+    socket.setsockopt(ZMQ_SNDTIMEO, 1000);
+    if (!socket.send(zmq::buffer("{\"type\":\"soapylistreq\"}"), zmq::send_flags::dontwait))
+        return results;
+    zmq::message_t packet;
+    socket.recv(packet);
+    std::string content;
+    for (size_t i = 0; i < packet.size(); i++)
+        content += ((char *)packet.data())[i];
 
-    results.push_back(devInfo);
+    nlohmann::json jsonObj = nlohmann::json::parse(content);
+
+    if (jsonObj["type"] != "soapylistrep")
+        return results;
+
+    for (nlohmann::detail::iteration_proxy_value<nlohmann::detail::iter_impl<nlohmann::json>> device : jsonObj.items())
+    {
+        if (device.key() == "type")
+            continue;
+        if (args.count("socket") != 0)
+            if (device.value() != args.at("socket"))
+                continue;
+        SoapySDR::Kwargs devInfo;
+        devInfo["label"] = "AltiWx - " + device.key();
+        devInfo["product"] = device.key();
+        devInfo["socket"] = device.value();
+        results.push_back(devInfo);
+    }
 
     return results;
 }

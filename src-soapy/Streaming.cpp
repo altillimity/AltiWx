@@ -50,10 +50,6 @@ SoapySDR::ArgInfoList SoapyAltiWx::getStreamArgsInfo(const int direction, const 
 }
 
 /*******************************************************************
- * Async thread work
- ******************************************************************/
-
-/*******************************************************************
  * Stream API
  ******************************************************************/
 
@@ -83,7 +79,7 @@ SoapySDR::Stream *SoapyAltiWx::setupStream(const int direction, const std::strin
 
     zmqContext = zmq::context_t(1);
     zmqSocket = zmq::socket_t(zmqContext, zmq::socket_type::dealer);
-    zmqSocket.connect("ipc:///tmp/altiwx");
+    zmqSocket.connect(socket);
 
     return (SoapySDR::Stream *)this;
 }

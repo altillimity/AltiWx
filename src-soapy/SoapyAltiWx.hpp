@@ -110,4 +110,5 @@ public:
      ******************************************************************/
     zmq::context_t zmqContext;
     zmq::socket_t zmqSocket;
+    std::string socket;
 };

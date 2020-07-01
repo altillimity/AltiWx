@@ -8,6 +8,8 @@
 #include "dsp/modem/modem_enum.h"
 #include <spdlog/spdlog.h>
 
+#define ALTIWX_SOCKET_PATH "ipc:///tmp/altiwx"
+
 // SDR Config struct
 struct SDRConfig
 {
