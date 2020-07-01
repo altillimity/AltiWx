@@ -119,7 +119,7 @@ void DSP::sdrThread()
 
         // Forward to SoapySDR if that's enabled
         if (soapy_m)
-            zmqSocket.send(zmq::message_t(sdr_buffer, length), zmq::send_flags::dontwait);
+            zmqSocket.send(zmq::message_t(sdr_buffer, length * sizeof(liquid_float_complex)), zmq::send_flags::dontwait);
 
         // Modems can now be modified!
         modemsMutex.unlock();
