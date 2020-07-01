@@ -6,6 +6,7 @@
 SoapyAltiWx::SoapyAltiWx(const SoapySDR::Kwargs &args)
 {
     socket = args.at("socket");
+    sampleRate = std::stol(args.at("samplerate"));
 }
 SoapyAltiWx::~SoapyAltiWx(void)
 {
@@ -135,6 +136,7 @@ double SoapyAltiWx::getFrequencyCorrection(const int direction, const size_t cha
 }
 SoapySDR::ArgInfoList SoapyAltiWx::getFrequencyArgsInfo(const int direction, const size_t channel) const
 {
+    return SoapySDR::ArgInfoList();
 }
 
 // Samplerate API
@@ -144,12 +146,12 @@ void SoapyAltiWx::setSampleRate(int direction, size_t channel, double rate)
 std::vector<double> SoapyAltiWx::listSampleRates(int direction, size_t channel) const
 {
     std::vector<double> samplerates;
-    samplerates.push_back(2400000);
+    samplerates.push_back(sampleRate);
     return samplerates;
 }
 double SoapyAltiWx::getSampleRate(const int direction, const size_t channel) const
 {
-    return 2400000;
+    return sampleRate;
 }
 void SoapyAltiWx::setBandwidth(const int direction, const size_t channel, const double bw)
 {

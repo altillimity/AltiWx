@@ -51,7 +51,7 @@ void CommunicationManager::work()
                 {
                     if (sdrConfig.soapy_redirect)
                     {
-                        answerJson[sdrConfig.name] = sdrConfig.soapySocket;
+                        answerJson[sdrConfig.name] = {sdrConfig.soapySocket, sdrConfig.sampleRate};
                     }
                 }
                 answer = answerJson.dump();
