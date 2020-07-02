@@ -2,6 +2,7 @@
 #include "zmq.hpp"
 #include <thread>
 
+// Class handling external requests like Soapy devices, etc
 class CommunicationManager
 {
 private:
@@ -14,6 +15,8 @@ private:
 
 public:
     CommunicationManager(std::string socket);
+    // Start listening
     void start();
+    // Stop server
     void stop();
 };

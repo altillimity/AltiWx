@@ -132,7 +132,7 @@ int SoapyAltiWx::readStream(SoapySDR::Stream *stream, void *const *buffs, const 
         fetchSamples();
 
     long elementsToFetch;
-    if (remainingInBuffer >= numElems)
+    if (remainingInBuffer >= (long) numElems)
         elementsToFetch = numElems;
     else
         elementsToFetch = remainingInBuffer;

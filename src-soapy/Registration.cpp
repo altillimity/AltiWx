@@ -1,9 +1,6 @@
 #include "SoapyAltiWx.hpp"
 #include <SoapySDR/Registry.hpp>
-#include <mutex>
-#include <map>
 #include "nlohmann/json.h"
-#include <iostream>
 
 static std::vector<SoapySDR::Kwargs> findAltiWx(const SoapySDR::Kwargs &args)
 {

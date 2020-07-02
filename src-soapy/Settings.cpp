@@ -1,7 +1,4 @@
 #include "SoapyAltiWx.hpp"
-#include <SoapySDR/Time.hpp>
-#include <algorithm>
-#include <iostream>
 
 SoapyAltiWx::SoapyAltiWx(const SoapySDR::Kwargs &args)
 {
