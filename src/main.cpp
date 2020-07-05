@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
     CommunicationManager communicationManager(ALTIWX_SOCKET_PATH);
     communicationManager.start();
 
-    //processPass({21576, getTLEFromNORAD(21576), time(NULL), time(NULL) + 10, 10.0f, false, true});
-    //processPass({40069, getTLEFromNORAD(40069), time(NULL), time(NULL) + 20, 10.0f});
+    std::thread test([=] { processPass({21576, getTLEFromNORAD(21576), time(NULL), time(NULL) + 20, 10.0f, false, true}); });
+    processPass({40069, getTLEFromNORAD(40069), time(NULL), time(NULL) + 20, 10.0f, false, true});
 
     std::cin.get();
 
