@@ -58,7 +58,7 @@ void DownlinkProcessor::process()
             logger->critical(e.what());
         }
     }
-    interpreterMutex.lock();
+    interpreterMutex.unlock();
 }
 
 std::vector<std::string> DownlinkProcessor::getOutputs()
