@@ -2,5 +2,5 @@
 
 // All modem types
 enum ModemType {
-    FM, IQ, IQWAV, LRPT
+    FM, IQ, IQWAV, QPSK
 };

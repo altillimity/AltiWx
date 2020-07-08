@@ -35,7 +35,11 @@ struct DownlinkConfig
     std::string postProcessingScript;
     ModemType modemType;
 
+    // FM Modem
     long modem_audioSamplerate;
+
+    // QPSK Modem
+    long modem_symbolRate;
 };
 
 // Satellite config struct

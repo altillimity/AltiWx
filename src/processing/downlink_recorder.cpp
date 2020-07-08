@@ -5,7 +5,7 @@
 #include "dsp/modem/modem_iqwav.h"
 #include "orbit/orbit_predictor.h"
 #include "orbit/tle_manager.h"
-#include "dsp/modem/modem_lrpt.h"
+#include "dsp/modem/modem_qpsk.h"
 
 DownlinkRecorder::DownlinkRecorder(std::shared_ptr<DSP> dsp, DownlinkConfig &downlink, SatelliteConfig satelliteConfig, std::string fileName) : dsp_m(dsp), downlink_m(downlink), satelliteConfig_m(satelliteConfig), running(true)
 {
@@ -26,8 +26,8 @@ DownlinkRecorder::DownlinkRecorder(std::shared_ptr<DSP> dsp, DownlinkConfig &dow
     case IQWAV:
         modem = std::make_shared<ModemIQWav>(downlink_m.frequency, downlink_m.bandwidth, fileName);
         break;
-    case LRPT:
-        modem = std::make_shared<ModemLRPT>(downlink_m.frequency, downlink_m.bandwidth, fileName);
+    case QPSK:
+        modem = std::make_shared<ModemQPSK>(downlink_m.frequency, downlink_m.bandwidth, downlink_m.modem_symbolRate, fileName);
         break;
     default:
         logger->critical("Invalid modem type!");

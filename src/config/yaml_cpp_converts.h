@@ -118,6 +118,8 @@ namespace YAML
             {
             case FM:
                 node["modem_audio_sample_rate"] = (long)downlinkConfig.modem_audioSamplerate;
+            case QPSK:
+                node["modem_qpsk_symbol_rate"] = (long)downlinkConfig.modem_symbolRate;
             }
             return node;
         }
@@ -141,6 +143,8 @@ namespace YAML
             {
             case FM:
                 downlinkConfig.modem_audioSamplerate = node["modem_audio_sample_rate"].as<long>();
+            case QPSK:
+                downlinkConfig.modem_symbolRate = node["modem_qpsk_symbol_rate"].as<long>();
             default:
                 break;
             }
@@ -166,8 +170,8 @@ namespace YAML
             case IQWAV:
                 node = (std::string) "IQWAV";
                 break;
-            case LRPT:
-                node = (std::string) "LRPT";
+            case QPSK:
+                node = (std::string) "QPSK";
                 break;
             }
             return node;
@@ -182,8 +186,8 @@ namespace YAML
                 modemType = ModemType::IQ;
             else if (type == "IQWAV")
                 modemType = ModemType::IQWAV;
-            else if (type == "LRPT")
-                modemType = ModemType::LRPT;
+            else if (type == "QPSK")
+                modemType = ModemType::QPSK;
             else
                 return false;
 
