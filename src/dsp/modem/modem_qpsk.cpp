@@ -66,4 +66,6 @@ void ModemQPSK::process(liquid_float_complex *buffer, unsigned int &length)
 
         output_filestream.write((char *)&softSymbolBuffer, sizeof(softSymbolBuffer));
     }
+
+    processingBuffer.clear();
 }
