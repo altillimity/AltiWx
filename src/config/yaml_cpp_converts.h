@@ -143,8 +143,10 @@ namespace YAML
             {
             case FM:
                 downlinkConfig.modem_audioSamplerate = node["modem_audio_sample_rate"].as<long>();
+                break;
             case QPSK:
                 downlinkConfig.modem_symbolRate = node["modem_qpsk_symbol_rate"].as<long>();
+                break;
             default:
                 break;
             }
