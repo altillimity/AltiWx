@@ -17,7 +17,7 @@ subprocess.Popen([command], shell=1).wait()
 os.remove(temp_file)
 
 output_file = altiwx.filename + ".bmp"
-command = "meteor_decode -a 66,65,64 '" + lrpt_file + "' -o '" + output_file + "' > /dev/null"
+command = "medet '" + lrpt_file + "' '" + altiwx.filename + "' -r 66 -g 65 -b 64 > /dev/null"
 altiwx.debug(command)
 subprocess.Popen([command], shell=1).wait()
 

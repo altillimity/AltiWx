@@ -25,7 +25,7 @@ ConfigData getDefaultConfig()
                                          (long)50e3,
                                          (bool)false,
                                          (std::string) "wav",
-                                         (std::string) "apt-noaa.py",
+                                         (std::string) "default/apt-noaa.py",
                                          (ModemType)ModemType::FM,
                                          11025}}};
     config.satelliteConfigs.push_back(noaa15Config);
