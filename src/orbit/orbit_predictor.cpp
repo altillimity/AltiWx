@@ -41,9 +41,9 @@ SatellitePass OrbitPredictor::getNextPass(std::time_t time)
         if (current_time == aosTime)
         {
             if (predict_orbit_obj.latitude > predict_observer->latitude)
-                southboud = true;
-            else
                 northbound = true;
+            else
+                southboud = true;
         }
     }
 
