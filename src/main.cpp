@@ -5,6 +5,7 @@
 #include "scheduler/scheduler.h"
 #include <iostream>
 #include <algorithm>
+#include <filesystem>
 #include "tclap/CmdLine.h"
 #include "orbit/pass_manager.h"
 #include "dsp/dsp_manager.h"
@@ -91,6 +92,9 @@ int main(int argc, char *argv[])
         }
 
         logger->info("Testing script " + scriptTest.getValue() + " with satellite " + getTLEFromNORAD(noradTest.getValue()).name);
+
+        // Create the directory we'll need!
+        std::filesystem::create_directory("testScript");
 
         // Run the script!
         DownlinkProcessor downlinkProcessor(
