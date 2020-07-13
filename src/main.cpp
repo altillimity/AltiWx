@@ -72,10 +72,12 @@ int main(int argc, char *argv[])
         TCLAP::ValueArg<std::string> scriptTest("s", "script", "Script to run", true, "", "script");
         TCLAP::ValueArg<std::string> fileInput("f", "file", "File to test with", true, "", "file");
         TCLAP::ValueArg<int> noradTest("n", "norad", "NORAD", true, 0, "NORAD");
+        TCLAP::ValueArg<std::string> downlinkTest("d", "downlink", "Downlink to test with", true, "", "name");
 
         cmd.add(scriptTest);
         cmd.add(fileInput);
         cmd.add(noradTest);
+        cmd.add(downlinkTest);
 
         // Parse
         try
@@ -88,18 +90,27 @@ int main(int argc, char *argv[])
             return 0;
         }
 
+        logger->info("Testing script " + scriptTest.getValue() + " with satellite " + getTLEFromNORAD(noradTest.getValue()).name);
+
         // Run the script!
-        DownlinkProcessor downlinkProcessor({noradTest.getValue(),
-                                             getTLEFromNORAD(noradTest.getValue()),
-                                             time(NULL),
-                                             time(NULL) + 20, 10.0f,
-                                             false,
-                                             true},
-                                            configManager->getConfig().getSatelliteConfigFromNORAD(noradTest.getValue()),
-                                            configManager->getConfig().getSatelliteConfigFromNORAD(noradTest.getValue()).downlinkConfigs[0],
-                                            fileInput.getValue(),
-                                            "testScript/test",
-                                            scriptTest.getValue());
+        DownlinkProcessor downlinkProcessor(
+            {noradTest.getValue(),
+             getTLEFromNORAD(noradTest.getValue()),
+             time(NULL),
+             time(NULL) + 20, 10.0f,
+             false,
+             true},
+            configManager->getConfig().getSatelliteConfigFromNORAD(noradTest.getValue()),
+            [&]() -> DownlinkConfig {
+                for (DownlinkConfig &config : configManager->getConfig().getSatelliteConfigFromNORAD(noradTest.getValue()).downlinkConfigs)
+                    if (config.name == downlinkTest.getValue())
+                        return config;
+                logger->error("Downlink " + downlinkTest.getValue() + " not found!");
+                exit(1);
+            }(),
+            fileInput.getValue(),
+            "testScript/test",
+            scriptTest.getValue());
         downlinkProcessor.process();
     }
 }
