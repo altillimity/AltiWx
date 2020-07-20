@@ -76,12 +76,14 @@ namespace YAML
             node["device"] = (std::string)sdrConfig.soapyDeviceString;
             node["soapy_redirect"] = (bool)sdrConfig.soapy_redirect;
             node["modem_threads"] = (int)sdrConfig.demodThreads;
+            if (sdrConfig.ppmEnabled)
+                node["ppm_correction"] = (double)sdrConfig.ppm;
             return node;
         }
 
         static bool decode(const Node &node, SDRConfig &sdrConfig)
         {
-            if (!node.IsMap() || node.size() != 7)
+            if (!node.IsMap() || node.size() < 7)
             {
                 return false;
             }
@@ -95,6 +97,12 @@ namespace YAML
             sdrConfig.demodThreads = node["modem_threads"].as<int>();
 
             sdrConfig.soapySocket = ((std::string)ALTIWX_SOCKET_PATH) + "-" + sdrConfig.name;
+
+            if (node["ppm_correction"].IsDefined())
+            {
+                sdrConfig.ppm = node["ppm_correction"].as<double>();
+                sdrConfig.ppmEnabled = true;
+            }
 
             return true;
         }

@@ -7,6 +7,7 @@
 #include "modem/modem.h"
 #include "zmq.hpp"
 #include "scheduler/bosma/ctpl_stl.h"
+#include "config/config.h"
 
 #define BUFFER_LENGTH 8192
 
@@ -14,6 +15,7 @@
 class DSP
 {
 private:
+    SDRConfig settings_m;
     std::string deviceString_m;
     liquid_float_complex sdr_buffer[BUFFER_LENGTH];
     SoapySDR::Device *device;
@@ -44,7 +46,7 @@ private:
     void sdrThread();
 
 public:
-    DSP(std::string deviceString, long sampleRate, long centerFrequency, int gain, bool soapy, std::string soapySocket, int demodThreads);
+    DSP(SDRConfig &settings);
     void start();
     void stop();
     // Attach a modem

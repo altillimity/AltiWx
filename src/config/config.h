@@ -21,6 +21,10 @@ struct SDRConfig
     bool soapy_redirect;
     std::string soapySocket;
     int demodThreads;
+
+    // PPM Correction
+    bool ppmEnabled;
+    double ppm;
 };
 
 // Downlink config struct

@@ -2,7 +2,14 @@
 #include "logger/logger.h"
 #include <SoapySDR/Formats.hpp>
 
-DSP::DSP(std::string deviceString, long sampleRate, long centerFrequency, int gain, bool soapy, std::string soapySocket, int demodThreads) : sampleRate_m(sampleRate), centerFrequency_m(centerFrequency), gain_m(gain), soapy_m(soapy), socketString(soapySocket), deviceString_m(deviceString), demodThreads_m(demodThreads)
+DSP::DSP(SDRConfig &settings) : sampleRate_m(settings.sampleRate),
+                                centerFrequency_m(settings.centerFrequency),
+                                gain_m(settings.gain),
+                                soapy_m(settings.soapy_redirect),
+                                socketString(settings.soapySocket),
+                                deviceString_m(settings.soapyDeviceString),
+                                demodThreads_m(settings.demodThreads),
+                                settings_m(settings)
 {
 }
 
@@ -23,6 +30,12 @@ void DSP::start()
 
     device->setSampleRate(SOAPY_SDR_RX, 0, sampleRate_m);
     logger->info("Sampling at " + std::to_string(sampleRate_m) + " S/s");
+
+    if (settings_m.ppmEnabled)
+    {
+        device->setFrequencyCorrection(SOAPY_SDR_RX, 0, settings_m.ppm);
+        logger->info("PPM correction set to " + std::to_string(settings_m.ppm) + " PPM");
+    }
 
     if (gain_m == 0)
     {

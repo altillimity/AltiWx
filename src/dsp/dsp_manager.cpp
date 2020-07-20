@@ -14,7 +14,7 @@ void initDSP()
         logger->debug("Frequency  (Hz)  : " + std::to_string(currentRadioConfig.centerFrequency));
         logger->debug("Samplerate (S/s) : " + std::to_string(currentRadioConfig.sampleRate));
         logger->debug("Gain       (dB)  : " + std::to_string(currentRadioConfig.gain));
-        std::shared_ptr<DSP> currentRadioDSP = std::make_shared<DSP>(currentRadioConfig.soapyDeviceString, currentRadioConfig.sampleRate, currentRadioConfig.centerFrequency, currentRadioConfig.gain, currentRadioConfig.soapy_redirect, currentRadioConfig.soapySocket, currentRadioConfig.demodThreads);
+        std::shared_ptr<DSP> currentRadioDSP = std::make_shared<DSP>(currentRadioConfig);
         radioList.emplace(currentRadioConfig.name, currentRadioDSP);
         currentRadioDSP->start();
     }
