@@ -103,6 +103,8 @@ namespace YAML
                 sdrConfig.ppm = node["ppm_correction"].as<double>();
                 sdrConfig.ppmEnabled = true;
             }
+            else
+                sdrConfig.ppmEnabled = false;
 
             return true;
         }

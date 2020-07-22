@@ -26,10 +26,10 @@ void DSP::start()
     logger->info("Device " + device->getHardwareKey() + " opened!");
 
     device->setFrequency(SOAPY_SDR_RX, 0, centerFrequency_m);
-    logger->info("Tuned to " + std::to_string(centerFrequency_m) + " Hz");
+    logger->info("Tuned to " + std::to_string(device->getFrequency(SOAPY_SDR_RX, 0)) + " Hz");
 
     device->setSampleRate(SOAPY_SDR_RX, 0, sampleRate_m);
-    logger->info("Sampling at " + std::to_string(sampleRate_m) + " S/s");
+    logger->info("Sampling at " + std::to_string(device->getSampleRate(SOAPY_SDR_RX, 0)) + " S/s");
 
     if (settings_m.ppmEnabled)
     {
@@ -46,7 +46,7 @@ void DSP::start()
     {
         device->setGainMode(SOAPY_SDR_RX, 0, false);
         device->setGain(SOAPY_SDR_RX, 0, gain_m);
-        logger->info("Tuner gain set to " + std::to_string(gain_m) + " dB");
+        logger->info("Tuner gain set to " + std::to_string(device->getGain(SOAPY_SDR_RX, 0)) + " dB");
     }
 
     // If soapy output is enabled, set it up
