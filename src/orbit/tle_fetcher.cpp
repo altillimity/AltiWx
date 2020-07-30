@@ -39,7 +39,7 @@ void TLEFetcher::fetch()
     {
         fetchCelestrakRequest.perform();
     }
-    catch (std::exception e)
+    catch (std::exception& e)
     {
         logger->debug(e.what());
         data = false;
