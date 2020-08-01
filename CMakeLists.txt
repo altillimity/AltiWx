@@ -29,6 +29,10 @@ find_package(fmt REQUIRED)
 target_include_directories(altiwx PUBLIC ${fmt_INCLUDE_DIRS})
 target_link_libraries(altiwx PUBLIC fmt::fmt)
 
+pkg_check_modules(libpqxx REQUIRED libpqxx)
+target_include_directories(altiwx PUBLIC ${PQXX_INCLUDE_DIRS})
+target_link_libraries(altiwx PUBLIC "-lpqxx -lpq")
+
 find_package(yaml-cpp REQUIRED)
 target_include_directories(altiwx PUBLIC ${YAML_CPP_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC ${YAML_CPP_LIBRARIES})

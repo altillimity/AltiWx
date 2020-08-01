@@ -95,6 +95,7 @@ void ConfigManager::loadConfigFile()
     // Parse the file into our object
     config_m.station_name = configFile["station_name"].as<std::string>();
     config_m.station = configFile["station"].as<SatelliteStation>();
+    config_m.databaseConfig = configFile["database"].as<DBConfig>();
     config_m.satelliteConfigs = configFile["satellites"].as<std::vector<SatelliteConfig>>();
     config_m.tle_update = configFile["tle_update"].as<std::string>();
     config_m.sdrConfigs = configFile["radios"].as<std::vector<SDRConfig>>();
@@ -107,6 +108,7 @@ void ConfigManager::saveConfigFile()
     // Write object into the file
     configFile["station_name"] = (std::string)config_m.station_name;
     configFile["station"] = (SatelliteStation)config_m.station;
+    configFile["database"] = (DBConfig)config_m.databaseConfig;
     configFile["satellites"] = (std::vector<SatelliteConfig>)config_m.satelliteConfigs;
     configFile["tle_update"] = (std::string)config_m.tle_update;
     configFile["radios"] = (std::vector<SDRConfig>)config_m.sdrConfigs;

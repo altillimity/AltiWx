@@ -263,4 +263,35 @@ namespace YAML
             return true;
         }
     };
+
+    template <>
+    struct convert<DBConfig>
+    {
+        static Node encode(const DBConfig &dbConfig)
+        {
+            Node node;
+            node["address"] = (std::string)dbConfig.address;
+            node["port"] = (int)dbConfig.port;
+            node["username"] = (std::string)dbConfig.username;
+            node["database"] = (std::string)dbConfig.database;
+            node["password"] = (std::string)dbConfig.password;
+            return node;
+        }
+
+        static bool decode(const Node &node, DBConfig &dbConfig)
+        {
+            if (!node.IsMap() || node.size() != 5)
+            {
+                return false;
+            }
+
+            dbConfig.address = node["address"].as<std::string>();
+            dbConfig.port = node["port"].as<int>();
+            dbConfig.username = node["username"].as<std::string>();
+            dbConfig.database = node["database"].as<std::string>();
+            dbConfig.password = node["password"].as<std::string>();
+
+            return true;
+        }
+    };
 } // namespace YAML

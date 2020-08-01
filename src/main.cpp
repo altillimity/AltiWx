@@ -12,6 +12,9 @@
 #include "processing/pass_processing.h"
 #include "processing/downlink_processor.h"
 #include "communication/communication.h"
+#include "database/database.h"
+
+#include <pqxx/pqxx>
 
 int main(int argc, char *argv[])
 {
@@ -31,6 +34,9 @@ int main(int argc, char *argv[])
     // Set custom log level
     setConsoleLevel(configManager->getConfig().logLevel);
     logger->debug("Using data directory " + configManager->getConfig().dataDirectory);
+
+    // Database!
+    initDatabaseManager();
 
     // Start scheduler
     initScheduler();
