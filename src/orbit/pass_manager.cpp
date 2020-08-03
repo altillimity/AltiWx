@@ -1,7 +1,7 @@
 #include "pass_manager.h"
 #include <vector>
 #include "satellite_pass.h"
-#include "config/config.h"
+#include "database/database.h"
 #include "logger/logger.h"
 #include "scheduler/scheduler.h"
 #include "orbit_predictor.h"
@@ -13,7 +13,7 @@ void schedulePasses()
 {
     std::vector<SatellitePass> passes;
 
-    for (SatelliteConfig &satellite : configManager->getConfig().satelliteConfigs)
+    for (SatelliteConfig &satellite : databaseManager->getAllSatellites())
     {
         // Predict passes fullfilling requested configuration and add store them
         logger->info("Predicting passes for " + getTLEFromNORAD(satellite.norad).name);

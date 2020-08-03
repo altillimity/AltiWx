@@ -42,12 +42,15 @@ int main(int argc, char *argv[])
     initScheduler();
 
     // Create a NORAD list
-    std::vector<int> norads;
+    /*std::vector<int> norads;
     for (SatelliteConfig satConfig : configManager->getConfig().satelliteConfigs)
         norads.push_back(satConfig.norad);
 
+    for (SatelliteConfig satConfig : configManager->getConfig().satelliteConfigs)
+        databaseManager->setSatellite(satConfig);*/
+
     // Start TLE manager
-    startTLEManager(norads);
+    startTLEManager();
 
     // No arguments? Run normally
     if (argc == 1)
@@ -110,9 +113,9 @@ int main(int argc, char *argv[])
              time(NULL) + 20, 10.0f,
              false,
              true},
-            configManager->getConfig().getSatelliteConfigFromNORAD(noradTest.getValue()),
+            databaseManager->getSatellite(noradTest.getValue()),
             [&]() -> DownlinkConfig {
-                for (DownlinkConfig &config : configManager->getConfig().getSatelliteConfigFromNORAD(noradTest.getValue()).downlinkConfigs)
+                for (DownlinkConfig &config : databaseManager->getSatellite(noradTest.getValue()).downlinkConfigs)
                     if (config.name == downlinkTest.getValue())
                         return config;
                 logger->error("Downlink " + downlinkTest.getValue() + " not found!");

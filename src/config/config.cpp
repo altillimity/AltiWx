@@ -15,21 +15,6 @@ ConfigData getDefaultConfig()
     config.station_name = "My Station";
     config.station = {0.0, 0.0, 0.0};
 
-    SatelliteConfig noaa15Config = {(int)25338,
-                                    (float)10.0f,
-                                    (int)1,
-                                    (std::vector<DownlinkConfig>){
-                                        {(std::string) "APT",
-                                         (std::string) "wx2m",
-                                         (long)137.620e6,
-                                         (long)50e3,
-                                         (bool)false,
-                                         (std::string) "wav",
-                                         (std::string) "default/apt-noaa.py",
-                                         (ModemType)ModemType::FM,
-                                         11025}}};
-    config.satelliteConfigs.push_back(noaa15Config);
-
     config.tle_update = "0 0 * * *";
 
     config.sdrConfigs.push_back({"wx2m", (long)137.500e6, (long)2.4e6, (int)0, (std::string) "driver=rtlsdr", (bool)false, "ipc:///tmp/altiwx"});
@@ -96,7 +81,6 @@ void ConfigManager::loadConfigFile()
     config_m.station_name = configFile["station_name"].as<std::string>();
     config_m.station = configFile["station"].as<SatelliteStation>();
     config_m.databaseConfig = configFile["database"].as<DBConfig>();
-    config_m.satelliteConfigs = configFile["satellites"].as<std::vector<SatelliteConfig>>();
     config_m.tle_update = configFile["tle_update"].as<std::string>();
     config_m.sdrConfigs = configFile["radios"].as<std::vector<SDRConfig>>();
     config_m.dataDirectory = configFile["data_directory"].as<std::string>();
@@ -109,7 +93,6 @@ void ConfigManager::saveConfigFile()
     configFile["station_name"] = (std::string)config_m.station_name;
     configFile["station"] = (SatelliteStation)config_m.station;
     configFile["database"] = (DBConfig)config_m.databaseConfig;
-    configFile["satellites"] = (std::vector<SatelliteConfig>)config_m.satelliteConfigs;
     configFile["tle_update"] = (std::string)config_m.tle_update;
     configFile["radios"] = (std::vector<SDRConfig>)config_m.sdrConfigs;
     configFile["data_directory"] = (std::string)config_m.dataDirectory;
@@ -118,16 +101,6 @@ void ConfigManager::saveConfigFile()
     // Write the actual file
     std::ofstream outFile(filename_m);
     outFile << configFile << '\n';
-}
-
-SatelliteConfig ConfigData::getSatelliteConfigFromNORAD(int norad)
-{
-    // Return a SatelliteConfig object from a NORAD id. Otherwise return an empty instance.
-    std::vector<SatelliteConfig>::iterator value = std::find_if(satelliteConfigs.begin(), satelliteConfigs.end(), [&](const SatelliteConfig &c) { return c.norad == norad; });
-    if (value != satelliteConfigs.end())
-        return *value;
-    else
-        return SatelliteConfig();
 }
 
 std::string SatelliteConfig::getName()

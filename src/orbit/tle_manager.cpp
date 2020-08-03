@@ -10,17 +10,15 @@
 
 // Mutex to prevent conflicts
 std::mutex tleManagerMutex;
-// Map holding TLE data
-std::vector<int> satelliteNORADs;
 
-int maxTLEAge = 10000;
+int maxTLEAge = 100000;
 
 // Fetch TLEs for all satellites
 void updateTLEs()
 {
     // Current update time
     time_t updateTime = time(NULL);
-    for (const int &norad : satelliteNORADs)
+    for (const int &norad : databaseManager->getAllNORADs())
     {
         // Fetch TLEs, update if the update was sucessful
         TLE tle;
@@ -55,12 +53,10 @@ void updateTLEs()
     }
 }
 
-void startTLEManager(std::vector<int> &norads)
+void startTLEManager()
 {
     // Initial TLE fetching, start the scheduler task
     logger->info("Starting TLE manager...");
-    for (int &norad : norads)
-        satelliteNORADs.push_back(norad);
     updateTLEs();
     std::string &cron = configManager->getConfig().tle_update;
     logger->info("TLE updates will run according to " + cron);

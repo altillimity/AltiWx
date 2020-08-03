@@ -71,10 +71,8 @@ struct ConfigData
     std::string station_name;
     SatelliteStation station;
     DBConfig databaseConfig;
-    std::vector<SatelliteConfig> satelliteConfigs;
     std::string tle_update;
     std::vector<SDRConfig> sdrConfigs;
-    SatelliteConfig getSatelliteConfigFromNORAD(int norad);
     std::string dataDirectory;
     spdlog::level::level_enum logLevel;
 };

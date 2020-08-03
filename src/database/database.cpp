@@ -1,5 +1,6 @@
 #include "database.h"
 #include "logger/logger.h"
+#include "communication/nlohmann/json.h"
 
 const std::string createTLETable = "CREATE TABLE IF NOT EXISTS TLE ("
                                    "NORAD INT PRIMARY KEY  NOT NULL,"
@@ -8,6 +9,15 @@ const std::string createTLETable = "CREATE TABLE IF NOT EXISTS TLE ("
                                    "LINE2          TEXT    NOT NULL,"
                                    "DATE           BIGINT  NOT NULL"
                                    ");";
+
+const std::string createSatelliteTable = "CREATE TABLE IF NOT EXISTS satellites ("
+                                         "norad INT PRIMARY KEY         NOT NULL,"
+                                         "min_elevation INT             NOT NULL,"
+                                         "priority      INT             NOT NULL,"
+                                         "downlinks     JSONB"
+                                         ");";
+
+const std::string testDownlinkType = "SELECT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'downlink');";
 
 std::shared_ptr<DatabaseManager> databaseManager;
 
@@ -77,6 +87,7 @@ pqxx::result DatabaseManager::runQueryGet(std::string sql)
 void DatabaseManager::init()
 {
     runQuery(createTLETable);
+    runQuery(createSatelliteTable);
 }
 
 // TLE Stuff
@@ -113,4 +124,139 @@ std::pair<TLE, time_t> DatabaseManager::getTLE(int norad)
         time = result[0][3].as<time_t>();
     }
     return std::make_pair(tle, time);
+}
+
+// Satellite Stuff
+#define SET_SAT_QUERY(norad, min_elevation, priority, downlinks) "INSERT INTO satellites (norad, min_elevation, priority, downlinks) VALUES (" + norad + ", " + min_elevation + ", " + priority + ", '" + downlinks + "'::jsonb) ON CONFLICT (NORAD) DO UPDATE SET NORAD = excluded.NORAD, min_elevation = excluded.min_elevation, priority = excluded.priority, downlinks = excluded.downlinks;"
+#define GET_NORADS_QUERY "SELECT norad FROM satellites;";
+#define GET_SATELLITE_QUERY(norad) "SELECT norad, min_elevation, priority, downlinks FROM satellites WHERE norad=" + norad + ";";
+#define GET_ALL_SATELLITES_QUERY "SELECT norad, min_elevation, priority, downlinks FROM satellites;";
+
+void DatabaseManager::setSatellite(SatelliteConfig &satConfig)
+{
+    nlohmann::json downlinks;
+    for (DownlinkConfig &downlink : satConfig.downlinkConfigs)
+    {
+        downlinks[downlink.name]["radio"] = downlink.radio;
+        downlinks[downlink.name]["type"] = modemTypeToString(downlink.modemType);
+        downlinks[downlink.name]["frequency"] = downlink.frequency;
+        downlinks[downlink.name]["bandwidth"] = downlink.bandwidth;
+        downlinks[downlink.name]["doppler"] = downlink.dopplerCorrection;
+        downlinks[downlink.name]["output_extension"] = downlink.outputExtension;
+        downlinks[downlink.name]["processing_script"] = downlink.postProcessingScript;
+        if (downlink.modemType == FM)
+            downlinks[downlink.name]["modem_audio_sample_rate"] = downlink.modem_audioSamplerate;
+        if (downlink.modemType == QPSK)
+            downlinks[downlink.name]["modem_qpsk_symbol_rate"] = downlink.modem_symbolRate;
+    }
+    std::string sql = SET_SAT_QUERY(std::to_string(satConfig.norad), std::to_string(satConfig.min_elevation), std::to_string(satConfig.priority), downlinks.dump());
+    runQuery(sql);
+}
+
+std::vector<int> DatabaseManager::getAllNORADs()
+{
+    std::vector<int> norads;
+    std::string sql = GET_NORADS_QUERY;
+    pqxx::result result = runQueryGet(sql);
+    if (!result.empty())
+    {
+        for (pqxx::result::const_iterator current : result)
+        {
+            norads.push_back(current[0].as<int>());
+        }
+    }
+    return norads;
+}
+
+SatelliteConfig DatabaseManager::getSatellite(int norad)
+{
+    SatelliteConfig satellite;
+    std::string sql = GET_SATELLITE_QUERY(std::to_string(norad));
+    pqxx::result result = runQueryGet(sql);
+    if (!result.empty())
+    {
+        satellite.norad = result[0][0].as<int>();
+        satellite.min_elevation = result[0][1].as<int>();
+        satellite.priority = result[0][2].as<int>();
+        nlohmann::json downlinksJson = nlohmann::json::parse(result[0][3].as<std::string>());
+        for (nlohmann::detail::iteration_proxy_value<nlohmann::detail::iter_impl<nlohmann::json>> downlink : downlinksJson.items())
+        {
+            DownlinkConfig downlinkConf;
+            downlinkConf.name = (std::string)downlink.key();
+
+            std::string type = (std::string)downlink.value()["type"];
+            if (type == "FM")
+                downlinkConf.modemType = ModemType::FM;
+            else if (type == "IQ")
+                downlinkConf.modemType = ModemType::IQ;
+            else if (type == "IQWAV")
+                downlinkConf.modemType = ModemType::IQWAV;
+            else if (type == "QPSK")
+                downlinkConf.modemType = ModemType::QPSK;
+
+            downlinkConf.radio = (std::string)downlink.value()["radio"];
+            downlinkConf.frequency = (long)downlink.value()["frequency"];
+            downlinkConf.bandwidth = (long)downlink.value()["bandwidth"];
+            downlinkConf.dopplerCorrection = (bool)downlink.value()["doppler"];
+            downlinkConf.outputExtension = (std::string)downlink.value()["output_extension"];
+            downlinkConf.radio = (std::string)downlink.value()["processing_script"];
+
+            if (downlinkConf.modemType == FM)
+                downlinkConf.modem_audioSamplerate = (long)downlink.value()["modem_audio_sample_rate"];
+            if (downlinkConf.modemType == QPSK)
+                downlinkConf.modem_symbolRate = (long)downlink.value()["modem_qpsk_symbol_rate"];
+
+            satellite.downlinkConfigs.push_back(downlinkConf);
+        }
+    }
+    return satellite;
+}
+
+std::vector<SatelliteConfig> DatabaseManager::getAllSatellites()
+{
+    std::vector<SatelliteConfig> satellites;
+    std::string sql = GET_ALL_SATELLITES_QUERY;
+    pqxx::result result = runQueryGet(sql);
+    if (!result.empty())
+    {
+        for (pqxx::row currentSat : result)
+        {
+            SatelliteConfig satellite;
+            satellite.norad = currentSat[0].as<int>();
+            satellite.min_elevation = currentSat[1].as<int>();
+            satellite.priority = currentSat[2].as<int>();
+            nlohmann::json downlinksJson = nlohmann::json::parse(currentSat[3].as<std::string>());
+            for (nlohmann::detail::iteration_proxy_value<nlohmann::detail::iter_impl<nlohmann::json>> downlink : downlinksJson.items())
+            {
+                DownlinkConfig downlinkConf;
+                downlinkConf.name = (std::string)downlink.key();
+
+                std::string type = (std::string)downlink.value()["type"];
+                if (type == "FM")
+                    downlinkConf.modemType = ModemType::FM;
+                else if (type == "IQ")
+                    downlinkConf.modemType = ModemType::IQ;
+                else if (type == "IQWAV")
+                    downlinkConf.modemType = ModemType::IQWAV;
+                else if (type == "QPSK")
+                    downlinkConf.modemType = ModemType::QPSK;
+
+                downlinkConf.radio = (std::string)downlink.value()["radio"];
+                downlinkConf.frequency = (long)downlink.value()["frequency"];
+                downlinkConf.bandwidth = (long)downlink.value()["bandwidth"];
+                downlinkConf.dopplerCorrection = (bool)downlink.value()["doppler"];
+                downlinkConf.outputExtension = (std::string)downlink.value()["output_extension"];
+                downlinkConf.radio = (std::string)downlink.value()["processing_script"];
+
+                if (downlinkConf.modemType == FM)
+                    downlinkConf.modem_audioSamplerate = (long)downlink.value()["modem_audio_sample_rate"];
+                if (downlinkConf.modemType == QPSK)
+                    downlinkConf.modem_symbolRate = (long)downlink.value()["modem_qpsk_symbol_rate"];
+
+                satellite.downlinkConfigs.push_back(downlinkConf);
+            }
+            satellites.push_back(satellite);
+        }
+    }
+    return satellites;
 }

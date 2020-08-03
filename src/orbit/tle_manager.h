@@ -6,4 +6,4 @@
 // Get TLE from NORAD
 TLE getTLEFromNORAD(int norad);
 // Init TLE manager
-void startTLEManager(std::vector<int> &norads);
+void startTLEManager();

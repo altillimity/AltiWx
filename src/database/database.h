@@ -21,11 +21,17 @@ public:
     void init();
     ~DatabaseManager();
 
-    // TLE Stuff
 public:
+    // TLE Stuff
     void setTLE(int norad, TLE tle, time_t age);
     bool tleExists(int norad);
     std::pair<TLE, time_t> getTLE(int norad);
+
+    // Satellite Stuff
+    void setSatellite(SatelliteConfig &satConfig);
+    std::vector<int> getAllNORADs();
+    SatelliteConfig getSatellite(int norad);
+    std::vector<SatelliteConfig> getAllSatellites();
 };
 
 extern std::shared_ptr<DatabaseManager> databaseManager;

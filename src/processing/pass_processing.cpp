@@ -5,6 +5,7 @@
 #include "dsp/dsp_manager.h"
 #include <filesystem>
 #include "downlink_processor.h"
+#include "database/database.h"
 
 // Generate output filename / path
 std::string generateFilepath(SatellitePass &satellitePass, SatelliteConfig &satelliteConfig, DownlinkConfig &downlinkConfig)
@@ -34,7 +35,7 @@ struct ToProcess
 void processPass(SatellitePass pass)
 {
     // Get SatelliteConfig
-    SatelliteConfig satelliteConfig = configManager->getConfig().getSatelliteConfigFromNORAD(pass.norad);
+    SatelliteConfig satelliteConfig = databaseManager->getSatellite(pass.norad);
     logger->info("AOS " + pass.tle.name);
 
     // Save every recorded file
