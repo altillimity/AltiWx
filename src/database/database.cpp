@@ -1,6 +1,6 @@
 #include "database.h"
 #include "logger/logger.h"
-#include "communication/nlohmann/json.h"
+#include "libs/nlohmann/json.h"
 
 const std::string createTLETable = "CREATE TABLE IF NOT EXISTS TLE ("
                                    "NORAD INT PRIMARY KEY  NOT NULL,"

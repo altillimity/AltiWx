@@ -5,7 +5,7 @@
 #include <mutex>
 #include <thread>
 #include "modem/modem.h"
-#include "zmq.hpp"
+#include "libs/zmq.hpp"
 #include "scheduler/bosma/ctpl_stl.h"
 #include "config/config.h"
 
