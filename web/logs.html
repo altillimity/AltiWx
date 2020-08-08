@@ -43,7 +43,7 @@
 
 
   <main role="main" class="container-fluid">
-    <div id="logsArea" style="color:grey"></div>
+    <div id="logsArea" style="color:grey; margin:0; line-height:1.0;"></div>
   </main><!-- /.container -->
 
 
@@ -63,7 +63,7 @@
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-          var shouldScroll = (document.body.scrollHeight - window.scrollY) < 1000;
+          var shouldScroll = (document.body.scrollHeight - window.scrollY) < 1200;
           console.log(shouldScroll);
           console.log(window.scrollY);
           document.getElementById("logsArea").innerHTML =
