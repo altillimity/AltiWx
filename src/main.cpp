@@ -13,8 +13,7 @@
 #include "processing/downlink_processor.h"
 #include "communication/communication.h"
 #include "database/database.h"
-
-#include <pqxx/pqxx>
+#include "web/server.h"
 
 int main(int argc, char *argv[])
 {
@@ -38,16 +37,11 @@ int main(int argc, char *argv[])
     // Database!
     initDatabaseManager();
 
+    // Web GUI
+    initWebServer();
+
     // Start scheduler
     initScheduler();
-
-    // Create a NORAD list
-    /*std::vector<int> norads;
-    for (SatelliteConfig satConfig : configManager->getConfig().satelliteConfigs)
-        norads.push_back(satConfig.norad);
-
-    for (SatelliteConfig satConfig : configManager->getConfig().satelliteConfigs)
-        databaseManager->setSatellite(satConfig);*/
 
     // Start TLE manager
     startTLEManager();
@@ -73,6 +67,9 @@ int main(int argc, char *argv[])
         communicationManager.stop();
         // Stop DSP
         stopDSP();
+
+        // Stop web server
+        stopWebServer();
     }
     else
     {

@@ -3,6 +3,6 @@
 class PacketSoapyList : public Packet
 {
 public:
-    std::string process(nlohmann::json &inputData);
+    std::string process(nlohmann::json &);
     static std::string getID();
 };

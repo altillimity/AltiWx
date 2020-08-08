@@ -2,7 +2,7 @@
 #include "logger/logger.h"
 #include <algorithm>
 
-void Modem::initResamp(long inputRate, long inputFrequency)
+void Modem::initResamp(long inputRate, long)
 {
     // Compute resampling rate, setup resampler
     freqResampRate = (double)bandwidth_m / (double)inputRate;
@@ -42,10 +42,12 @@ void Modem::demod(liquid_float_complex *buffer, uint32_t length)
 
     // Shift frequency to 0Hz
     if (shiftFrequency != 0)
+    {
         if (shiftFrequency > 0)
             nco_crcf_mix_block_down(freqShifter, buffer, sdr_buffer, length);
         else
             nco_crcf_mix_block_up(freqShifter, buffer, sdr_buffer, length);
+    }
 
     // Resample
     msresamp_crcf_execute(freqResampler, shiftFrequency == 0 ? buffer : sdr_buffer, length, resamp_buffer, &resamp_buffer_length);

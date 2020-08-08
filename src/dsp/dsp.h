@@ -15,8 +15,14 @@
 class DSP
 {
 private:
-    SDRConfig settings_m;
+    long sampleRate_m;
+    long centerFrequency_m;
+    int gain_m;
+    bool soapy_m;
+    std::string socketString;
     std::string deviceString_m;
+    int demodThreads_m;
+    SDRConfig settings_m;
     liquid_float_complex sdr_buffer[BUFFER_LENGTH];
     SoapySDR::Device *device;
     SoapySDR::Stream *device_stream;
@@ -24,13 +30,7 @@ private:
     std::mutex modemsMutex;
     std::unordered_map<std::string, std::shared_ptr<Modem>> activeModems;
     std::thread sdrThread_m;
-    long sampleRate_m;
-    long centerFrequency_m;
-    int gain_m;
-    bool soapy_m;
-    std::string socketString;
     bool running;
-    int demodThreads_m;
 
     // Modem thread pool
     std::shared_ptr<ctpl::thread_pool> modem_pool;

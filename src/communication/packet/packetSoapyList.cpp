@@ -1,7 +1,7 @@
 #include "packetSoapyList.h"
 #include "config/config.h"
 
-std::string PacketSoapyList::process(nlohmann::json& inputData)
+std::string PacketSoapyList::process(nlohmann::json &)
 {
     // Build answer json
     nlohmann::json answerJson;

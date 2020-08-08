@@ -42,7 +42,7 @@ void CommunicationManager::work()
             {
                 jsonObject = nlohmann::json::parse(content);
             }
-            catch (std::exception e)
+            catch (std::exception& e)
             {
                 zmqSocket.send(zmq::buffer("bad request"), zmq::send_flags::dontwait);
                 continue;

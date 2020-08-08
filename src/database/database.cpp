@@ -51,6 +51,7 @@ DatabaseManager::~DatabaseManager()
 
 bool DatabaseManager::runQuery(std::string sql)
 {
+    dbMutex.lock();
     try
     {
         pqxx::work statementWork(*databaseConnection);
@@ -60,14 +61,17 @@ bool DatabaseManager::runQuery(std::string sql)
     }
     catch (const std::exception &e)
     {
+        dbMutex.unlock();
         logger->error(e.what());
         return false;
     }
+    dbMutex.unlock();
     return true;
 }
 
 pqxx::result DatabaseManager::runQueryGet(std::string sql)
 {
+    dbMutex.lock();
     pqxx::result r;
     try
     {
@@ -78,9 +82,11 @@ pqxx::result DatabaseManager::runQueryGet(std::string sql)
     }
     catch (const std::exception &e)
     {
+        dbMutex.unlock();
         logger->error(e.what());
         return r;
     }
+    dbMutex.unlock();
     return r;
 }
 
@@ -130,6 +136,7 @@ std::pair<TLE, time_t> DatabaseManager::getTLE(int norad)
 #define SET_SAT_QUERY(norad, min_elevation, priority, downlinks) "INSERT INTO satellites (norad, min_elevation, priority, downlinks) VALUES (" + norad + ", " + min_elevation + ", " + priority + ", '" + downlinks + "'::jsonb) ON CONFLICT (NORAD) DO UPDATE SET NORAD = excluded.NORAD, min_elevation = excluded.min_elevation, priority = excluded.priority, downlinks = excluded.downlinks;"
 #define GET_NORADS_QUERY "SELECT norad FROM satellites;";
 #define GET_SATELLITE_QUERY(norad) "SELECT norad, min_elevation, priority, downlinks FROM satellites WHERE norad=" + norad + ";";
+#define DELETE_SATELLITE_QUERY(norad) "DELETE FROM satellites WHERE norad=" + norad + ";";
 #define GET_ALL_SATELLITES_QUERY "SELECT norad, min_elevation, priority, downlinks FROM satellites;";
 
 void DatabaseManager::setSatellite(SatelliteConfig &satConfig)
@@ -199,7 +206,7 @@ SatelliteConfig DatabaseManager::getSatellite(int norad)
             downlinkConf.bandwidth = (long)downlink.value()["bandwidth"];
             downlinkConf.dopplerCorrection = (bool)downlink.value()["doppler"];
             downlinkConf.outputExtension = (std::string)downlink.value()["output_extension"];
-            downlinkConf.radio = (std::string)downlink.value()["processing_script"];
+            downlinkConf.postProcessingScript = (std::string)downlink.value()["processing_script"];
 
             if (downlinkConf.modemType == FM)
                 downlinkConf.modem_audioSamplerate = (long)downlink.value()["modem_audio_sample_rate"];
@@ -210,6 +217,12 @@ SatelliteConfig DatabaseManager::getSatellite(int norad)
         }
     }
     return satellite;
+}
+
+void DatabaseManager::deleteSatellite(int norad)
+{
+    std::string sql = DELETE_SATELLITE_QUERY(std::to_string(norad));
+    runQuery(sql);
 }
 
 std::vector<SatelliteConfig> DatabaseManager::getAllSatellites()

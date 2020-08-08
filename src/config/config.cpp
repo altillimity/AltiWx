@@ -7,25 +7,6 @@
 
 std::shared_ptr<ConfigManager> configManager;
 
-ConfigData getDefaultConfig()
-{
-    // Fill config object with default values
-    ConfigData config;
-
-    config.station_name = "My Station";
-    config.station = {0.0, 0.0, 0.0};
-
-    config.tle_update = "0 0 * * *";
-
-    config.sdrConfigs.push_back({"wx2m", (long)137.500e6, (long)2.4e6, (int)0, (std::string) "driver=rtlsdr", (bool)false, "ipc:///tmp/altiwx"});
-
-    config.dataDirectory = "data";
-
-    config.logLevel = spdlog::level::trace;
-
-    return config;
-}
-
 void initConfig()
 {
     logger->info("Initializing config...");
@@ -43,9 +24,8 @@ void initConfig()
     else
     {
         // Write defaults
-        logger->debug("Config not found! Writing defaults to " + filename);
-        configManager = std::make_shared<ConfigManager>(filename, getDefaultConfig());
-        configManager->saveConfigFile();
+        logger->debug("Config not found! Exiting!");
+       exit(0);
     }
     logger->info("Done!");
 }
@@ -70,7 +50,7 @@ void ConfigManager::loadConfigFile()
     {
         configFile = YAML::LoadFile(filename_m);
     }
-    catch (YAML::Exception e)
+    catch (YAML::Exception& e)
     {
         logger->critical("Fatal error reading config! Aborting!");
         logger->critical(e.what());

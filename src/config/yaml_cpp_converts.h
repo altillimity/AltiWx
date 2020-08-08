@@ -128,8 +128,12 @@ namespace YAML
             {
             case FM:
                 node["modem_audio_sample_rate"] = (long)downlinkConfig.modem_audioSamplerate;
+                break;
             case QPSK:
                 node["modem_qpsk_symbol_rate"] = (long)downlinkConfig.modem_symbolRate;
+                break;
+            default:
+                break;
             }
             return node;
         }
@@ -235,6 +239,8 @@ namespace YAML
                 break;
             case spdlog::level::off:
                 node = (std::string) "off";
+                break;
+            default:
                 break;
             }
             return node;

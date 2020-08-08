@@ -56,10 +56,15 @@ find_package(ZeroMQ REQUIRED)
 target_link_libraries(altiwx PUBLIC ${ZeroMQ_LIBRARIES})
 target_include_directories(altiwx PUBLIC ${ZeroMQ_INCLUDE_DIR})
 
+find_package(Onion REQUIRED)
+target_link_libraries(altiwx PUBLIC ${ONION_LIBRARIES})
+target_include_directories(altiwx PUBLIC ${ONION_INCLUDE_DIR})
+
 target_link_libraries(altiwx PUBLIC stdc++fs)
 
 set(SOAPY_VIRTUAL_DEVICE 1)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/scripts DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/web DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(src-soapy)
