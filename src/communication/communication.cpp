@@ -50,7 +50,7 @@ void CommunicationManager::work()
 
             // Check packet type
             if (packtMap.find(jsonObject["type"]) != packtMap.end())
-                packtMap[jsonObject["type"]]->process(jsonObject);
+                answer = packtMap[jsonObject["type"]]->process(jsonObject);
             // Otherwise, bad request
             else
                 answer = "bad request";

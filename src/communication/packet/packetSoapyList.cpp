@@ -1,5 +1,6 @@
 #include "packetSoapyList.h"
 #include "config/config.h"
+#include "logger/logger.h"
 
 std::string PacketSoapyList::process(nlohmann::json &)
 {
