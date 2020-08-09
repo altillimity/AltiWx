@@ -49,14 +49,15 @@ int main(int argc, char *argv[])
     // No arguments? Run normally
     if (argc == 1)
     {
-        // Start pass manager
-        initPassManager();
-        // Finally, start DSP
-        initDSP();
-
         // Start communication manager
         CommunicationManager communicationManager(ALTIWX_SOCKET_PATH);
         communicationManager.start();
+
+        // Finally, start DSP
+        initDSP();
+
+        // Start pass manager
+        initPassManager();
 
         //std::thread test([=] { processPass({21576, getTLEFromNORAD(21576), time(NULL), time(NULL) + 20, 10.0f, false, true}); });
         //processPass({40069, getTLEFromNORAD(40069), time(NULL), time(NULL) + 20, 10.0f, false, true});
