@@ -39,7 +39,7 @@ void TLEFetcher::fetch()
     {
         fetchCelestrakRequest.perform();
     }
-    catch (std::exception& e)
+    catch (std::exception &e)
     {
         logger->debug(e.what());
         data = false;
@@ -55,7 +55,7 @@ void TLEFetcher::fetch()
     contentString.erase(0, contentString.find('\n') + 1);
     std::string tle_1 = contentString.substr(0, contentString.find('\n'));
     contentString.erase(0, contentString.find('\n') + 1);
-    std::string tle_2 = contentString.substr(0, contentString.find('\n'));;
+    std::string tle_2 = contentString.substr(0, contentString.find('\n'));
 
     logger->debug("TLEFetcher got\n" + name + '\n' + tle_1 + '\n' + tle_2);
 

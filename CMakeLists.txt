@@ -37,6 +37,10 @@ find_package(yaml-cpp REQUIRED)
 target_include_directories(altiwx PUBLIC ${YAML_CPP_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC ${YAML_CPP_LIBRARIES})
 
+pkg_check_modules(predict REQUIRED predict)
+target_include_directories(altiwx PUBLIC ${PREDICT_INCLUDE_DIR})
+target_link_libraries(altiwx PUBLIC predict)
+
 find_package(Threads REQUIRED)
 target_link_libraries(altiwx PUBLIC Threads::Threads)
 
