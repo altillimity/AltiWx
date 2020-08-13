@@ -6,7 +6,7 @@ altiwx.info("Processing NOAA APT data...")
 output_file = altiwx.filename + ".png"
 
 outflag = ""
-if altiwx.southbound:
+if altiwx.northbound:
     outflag = "-e f"
 
 command = "aptdec " + outflag + " -o '" + output_file + "' '" + altiwx.input_file + "'"
