@@ -300,4 +300,29 @@ namespace YAML
             return true;
         }
     };
+
+    template <>
+    struct convert<WebConfig>
+    {
+        static Node encode(const WebConfig &webConfig)
+        {
+            Node node;
+            node["address"] = (std::string)webConfig.address;
+            node["port"] = (int)webConfig.port;
+            return node;
+        }
+
+        static bool decode(const Node &node, WebConfig &webConfig)
+        {
+            if (!node.IsMap() || node.size() != 2)
+            {
+                return false;
+            }
+
+            webConfig.address = node["address"].as<std::string>();
+            webConfig.port = node["port"].as<int>();
+
+            return true;
+        }
+    };
 } // namespace YAML

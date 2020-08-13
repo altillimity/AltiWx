@@ -25,7 +25,7 @@ void initConfig()
     {
         // Write defaults
         logger->debug("Config not found! Exiting!");
-       exit(0);
+        exit(0);
     }
     logger->info("Done!");
 }
@@ -50,7 +50,7 @@ void ConfigManager::loadConfigFile()
     {
         configFile = YAML::LoadFile(filename_m);
     }
-    catch (YAML::Exception& e)
+    catch (YAML::Exception &e)
     {
         logger->critical("Fatal error reading config! Aborting!");
         logger->critical(e.what());
@@ -61,6 +61,7 @@ void ConfigManager::loadConfigFile()
     config_m.station_name = configFile["station_name"].as<std::string>();
     config_m.station = configFile["station"].as<SatelliteStation>();
     config_m.databaseConfig = configFile["database"].as<DBConfig>();
+    config_m.webConfig = configFile["web"].as<WebConfig>();
     config_m.tle_update = configFile["tle_update"].as<std::string>();
     config_m.sdrConfigs = configFile["radios"].as<std::vector<SDRConfig>>();
     config_m.dataDirectory = configFile["data_directory"].as<std::string>();
@@ -73,6 +74,7 @@ void ConfigManager::saveConfigFile()
     configFile["station_name"] = (std::string)config_m.station_name;
     configFile["station"] = (SatelliteStation)config_m.station;
     configFile["database"] = (DBConfig)config_m.databaseConfig;
+    configFile["web"] = (WebConfig)config_m.webConfig;
     configFile["tle_update"] = (std::string)config_m.tle_update;
     configFile["radios"] = (std::vector<SDRConfig>)config_m.sdrConfigs;
     configFile["data_directory"] = (std::string)config_m.dataDirectory;

@@ -22,9 +22,11 @@ void serverThread()
 
 void initWebServer()
 {
-    logger->info("Starting web server on 0.0.0.0:8080");
+    std::string adress = configManager->getConfig().webConfig.address;
+    std::string port = std::to_string(configManager->getConfig().webConfig.port);
+    logger->info("Starting web server on " + adress + ":" + port);
     webServer = std::make_shared<Onion::Onion>(O_THREADED);
-    webServer->addListenPoint("0.0.0.0", "8080", Onion::HttpListenPoint());
+    webServer->addListenPoint(adress, port, Onion::HttpListenPoint());
     webRoot = std::make_shared<Onion::Url>(webServer.get());
 
     webRoot->add("test", "Some static text", HTTP_OK);

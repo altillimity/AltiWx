@@ -11,12 +11,20 @@
 #define ALTIWX_SOCKET_PATH "ipc:///tmp/altiwx"
 
 // PostgreSQL Database Config struct
-struct DBConfig {
+struct DBConfig
+{
     std::string address;
     int port;
     std::string username;
     std::string database;
     std::string password;
+};
+
+// PostgreSQL Database Config struct
+struct WebConfig
+{
+    std::string address;
+    int port;
 };
 
 // SDR Config struct
@@ -71,6 +79,7 @@ struct ConfigData
     std::string station_name;
     SatelliteStation station;
     DBConfig databaseConfig;
+    WebConfig webConfig;
     std::string tle_update;
     std::vector<SDRConfig> sdrConfigs;
     std::string dataDirectory;
