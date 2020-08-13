@@ -292,7 +292,7 @@
 
           jQuery.each(jsonInput, function (name, content) {
             content["name"] = name;
-            outputTable += "<tr onclick=\"downlinkModalShow('" + JSON.stringify(content).replaceAll('"', '\\\'') + "', false);\"> ";
+            outputTable += "<tr onclick=\"downlinkModalShow('" + JSON.stringify(content).replace('"', '\\\'') + "', false);\"> ";
             outputTable += "<th scope=\"row\">" + name + "</th>";
             outputTable += "<td>" + content["radio"] + "</td>";
             outputTable += "<td>" + content["type"] + "</td>";
@@ -319,7 +319,7 @@
     }
 
     function downlinkModalShow(downlink, newCfg) {
-      var jsonData = JSON.parse(downlink.replaceAll('\'', '"'));
+      var jsonData = JSON.parse(downlink.replace('\'', '"'));
       document.getElementById("downlinkModalCenterTitle").innerHTML = jsonData["name"];
       document.getElementById("radioField").value = newCfg ? "" : jsonData["radio"];
       document.getElementById("modemTypeField").value = newCfg ? "IQ" : jsonData["type"];
