@@ -116,7 +116,7 @@ void DSP::sdrThread()
         if (length > BUFFER_LENGTH)
         {
             modemsMutex.unlock();
-            logger->critical("SDR Buffer contained too many elements! Check your SDR!");
+            // logger->critical("SDR Buffer contained too many elements! Check your SDR!");
             continue;
         }
 
