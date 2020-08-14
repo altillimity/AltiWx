@@ -5,8 +5,10 @@
 #include "libs/nlohmann/json.h"
 #include <memory>
 
+// Where we register all packets
 void registerPackets();
 
+// Packet class structure
 class Packet
 {
 public:

@@ -42,7 +42,7 @@ void CommunicationManager::work()
             {
                 jsonObject = nlohmann::json::parse(content);
             }
-            catch (std::exception& e)
+            catch (std::exception &e)
             {
                 zmqSocket.send(zmq::buffer("bad request"), zmq::send_flags::dontwait);
                 continue;
@@ -50,7 +50,7 @@ void CommunicationManager::work()
 
             // Check packet type
             if (packtMap.find(jsonObject["type"]) != packtMap.end())
-                answer = packtMap[jsonObject["type"]]->process(jsonObject);
+                answer = packtMap[jsonObject["type"]]->process(jsonObject); // Call it
             // Otherwise, bad request
             else
                 answer = "bad request";

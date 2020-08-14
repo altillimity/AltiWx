@@ -2,6 +2,7 @@
 #include "logger/logger.h"
 #include "libs/nlohmann/json.h"
 
+// Query to create TLE table
 const std::string createTLETable = "CREATE TABLE IF NOT EXISTS TLE ("
                                    "NORAD INT PRIMARY KEY  NOT NULL,"
                                    "NAME           TEXT    NOT NULL,"
@@ -10,6 +11,7 @@ const std::string createTLETable = "CREATE TABLE IF NOT EXISTS TLE ("
                                    "DATE           BIGINT  NOT NULL"
                                    ");";
 
+// Query to create satellite table
 const std::string createSatelliteTable = "CREATE TABLE IF NOT EXISTS satellites ("
                                          "norad INT PRIMARY KEY         NOT NULL,"
                                          "min_elevation INT             NOT NULL,"
@@ -17,18 +19,19 @@ const std::string createSatelliteTable = "CREATE TABLE IF NOT EXISTS satellites 
                                          "downlinks     JSONB"
                                          ");";
 
-const std::string testDownlinkType = "SELECT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'downlink');";
-
+// Main instance
 std::shared_ptr<DatabaseManager> databaseManager;
 
 void initDatabaseManager()
 {
+    // Just create it and run init()
     databaseManager = std::make_shared<DatabaseManager>(configManager->getConfig().databaseConfig);
     databaseManager->init();
 }
 
 DatabaseManager::DatabaseManager(DBConfig &config)
 {
+    // Connect to database and log it out
     logger->info("Connection to PostgreSQL database " + config.database + " at " + config.address + ":" + std::to_string(config.port));
     try
     {
@@ -46,14 +49,17 @@ DatabaseManager::DatabaseManager(DBConfig &config)
 
 DatabaseManager::~DatabaseManager()
 {
+    // Exit connection
     databaseConnection->disconnect();
 }
 
 bool DatabaseManager::runQuery(std::string sql)
 {
+    // Lock mutex for safety
     dbMutex.lock();
     try
     {
+        // Run it!
         pqxx::work statementWork(*databaseConnection);
         logger->trace(sql);
         statementWork.exec(sql);
@@ -61,20 +67,25 @@ bool DatabaseManager::runQuery(std::string sql)
     }
     catch (const std::exception &e)
     {
+        // Log error
         dbMutex.unlock();
         logger->error(e.what());
         return false;
     }
+    // Unlock mutex
     dbMutex.unlock();
     return true;
 }
 
+// Same as above but returns result
 pqxx::result DatabaseManager::runQueryGet(std::string sql)
 {
+    // Lock mutex for safety
     dbMutex.lock();
     pqxx::result r;
     try
     {
+        // Run it!
         pqxx::nontransaction statementWork(*databaseConnection);
         logger->trace(sql);
         r = statementWork.exec(sql);
@@ -82,16 +93,19 @@ pqxx::result DatabaseManager::runQueryGet(std::string sql)
     }
     catch (const std::exception &e)
     {
+        // Log error
         dbMutex.unlock();
         logger->error(e.what());
         return r;
     }
+    // Unlock mutex
     dbMutex.unlock();
     return r;
 }
 
 void DatabaseManager::init()
 {
+    // Create tables if they do not exist
     runQuery(createTLETable);
     runQuery(createSatelliteTable);
 }

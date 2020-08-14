@@ -6,15 +6,18 @@
 #include "orbit/tle.h"
 #include <mutex>
 
+// Init database stuff
 void initDatabaseManager();
 
 class DatabaseManager
 {
 private:
+    // Main DB object and mutex for thread safety
     std::shared_ptr<pqxx::connection> databaseConnection;
     std::mutex dbMutex;
 
 private:
+    // Run SQL queries
     bool runQuery(std::string sql);
     pqxx::result runQueryGet(std::string sql);
 
@@ -37,4 +40,5 @@ public:
     void deleteSatellite(int norad);
 };
 
+// Main instance
 extern std::shared_ptr<DatabaseManager> databaseManager;

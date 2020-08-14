@@ -1,5 +1,6 @@
 #include "packet.h"
 
+// List SoapySDR devices
 class PacketSoapyList : public Packet
 {
 public:

@@ -11,41 +11,50 @@
 #include "database/database.h"
 #include "libs/nlohmann/json.h"
 
+// Server objects we need
 std::shared_ptr<std::thread> serverThreadObj;
 std::shared_ptr<Onion::Onion> webServer;
 std::shared_ptr<Onion::Url> webRoot;
 
 void serverThread()
 {
+    // Just run it
     webServer->listen();
 }
 
 void initWebServer()
 {
+    // Get config settings
     std::string adress = configManager->getConfig().webConfig.address;
     std::string port = std::to_string(configManager->getConfig().webConfig.port);
     logger->info("Starting web server on " + adress + ":" + port);
+
+    // Init our objects
     webServer = std::make_shared<Onion::Onion>(O_THREADED);
     webServer->addListenPoint(adress, port, Onion::HttpListenPoint());
     webRoot = std::make_shared<Onion::Url>(webServer.get());
 
-    webRoot->add("test", "Some static text", HTTP_OK);
-    webRoot->add("", Onion::ExportLocal("web/index.html"));
-    webRoot->add("index.html", Onion::ExportLocal("web/index.html"));
-    webRoot->add("logs.html", Onion::ExportLocal("web/logs.html"));
-    webRoot->add("satellites.html", Onion::ExportLocal("web/satellites.html"));
+    // Register static resources
     webRoot->add("starter-template.css", Onion::ExportLocal("web/starter-template.css"));
     webRoot->add("css/bootstrap-material-design.min.css", Onion::ExportLocal("web/css/bootstrap-material-design.min.css"));
     webRoot->add("js/bootstrap-material-design.min.js", Onion::ExportLocal("web/js/bootstrap-material-design.min.js"));
     webRoot->add("js/jquery-slim.min.js", Onion::ExportLocal("web/js/jquery-slim.min.js"));
     webRoot->add("js/popper.min.js", Onion::ExportLocal("web/js/popper.min.js"));
 
+    // Register static pages
+    webRoot->add("", Onion::ExportLocal("web/index.html"));
+    webRoot->add("index.html", Onion::ExportLocal("web/index.html"));
+    webRoot->add("logs.html", Onion::ExportLocal("web/logs.html"));
+    webRoot->add("satellites.html", Onion::ExportLocal("web/satellites.html"));
+
+    // Return logs
     webRoot->add("ajax/logs", [](Onion::Request &, Onion::Response &res) {
         for (std::string &current : logs)
             res << current << "</br>";
         return OCS_PROCESSED;
     });
 
+    // Return satellite list
     webRoot->add("ajax/satlist", [](Onion::Request &, Onion::Response &res) {
         nlohmann::json jsonObj;
         for (SatelliteConfig &satConfig : databaseManager->getAllSatellites())
@@ -59,6 +68,7 @@ void initWebServer()
         return OCS_PROCESSED;
     });
 
+    // Return downlink list for a satellite
     webRoot->add("ajax/downlinklist", [](Onion::Request &req, Onion::Response &res) {
         nlohmann::json jsonObj;
         for (DownlinkConfig &downlinkConfig : databaseManager->getSatellite(std::stoi(req.post()["norad"])).downlinkConfigs)
@@ -80,6 +90,7 @@ void initWebServer()
         return OCS_PROCESSED;
     });
 
+    // Modify a satellite
     webRoot->add("ajax/modifysat", [](Onion::Request &req, Onion::Response &) {
         SatelliteConfig cfg = databaseManager->getSatellite(std::stoi(req.post()["norad"]));
         cfg.norad = std::stoi(req.post()["norad"]);
@@ -89,11 +100,13 @@ void initWebServer()
         return OCS_PROCESSED;
     });
 
+    // Delete a satellite
     webRoot->add("ajax/delsat", [](Onion::Request &req, Onion::Response &) {
         databaseManager->deleteSatellite(std::stoi(req.post()["norad"]));
         return OCS_PROCESSED;
     });
 
+    // Modify a downlink
     webRoot->add("ajax/modifydownlink", [](Onion::Request &req, Onion::Response &) {
         SatelliteConfig cfg = databaseManager->getSatellite(std::stoi(req.post()["norad"]));
 
@@ -159,6 +172,7 @@ void initWebServer()
         return OCS_PROCESSED;
     });
 
+    // Delete a downlink
     webRoot->add("ajax/deldownlink", [](Onion::Request &req, Onion::Response &) {
         SatelliteConfig cfg = databaseManager->getSatellite(std::stoi(req.post()["norad"]));
 
@@ -171,12 +185,14 @@ void initWebServer()
         return OCS_PROCESSED;
     });
 
+    // Start it for real in a thread
     serverThreadObj = std::make_shared<std::thread>(&serverThread);
     logger->info("Web server started!");
 }
 
 void stopWebServer()
 {
+    // Stop and wait for it to exit
     webServer->listenStop();
     if (serverThreadObj->joinable())
         serverThreadObj->join();
