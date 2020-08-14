@@ -40,13 +40,6 @@ void initWebServer()
     webRoot->add("js/jquery-slim.min.js", Onion::ExportLocal("web/js/jquery-slim.min.js"));
     webRoot->add("js/popper.min.js", Onion::ExportLocal("web/js/popper.min.js"));
 
-    webRoot->add("ajax", [](Onion::Request &, Onion::Response &res) {
-        int n = rand() % 1000000 + 1;
-        logger->debug("Gave number : " + std::to_string(n));
-        res << n;
-        return OCS_PROCESSED;
-    });
-
     webRoot->add("ajax/logs", [](Onion::Request &, Onion::Response &res) {
         for (std::string &current : logs)
             res << current << "</br>";
