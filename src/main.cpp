@@ -12,6 +12,8 @@
 #include "processing/pass_processing.h"
 #include "processing/downlink_processor.h"
 #include "communication/communication.h"
+#include "database/database.h"
+#include "web/server.h"
 
 int main(int argc, char *argv[])
 {
@@ -32,28 +34,30 @@ int main(int argc, char *argv[])
     setConsoleLevel(configManager->getConfig().logLevel);
     logger->debug("Using data directory " + configManager->getConfig().dataDirectory);
 
+    // Database!
+    initDatabaseManager();
+
+    // Web GUI
+    initWebServer();
+
     // Start scheduler
     initScheduler();
 
-    // Create a NORAD list
-    std::vector<int> norads;
-    for (SatelliteConfig satConfig : configManager->getConfig().satelliteConfigs)
-        norads.push_back(satConfig.norad);
-
     // Start TLE manager
-    startTLEManager(norads);
+    startTLEManager();
 
     // No arguments? Run normally
     if (argc == 1)
     {
-        // Start pass manager
-        initPassManager();
-        // Finally, start DSP
-        initDSP();
-
         // Start communication manager
         CommunicationManager communicationManager(ALTIWX_SOCKET_PATH);
         communicationManager.start();
+
+        // Finally, start DSP
+        initDSP();
+
+        // Start pass manager
+        initPassManager();
 
         //std::thread test([=] { processPass({21576, getTLEFromNORAD(21576), time(NULL), time(NULL) + 20, 10.0f, false, true}); });
         //processPass({40069, getTLEFromNORAD(40069), time(NULL), time(NULL) + 20, 10.0f, false, true});
@@ -64,6 +68,9 @@ int main(int argc, char *argv[])
         communicationManager.stop();
         // Stop DSP
         stopDSP();
+
+        // Stop web server
+        stopWebServer();
     }
     else
     {
@@ -104,9 +111,9 @@ int main(int argc, char *argv[])
              time(NULL) + 20, 10.0f,
              false,
              true},
-            configManager->getConfig().getSatelliteConfigFromNORAD(noradTest.getValue()),
+            databaseManager->getSatellite(noradTest.getValue()),
             [&]() -> DownlinkConfig {
-                for (DownlinkConfig &config : configManager->getConfig().getSatelliteConfigFromNORAD(noradTest.getValue()).downlinkConfigs)
+                for (DownlinkConfig &config : databaseManager->getSatellite(noradTest.getValue()).downlinkConfigs)
                     if (config.name == downlinkTest.getValue())
                         return config;
                 logger->error("Downlink " + downlinkTest.getValue() + " not found!");

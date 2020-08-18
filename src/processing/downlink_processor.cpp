@@ -53,7 +53,7 @@ void DownlinkProcessor::process()
         {
             pybind11::exec(scriptContent_m);
         }
-        catch (std::runtime_error e)
+        catch (std::runtime_error& e)
         {
             logger->critical(e.what());
         }

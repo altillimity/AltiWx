@@ -1,7 +1,7 @@
 #include "communication.h"
 #include "logger/logger.h"
-#include "nlohmann/json.h"
-#include "config/config.h"
+#include "libs/nlohmann/json.h"
+#include "packet/packet.h"
 
 CommunicationManager::CommunicationManager(std::string socket) : socket_m(socket)
 {
@@ -10,6 +10,7 @@ CommunicationManager::CommunicationManager(std::string socket) : socket_m(socket
     zmqContext = zmq::context_t(1);
     zmqSocket = zmq::socket_t(zmqContext, zmq::socket_type::rep);
     zmqSocket.bind(socket_m);
+    registerPackets();
     logger->debug("Bound to " + socket_m);
     running = true;
 }
@@ -41,32 +42,15 @@ void CommunicationManager::work()
             {
                 jsonObject = nlohmann::json::parse(content);
             }
-            catch (std::exception e)
+            catch (std::exception &e)
             {
                 zmqSocket.send(zmq::buffer("bad request"), zmq::send_flags::dontwait);
                 continue;
             }
 
             // Check packet type
-            if (jsonObject["type"] == "soapylistreq")
-            {
-                // Build answer json
-                nlohmann::json answerJson;
-
-                answerJson["type"] = "soapylistrep";
-
-                // Find SDRs that correspond
-                for (SDRConfig sdrConfig : configManager->getConfig().sdrConfigs)
-                {
-                    if (sdrConfig.soapy_redirect)
-                    {
-                        // Add them to our object
-                        answerJson[sdrConfig.name] = {sdrConfig.soapySocket, sdrConfig.sampleRate};
-                    }
-                }
-                // Convert to string
-                answer = answerJson.dump();
-            }
+            if (packtMap.find(jsonObject["type"]) != packtMap.end())
+                answer = packtMap[jsonObject["type"]]->process(jsonObject); // Call it
             // Otherwise, bad request
             else
                 answer = "bad request";

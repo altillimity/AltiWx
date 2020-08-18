@@ -6,20 +6,28 @@
 #include "config/config.h"
 #include "scheduler/scheduler.h"
 #include "tle_fetcher.h"
+#include "database/database.h"
 
 // Mutex to prevent conflicts
 std::mutex tleManagerMutex;
-// Map holding TLE data
-std::unordered_map<int, TLE> satelliteTLEs;
 
 // Fetch TLEs for all satellites
 void updateTLEs()
 {
-    for (std::pair<const int, TLE> &currentNorad : satelliteTLEs)
+    // Current update time
+    time_t updateTime = time(NULL);
+    for (const int &norad : databaseManager->getAllNORADs())
     {
         // Fetch TLEs, update if the update was sucessful
-        int norad = currentNorad.first;
-        TLE &tle = currentNorad.second;
+        TLE tle;
+        // Check if the database-stored TLE needs update
+        if (databaseManager->tleExists(norad))
+        {
+            std::pair<TLE, time_t> res = databaseManager->getTLE(norad);
+            tle = res.first;
+            if (updateTime - res.second < configManager->getConfig().max_tle_age)
+                continue;
+        }
 
         logger->info("Fetching TLE for NORAD " + std::to_string(norad) + (tle.name.length() > 0 ? " - " + tle.name : ""));
 
@@ -28,9 +36,13 @@ void updateTLEs()
 
         if (tleFetcher.containsData())
         {
+            // If that one was not found, we notice the user
+            if (tleFetcher.getTLE().name.find("No TLE found") != std::string::npos)
+                logger->warn("Could not fetch TLE for NORAD " + std::to_string(norad) + (tle.name.length() > 0 ? " - " + tle.name : ""));
             // Mutex used to prevent getTLEFromNORAD to fetch data at the same time
             tleManagerMutex.lock();
             tle = tleFetcher.getTLE();
+            databaseManager->setTLE(norad, tle, updateTime);
             tleManagerMutex.unlock();
             logger->info("Success!");
         }
@@ -39,12 +51,10 @@ void updateTLEs()
     }
 }
 
-void startTLEManager(std::vector<int> &norads)
+void startTLEManager()
 {
     // Initial TLE fetching, start the scheduler task
     logger->info("Starting TLE manager...");
-    for (int &norad : norads)
-        satelliteTLEs.emplace(norad, TLE());
     updateTLEs();
     std::string &cron = configManager->getConfig().tle_update;
     logger->info("TLE updates will run according to " + cron);
@@ -58,8 +68,8 @@ TLE getTLEFromNORAD(int norad)
 
     // Simply return the appropriate TLE object
     TLE tle;
-    if (satelliteTLEs.find(norad) != satelliteTLEs.end())
-        tle = satelliteTLEs[norad];
+    if (databaseManager->tleExists(norad))
+        tle = databaseManager->getTLE(norad).first;
     else
     {
         logger->debug("Invalid NORAD " + std::to_string(norad));

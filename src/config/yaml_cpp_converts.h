@@ -128,8 +128,12 @@ namespace YAML
             {
             case FM:
                 node["modem_audio_sample_rate"] = (long)downlinkConfig.modem_audioSamplerate;
+                break;
             case QPSK:
                 node["modem_qpsk_symbol_rate"] = (long)downlinkConfig.modem_symbolRate;
+                break;
+            default:
+                break;
             }
             return node;
         }
@@ -236,6 +240,8 @@ namespace YAML
             case spdlog::level::off:
                 node = (std::string) "off";
                 break;
+            default:
+                break;
             }
             return node;
         }
@@ -259,6 +265,62 @@ namespace YAML
                 level = spdlog::level::off;
             else
                 return false;
+
+            return true;
+        }
+    };
+
+    template <>
+    struct convert<DBConfig>
+    {
+        static Node encode(const DBConfig &dbConfig)
+        {
+            Node node;
+            node["address"] = (std::string)dbConfig.address;
+            node["port"] = (int)dbConfig.port;
+            node["username"] = (std::string)dbConfig.username;
+            node["database"] = (std::string)dbConfig.database;
+            node["password"] = (std::string)dbConfig.password;
+            return node;
+        }
+
+        static bool decode(const Node &node, DBConfig &dbConfig)
+        {
+            if (!node.IsMap() || node.size() != 5)
+            {
+                return false;
+            }
+
+            dbConfig.address = node["address"].as<std::string>();
+            dbConfig.port = node["port"].as<int>();
+            dbConfig.username = node["username"].as<std::string>();
+            dbConfig.database = node["database"].as<std::string>();
+            dbConfig.password = node["password"].as<std::string>();
+
+            return true;
+        }
+    };
+
+    template <>
+    struct convert<WebConfig>
+    {
+        static Node encode(const WebConfig &webConfig)
+        {
+            Node node;
+            node["address"] = (std::string)webConfig.address;
+            node["port"] = (int)webConfig.port;
+            return node;
+        }
+
+        static bool decode(const Node &node, WebConfig &webConfig)
+        {
+            if (!node.IsMap() || node.size() != 2)
+            {
+                return false;
+            }
+
+            webConfig.address = node["address"].as<std::string>();
+            webConfig.port = node["port"].as<int>();
 
             return true;
         }

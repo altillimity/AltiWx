@@ -1,0 +1,52 @@
+# How should this station be called?
+station_name: My Station
+
+# Location used for pass prediction, altitude is in meters
+station:
+  latitude: 0
+  longitude: 0
+  altitude: 0
+
+# How often should TLEs be checked for updates against Celestrak?
+tle_update: 0 0 * * *
+# Maximum TLE age before we update them, in seconds
+max_tle_age: 172800
+
+# AltiWx uses PostgreSQL for storing data, so here you need to configure the database
+database:
+  address: "127.0.0.1"
+  port: 5432
+  database: altiwx
+  username: altiwx
+  password: passwordForAltiWX
+
+# Web interface configuration
+web:
+  address: "0.0.0.0"
+  port: 8080
+
+# Where to store collected data? (Eg, recordings, etc)
+data_directory: data
+
+# How detailed should logging be?
+# Available : trace, debug, info, warn, error, critical, off
+# In production you should at least keep info, but debug can provide some valuable informations
+logger_level: debug
+
+# Configure your SDRs here, with some optional settings such as PPM correction
+# The sample rate and frequency are in Hz, and the sample rate determines how much band you will be able to cover
+# The gain is an INTEGER! Do not use floats (eg, 33.8), this is not supported and will cause the config to fail
+# Device is SoapySDR device string
+# Soapy redirection will create a virtual Soapy device redirecting samples from your actual SDR, handy to check
+# on your spectrum through another software or setup a WebSDR for example.
+# Modem threads determines how much thread will be used for demodulation. The more threads the more demodulation you
+# can do at once, but if all you're doing is a single at once, no point going over 1.
+radios:
+  - name: wx2m
+    frequency: 137500000
+    sample_rate: 2400000
+    gain: 38
+    device: "driver=rtlsdr"
+    soapy_redirect: true
+    modem_threads: 4
+    # ppm_correction: 0

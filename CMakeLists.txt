@@ -29,9 +29,17 @@ find_package(fmt REQUIRED)
 target_include_directories(altiwx PUBLIC ${fmt_INCLUDE_DIRS})
 target_link_libraries(altiwx PUBLIC fmt::fmt)
 
+pkg_check_modules(libpqxx REQUIRED libpqxx)
+target_include_directories(altiwx PUBLIC ${PQXX_INCLUDE_DIRS})
+target_link_libraries(altiwx PUBLIC "-lpqxx -lpq")
+
 find_package(yaml-cpp REQUIRED)
 target_include_directories(altiwx PUBLIC ${YAML_CPP_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC ${YAML_CPP_LIBRARIES})
+
+pkg_check_modules(predict REQUIRED predict)
+target_include_directories(altiwx PUBLIC ${PREDICT_INCLUDE_DIR})
+target_link_libraries(altiwx PUBLIC predict)
 
 find_package(Threads REQUIRED)
 target_link_libraries(altiwx PUBLIC Threads::Threads)
@@ -52,10 +60,16 @@ find_package(ZeroMQ REQUIRED)
 target_link_libraries(altiwx PUBLIC ${ZeroMQ_LIBRARIES})
 target_include_directories(altiwx PUBLIC ${ZeroMQ_INCLUDE_DIR})
 
+find_package(Onion REQUIRED)
+target_link_libraries(altiwx PUBLIC ${ONION_LIBRARIES})
+target_include_directories(altiwx PUBLIC ${ONION_INCLUDE_DIR})
+
 target_link_libraries(altiwx PUBLIC stdc++fs)
 
 set(SOAPY_VIRTUAL_DEVICE 1)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/scripts DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+# file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/scripts DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/web DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+# file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/config.yml DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(src-soapy)
