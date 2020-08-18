@@ -81,6 +81,7 @@ struct ConfigData
     DBConfig databaseConfig;
     WebConfig webConfig;
     std::string tle_update;
+    int max_tle_age;
     std::vector<SDRConfig> sdrConfigs;
     std::string dataDirectory;
     spdlog::level::level_enum logLevel;

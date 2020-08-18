@@ -11,8 +11,6 @@
 // Mutex to prevent conflicts
 std::mutex tleManagerMutex;
 
-int maxTLEAge = 100000;
-
 // Fetch TLEs for all satellites
 void updateTLEs()
 {
@@ -27,7 +25,7 @@ void updateTLEs()
         {
             std::pair<TLE, time_t> res = databaseManager->getTLE(norad);
             tle = res.first;
-            if (updateTime - res.second < maxTLEAge)
+            if (updateTime - res.second < configManager->getConfig().max_tle_age)
                 continue;
         }
 

@@ -9,6 +9,8 @@ station:
 
 # How often should TLEs be checked for updates against Celestrak?
 tle_update: 0 0 * * *
+# Maximum TLE age before we update them, in seconds
+max_tle_age: 172800
 
 # AltiWx uses PostgreSQL for storing data, so here you need to configure the database
 database:

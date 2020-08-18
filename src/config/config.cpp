@@ -63,6 +63,7 @@ void ConfigManager::loadConfigFile()
     config_m.databaseConfig = configFile["database"].as<DBConfig>();
     config_m.webConfig = configFile["web"].as<WebConfig>();
     config_m.tle_update = configFile["tle_update"].as<std::string>();
+    config_m.max_tle_age = configFile["max_tle_age"].as<int>();
     config_m.sdrConfigs = configFile["radios"].as<std::vector<SDRConfig>>();
     config_m.dataDirectory = configFile["data_directory"].as<std::string>();
     config_m.logLevel = configFile["logger_level"].as<spdlog::level::level_enum>();
@@ -79,6 +80,7 @@ void ConfigManager::saveConfigFile()
     configFile["radios"] = (std::vector<SDRConfig>)config_m.sdrConfigs;
     configFile["data_directory"] = (std::string)config_m.dataDirectory;
     configFile["logger_level"] = (spdlog::level::level_enum)config_m.logLevel;
+    configFile["max_tle_age"] = (int)config_m.max_tle_age;
 
     // Write the actual file
     std::ofstream outFile(filename_m);
