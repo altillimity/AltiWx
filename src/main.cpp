@@ -14,6 +14,11 @@
 #include "communication/communication.h"
 #include "database/database.h"
 #include "web/server.h"
+#include "plugin/plugins.h"
+
+// API
+#include "api/includes/altiwx/altiwx.h"
+#include "api/includes/altiwx/events/started_event.h"
 
 int main(int argc, char *argv[])
 {
@@ -33,6 +38,16 @@ int main(int argc, char *argv[])
     // Set custom log level
     setConsoleLevel(configManager->getConfig().logLevel);
     logger->debug("Using data directory " + configManager->getConfig().dataDirectory);
+
+    std::shared_ptr<altiwx::Plugin> pluginptr;
+    try
+    {
+        pluginptr = loadPlugin("plugins/sample/libsamplePlugin.so");
+    }
+    catch (std::exception &e)
+    {
+        logger->critical(e.what());
+    }
 
     // Database!
     initDatabaseManager();
@@ -61,6 +76,8 @@ int main(int argc, char *argv[])
 
         //std::thread test([=] { processPass({21576, getTLEFromNORAD(21576), time(NULL), time(NULL) + 20, 10.0f, false, true}); });
         //processPass({40069, getTLEFromNORAD(40069), time(NULL), time(NULL) + 20, 10.0f, false, true});
+
+        altiwx::eventBus->fire_event<altiwx::events::StartedEvent>({});
 
         std::cin.get();
 

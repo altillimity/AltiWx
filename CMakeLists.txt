@@ -65,6 +65,7 @@ target_link_libraries(altiwx PUBLIC ${ONION_LIBRARIES})
 target_include_directories(altiwx PUBLIC ${ONION_INCLUDE_DIR})
 
 target_link_libraries(altiwx PUBLIC stdc++fs)
+target_link_libraries(altiwx PUBLIC dl)
 
 set(SOAPY_VIRTUAL_DEVICE 1)
 
@@ -73,3 +74,4 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/web DESTINATION ${CMAKE_CURRENT_BINARY_DIR
 # file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/config.yml DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(src-soapy)
+add_subdirectory(plugins)
