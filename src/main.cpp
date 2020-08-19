@@ -17,8 +17,8 @@
 #include "plugin/plugins.h"
 
 // API
-#include "api/includes/altiwx/altiwx.h"
-#include "api/includes/altiwx/events/started_event.h"
+#include "api/altiwx/altiwx.h"
+#include "api/altiwx/events/events.h"
 
 int main(int argc, char *argv[])
 {
@@ -39,15 +39,11 @@ int main(int argc, char *argv[])
     setConsoleLevel(configManager->getConfig().logLevel);
     logger->debug("Using data directory " + configManager->getConfig().dataDirectory);
 
-    std::shared_ptr<altiwx::Plugin> pluginptr;
-    try
-    {
-        pluginptr = loadPlugin("plugins/sample/libsamplePlugin.so");
-    }
-    catch (std::exception &e)
-    {
-        logger->critical(e.what());
-    }
+    // Plugins!
+    initPlugins();
+
+    // Modems
+    registerModems();
 
     // Database!
     initDatabaseManager();
@@ -74,10 +70,10 @@ int main(int argc, char *argv[])
         // Start pass manager
         initPassManager();
 
+        altiwx::eventBus->fire_event<altiwx::events::StartedEvent>({});
+
         //std::thread test([=] { processPass({21576, getTLEFromNORAD(21576), time(NULL), time(NULL) + 20, 10.0f, false, true}); });
         //processPass({40069, getTLEFromNORAD(40069), time(NULL), time(NULL) + 20, 10.0f, false, true});
-
-        altiwx::eventBus->fire_event<altiwx::events::StartedEvent>({});
 
         std::cin.get();
 

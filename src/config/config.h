@@ -5,7 +5,6 @@
 #include <memory>
 #include <yaml-cpp/yaml.h>
 #include "orbit/satellite_station.h"
-#include "dsp/modem/modem_enum.h"
 #include <spdlog/spdlog.h>
 
 #define ALTIWX_SOCKET_PATH "ipc:///tmp/altiwx"
@@ -54,13 +53,8 @@ struct DownlinkConfig
     bool dopplerCorrection;
     std::string outputExtension;
     std::string postProcessingScript;
-    ModemType modemType;
-
-    // FM Modem
-    long modem_audioSamplerate;
-
-    // QPSK Modem
-    long modem_symbolRate;
+    std::string modemType;
+    std::unordered_map<std::string, std::string> modemParameters;
 };
 
 // Satellite config struct

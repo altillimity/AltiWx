@@ -159,16 +159,13 @@ void DatabaseManager::setSatellite(SatelliteConfig &satConfig)
     for (DownlinkConfig &downlink : satConfig.downlinkConfigs)
     {
         downlinks[downlink.name]["radio"] = downlink.radio;
-        downlinks[downlink.name]["type"] = modemTypeToString(downlink.modemType);
+        downlinks[downlink.name]["type"] = downlink.modemType;
         downlinks[downlink.name]["frequency"] = downlink.frequency;
         downlinks[downlink.name]["bandwidth"] = downlink.bandwidth;
         downlinks[downlink.name]["doppler"] = downlink.dopplerCorrection;
         downlinks[downlink.name]["output_extension"] = downlink.outputExtension;
         downlinks[downlink.name]["processing_script"] = downlink.postProcessingScript;
-        if (downlink.modemType == FM)
-            downlinks[downlink.name]["modem_audio_sample_rate"] = downlink.modem_audioSamplerate;
-        if (downlink.modemType == QPSK)
-            downlinks[downlink.name]["modem_qpsk_symbol_rate"] = downlink.modem_symbolRate;
+        downlinks[downlink.name]["parameters"] = downlink.modemParameters;
     }
     std::string sql = SET_SAT_QUERY(std::to_string(satConfig.norad), std::to_string(satConfig.min_elevation), std::to_string(satConfig.priority), downlinks.dump());
     runQuery(sql);
@@ -202,32 +199,28 @@ SatelliteConfig DatabaseManager::getSatellite(int norad)
         nlohmann::json downlinksJson = nlohmann::json::parse(result[0][3].as<std::string>());
         for (nlohmann::detail::iteration_proxy_value<nlohmann::detail::iter_impl<nlohmann::json>> downlink : downlinksJson.items())
         {
-            DownlinkConfig downlinkConf;
-            downlinkConf.name = (std::string)downlink.key();
+            try
+            {
+                DownlinkConfig downlinkConf;
+                downlinkConf.name = (std::string)downlink.key();
 
-            std::string type = (std::string)downlink.value()["type"];
-            if (type == "FM")
-                downlinkConf.modemType = ModemType::FM;
-            else if (type == "IQ")
-                downlinkConf.modemType = ModemType::IQ;
-            else if (type == "IQWAV")
-                downlinkConf.modemType = ModemType::IQWAV;
-            else if (type == "QPSK")
-                downlinkConf.modemType = ModemType::QPSK;
+                downlinkConf.modemType = (std::string)downlink.value()["type"];
 
-            downlinkConf.radio = (std::string)downlink.value()["radio"];
-            downlinkConf.frequency = (long)downlink.value()["frequency"];
-            downlinkConf.bandwidth = (long)downlink.value()["bandwidth"];
-            downlinkConf.dopplerCorrection = (bool)downlink.value()["doppler"];
-            downlinkConf.outputExtension = (std::string)downlink.value()["output_extension"];
-            downlinkConf.postProcessingScript = (std::string)downlink.value()["processing_script"];
+                downlinkConf.radio = (std::string)downlink.value()["radio"];
+                downlinkConf.frequency = (long)downlink.value()["frequency"];
+                downlinkConf.bandwidth = (long)downlink.value()["bandwidth"];
+                downlinkConf.dopplerCorrection = (bool)downlink.value()["doppler"];
+                downlinkConf.outputExtension = (std::string)downlink.value()["output_extension"];
+                downlinkConf.postProcessingScript = (std::string)downlink.value()["processing_script"];
 
-            if (downlinkConf.modemType == FM)
-                downlinkConf.modem_audioSamplerate = (long)downlink.value()["modem_audio_sample_rate"];
-            if (downlinkConf.modemType == QPSK)
-                downlinkConf.modem_symbolRate = (long)downlink.value()["modem_qpsk_symbol_rate"];
+                downlinkConf.modemParameters = (std::unordered_map<std::string, std::string>)downlink.value()["parameters"];
 
-            satellite.downlinkConfigs.push_back(downlinkConf);
+                satellite.downlinkConfigs.push_back(downlinkConf);
+            }
+            catch (std::exception &e)
+            {
+                logger->error(e.what());
+            }
         }
     }
     return satellite;
@@ -255,32 +248,28 @@ std::vector<SatelliteConfig> DatabaseManager::getAllSatellites()
             nlohmann::json downlinksJson = nlohmann::json::parse(currentSat[3].as<std::string>());
             for (nlohmann::detail::iteration_proxy_value<nlohmann::detail::iter_impl<nlohmann::json>> downlink : downlinksJson.items())
             {
-                DownlinkConfig downlinkConf;
-                downlinkConf.name = (std::string)downlink.key();
+                try
+                {
+                    DownlinkConfig downlinkConf;
+                    downlinkConf.name = (std::string)downlink.key();
 
-                std::string type = (std::string)downlink.value()["type"];
-                if (type == "FM")
-                    downlinkConf.modemType = ModemType::FM;
-                else if (type == "IQ")
-                    downlinkConf.modemType = ModemType::IQ;
-                else if (type == "IQWAV")
-                    downlinkConf.modemType = ModemType::IQWAV;
-                else if (type == "QPSK")
-                    downlinkConf.modemType = ModemType::QPSK;
+                    downlinkConf.modemType = (std::string)downlink.value()["type"];
 
-                downlinkConf.radio = (std::string)downlink.value()["radio"];
-                downlinkConf.frequency = (long)downlink.value()["frequency"];
-                downlinkConf.bandwidth = (long)downlink.value()["bandwidth"];
-                downlinkConf.dopplerCorrection = (bool)downlink.value()["doppler"];
-                downlinkConf.outputExtension = (std::string)downlink.value()["output_extension"];
-                downlinkConf.radio = (std::string)downlink.value()["processing_script"];
+                    downlinkConf.radio = (std::string)downlink.value()["radio"];
+                    downlinkConf.frequency = (long)downlink.value()["frequency"];
+                    downlinkConf.bandwidth = (long)downlink.value()["bandwidth"];
+                    downlinkConf.dopplerCorrection = (bool)downlink.value()["doppler"];
+                    downlinkConf.outputExtension = (std::string)downlink.value()["output_extension"];
+                    downlinkConf.radio = (std::string)downlink.value()["processing_script"];
 
-                if (downlinkConf.modemType == FM)
-                    downlinkConf.modem_audioSamplerate = (long)downlink.value()["modem_audio_sample_rate"];
-                if (downlinkConf.modemType == QPSK)
-                    downlinkConf.modem_symbolRate = (long)downlink.value()["modem_qpsk_symbol_rate"];
+                    downlinkConf.modemParameters = (std::unordered_map<std::string, std::string>)downlink.value()["parameters"];
 
-                satellite.downlinkConfigs.push_back(downlinkConf);
+                    satellite.downlinkConfigs.push_back(downlinkConf);
+                }
+                catch (std::exception &e)
+                {
+                    logger->error(e.what());
+                }
             }
             satellites.push_back(satellite);
         }

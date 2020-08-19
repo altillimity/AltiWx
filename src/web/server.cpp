@@ -74,16 +74,16 @@ void initWebServer()
         for (DownlinkConfig &downlinkConfig : databaseManager->getSatellite(std::stoi(req.post()["norad"])).downlinkConfigs)
         {
             jsonObj[downlinkConfig.name]["radio"] = downlinkConfig.radio;
-            jsonObj[downlinkConfig.name]["type"] = modemTypeToString(downlinkConfig.modemType);
+            jsonObj[downlinkConfig.name]["type"] = downlinkConfig.modemType;
             jsonObj[downlinkConfig.name]["frequency"] = downlinkConfig.frequency;
             jsonObj[downlinkConfig.name]["bandwidth"] = downlinkConfig.bandwidth;
             jsonObj[downlinkConfig.name]["doppler"] = downlinkConfig.dopplerCorrection;
             jsonObj[downlinkConfig.name]["output_extension"] = downlinkConfig.outputExtension;
             jsonObj[downlinkConfig.name]["processing_script"] = downlinkConfig.postProcessingScript;
-            if (downlinkConfig.modemType == FM)
+            /*if (downlinkConfig.modemType == FM)
                 jsonObj[downlinkConfig.name]["modem_audio_sample_rate"] = downlinkConfig.modem_audioSamplerate;
             if (downlinkConfig.modemType == QPSK)
-                jsonObj[downlinkConfig.name]["modem_qpsk_symbol_rate"] = downlinkConfig.modem_symbolRate;
+                jsonObj[downlinkConfig.name]["modem_qpsk_symbol_rate"] = downlinkConfig.modem_symbolRate;*/
         }
         res.setHeader("content-type", "application/json");
         res << jsonObj.dump();
@@ -116,15 +116,7 @@ void initWebServer()
         {
             it->radio = req.post()["radio"];
 
-            std::string type = (std::string)req.post()["type"];
-            if (type == "FM")
-                it->modemType = ModemType::FM;
-            else if (type == "IQ")
-                it->modemType = ModemType::IQ;
-            else if (type == "IQWAV")
-                it->modemType = ModemType::IQWAV;
-            else if (type == "QPSK")
-                it->modemType = ModemType::QPSK;
+            it->modemType = (std::string)req.post()["type"];
 
             it->frequency = std::stoi(req.post()["frequency"]);
             it->bandwidth = std::stoi(req.post()["bandwidth"]);
@@ -132,10 +124,10 @@ void initWebServer()
             it->postProcessingScript = req.post()["script"];
             it->dopplerCorrection = req.post()["doppler"] == "true";
 
-            if (type == "FM")
+            /*if (type == "FM")
                 it->modem_audioSamplerate = std::stoi(req.post()["audiorate"]);
             else if (type == "QPSK")
-                it->modem_symbolRate = std::stoi(req.post()["symbolrate"]);
+                it->modem_symbolRate = std::stoi(req.post()["symbolrate"]);*/
         }
         else
         {
@@ -144,15 +136,7 @@ void initWebServer()
             cfgDownlink.name = req.post()["downlink"];
             cfgDownlink.radio = req.post()["radio"];
 
-            std::string type = (std::string)req.post()["type"];
-            if (type == "FM")
-                cfgDownlink.modemType = ModemType::FM;
-            else if (type == "IQ")
-                cfgDownlink.modemType = ModemType::IQ;
-            else if (type == "IQWAV")
-                cfgDownlink.modemType = ModemType::IQWAV;
-            else if (type == "QPSK")
-                cfgDownlink.modemType = ModemType::QPSK;
+            cfgDownlink.modemType = (std::string)req.post()["type"];
 
             cfgDownlink.frequency = std::stoi(req.post()["frequency"]);
             cfgDownlink.bandwidth = std::stoi(req.post()["bandwidth"]);
@@ -160,10 +144,10 @@ void initWebServer()
             cfgDownlink.postProcessingScript = req.post()["script"];
             cfgDownlink.dopplerCorrection = req.post()["doppler"] == "true";
 
-            if (type == "FM")
+            /*if (type == "FM")
                 cfgDownlink.modem_audioSamplerate = std::stoi(req.post()["audiorate"]);
             else if (type == "QPSK")
-                cfgDownlink.modem_symbolRate = std::stoi(req.post()["symbolrate"]);
+                cfgDownlink.modem_symbolRate = std::stoi(req.post()["symbolrate"]);*/
 
             cfg.downlinkConfigs.push_back(cfgDownlink);
         }

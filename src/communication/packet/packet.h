@@ -16,4 +16,4 @@ public:
     virtual std::string process(nlohmann::json& inputData) = 0;
 };
 
-extern std::unordered_map<std::string, std::shared_ptr<Packet>> packtMap;
+extern std::unordered_map<std::string, std::shared_ptr<Packet>> packetMap;

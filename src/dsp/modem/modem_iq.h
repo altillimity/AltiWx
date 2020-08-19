@@ -15,6 +15,11 @@ protected:
     void process(liquid_float_complex *buffer, unsigned int &length);
 
 public:
-    ModemIQ(long frequency, long bandwidth, std::string outputFile);
+    static std::string getType();
+    std::vector<std::string> getParameters();
+    void setParameters(long frequency, long bandwidth, std::unordered_map<std::string, std::string> &parameters);
     void stop();
+
+public:
+    static std::shared_ptr<Modem> getInstance();
 };

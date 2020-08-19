@@ -1,13 +1,12 @@
 #include "downlink_recorder.h"
 #include "logger/logger.h"
-#include "dsp/modem/modem_fm.h"
-#include "dsp/modem/modem_iq.h"
-#include "dsp/modem/modem_iqwav.h"
+#include "dsp/modem/modem.h"
 #include "orbit/orbit_predictor.h"
 #include "orbit/tle_manager.h"
-#include "dsp/modem/modem_qpsk.h"
-
-DownlinkRecorder::DownlinkRecorder(std::shared_ptr<DSP> dsp, DownlinkConfig &downlink, SatelliteConfig satelliteConfig, std::string fileName) : dsp_m(dsp), downlink_m(downlink), satelliteConfig_m(satelliteConfig), running(true)
+DownlinkRecorder::DownlinkRecorder(std::shared_ptr<DSP> dsp, DownlinkConfig &downlink, SatelliteConfig satelliteConfig, std::string fileName) : dsp_m(dsp),
+                                                                                                                                                downlink_m(downlink),
+                                                                                                                                                satelliteConfig_m(satelliteConfig),
+                                                                                                                                                running(true)
 {
     logger->debug("Setting up recorder for " + downlink_m.name + " downlink on " + std::to_string(downlink_m.frequency) + " Hz. Bandwidth " + std::to_string(downlink_m.bandwidth) + " Hz");
 
@@ -15,23 +14,14 @@ DownlinkRecorder::DownlinkRecorder(std::shared_ptr<DSP> dsp, DownlinkConfig &dow
     modemID = std::to_string(satelliteConfig.norad) + "-" + downlink_m.name + "-" + std::to_string(downlink.frequency);
 
     // Init our Modem object
-    switch (downlink_m.modemType)
-    {
-    case FM:
-        modem = std::make_shared<ModemFM>(downlink_m.frequency, downlink_m.bandwidth, downlink_m.modem_audioSamplerate, fileName);
-        break;
-    case IQ:
-        modem = std::make_shared<ModemIQ>(downlink_m.frequency, downlink_m.bandwidth, fileName);
-        break;
-    case IQWAV:
-        modem = std::make_shared<ModemIQWav>(downlink_m.frequency, downlink_m.bandwidth, fileName);
-        break;
-    case QPSK:
-        modem = std::make_shared<ModemQPSK>(downlink_m.frequency, downlink_m.bandwidth, downlink_m.modem_symbolRate, fileName);
-        break;
-    default:
+    if (modemRegistry.find(downlink_m.modemType) != modemRegistry.end())
+        modem = modemRegistry[downlink_m.modemType]();
+    else
         logger->critical("Invalid modem type!");
-    }
+
+    std::unordered_map<std::string, std::string> parameters = downlink_m.modemParameters;
+    parameters["output_file"] = fileName;
+    modem->setParameters(downlink_m.frequency, downlink_m.bandwidth, parameters);
 
     // If dopper is enabled, set it up
     if (downlink_m.dopplerCorrection)

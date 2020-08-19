@@ -49,8 +49,8 @@ void CommunicationManager::work()
             }
 
             // Check packet type
-            if (packtMap.find(jsonObject["type"]) != packtMap.end())
-                answer = packtMap[jsonObject["type"]]->process(jsonObject); // Call it
+            if (packetMap.find(jsonObject["type"]) != packetMap.end())
+                answer = packetMap[jsonObject["type"]]->process(jsonObject); // Call it
             // Otherwise, bad request
             else
                 answer = "bad request";
