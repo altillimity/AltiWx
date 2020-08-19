@@ -10,6 +10,7 @@
 #include "logger/web_sink.h"
 #include "database/database.h"
 #include "libs/nlohmann/json.h"
+#include "dsp/modem/modem.h"
 
 // Server objects we need
 std::shared_ptr<std::thread> serverThreadObj;
@@ -80,11 +81,34 @@ void initWebServer()
             jsonObj[downlinkConfig.name]["doppler"] = downlinkConfig.dopplerCorrection;
             jsonObj[downlinkConfig.name]["output_extension"] = downlinkConfig.outputExtension;
             jsonObj[downlinkConfig.name]["processing_script"] = downlinkConfig.postProcessingScript;
-            /*if (downlinkConfig.modemType == FM)
-                jsonObj[downlinkConfig.name]["modem_audio_sample_rate"] = downlinkConfig.modem_audioSamplerate;
-            if (downlinkConfig.modemType == QPSK)
-                jsonObj[downlinkConfig.name]["modem_qpsk_symbol_rate"] = downlinkConfig.modem_symbolRate;*/
+            jsonObj[downlinkConfig.name]["parameters"] = downlinkConfig.modemParameters;
         }
+        res.setHeader("content-type", "application/json");
+        res << jsonObj.dump();
+        return OCS_PROCESSED;
+    });
+
+    // Return modem parameters
+    webRoot->add("ajax/modemparameters", [](Onion::Request &req, Onion::Response &res) {
+        nlohmann::json jsonObj;
+
+        if (modemRegistry.find(req.post()["type"]) != modemRegistry.end())
+            jsonObj = modemRegistry[req.post()["type"]]()->getParameters();
+        else
+            jsonObj = (std::vector<std::string>){};
+
+        res.setHeader("content-type", "application/json");
+        res << jsonObj.dump();
+        return OCS_PROCESSED;
+    });
+
+    // Return modem list
+    webRoot->add("ajax/modemlist", [](Onion::Request &req, Onion::Response &res) {
+        nlohmann::json jsonObj;
+
+        for (std::pair<const std::string, std::function<std::shared_ptr<Modem>()>> &it : modemRegistry)
+            jsonObj += it.first;
+
         res.setHeader("content-type", "application/json");
         res << jsonObj.dump();
         return OCS_PROCESSED;
@@ -124,10 +148,7 @@ void initWebServer()
             it->postProcessingScript = req.post()["script"];
             it->dopplerCorrection = req.post()["doppler"] == "true";
 
-            /*if (type == "FM")
-                it->modem_audioSamplerate = std::stoi(req.post()["audiorate"]);
-            else if (type == "QPSK")
-                it->modem_symbolRate = std::stoi(req.post()["symbolrate"]);*/
+            it->modemParameters = (std::unordered_map<std::string, std::string>)nlohmann::json::parse(req.post()["parameters"]);
         }
         else
         {
@@ -144,10 +165,7 @@ void initWebServer()
             cfgDownlink.postProcessingScript = req.post()["script"];
             cfgDownlink.dopplerCorrection = req.post()["doppler"] == "true";
 
-            /*if (type == "FM")
-                cfgDownlink.modem_audioSamplerate = std::stoi(req.post()["audiorate"]);
-            else if (type == "QPSK")
-                cfgDownlink.modem_symbolRate = std::stoi(req.post()["symbolrate"]);*/
+            it->modemParameters = (std::unordered_map<std::string, std::string>)nlohmann::json::parse(req.post()["parameters"]);
 
             cfg.downlinkConfigs.push_back(cfgDownlink);
         }

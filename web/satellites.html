@@ -78,9 +78,6 @@
             <div class="form-group">
               <label for="modemTypeField">Modem Type</label>
               <select class="form-control" id="modemTypeField">
-                <option>IQ</option>
-                <option>FM</option>
-                <option>QPSK</option>
               </select>
               <small class="form-text text-muted">Modem type to use</small>
             </div>
@@ -110,15 +107,18 @@
               <label class="form-check-label" for="dopplerField">Doppler</label>
               <small class="form-text text-muted">Enable doppler tracking?</small>
             </div>
-            <div class="form-group" hidden="true" id="optionAudioSamplerate">
-              <label for="audioSamplerateField">Audio samplerate (Hz)</label>
-              <input type="text" class="form-control" id="audioSamplerateField" placeholder="Example : 48000">
-              <small class="form-text text-muted">Samplerate of the output audio file</small>
-            </div>
-            <div class="form-group" hidden="true" id="optionQPSKSymbolrate">
-              <label for="qpskSymbolrateField">QPSK Symbolrate</label>
-              <input type="text" class="form-control" id="qpskSymbolrateField" placeholder="Eg, 72000">
-              <small class="form-text text-muted">QPSK Symbolrate</small>
+            <div class="form-group">
+              <label for="tablepara">Parameters</label>
+              <table id="tablepara" class="table table-dark table-hover table-sm">
+                <thead class="thead-inverse">
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Value</th>
+                  </tr>
+                </thead>
+                <tbody id="modemParametersOptions">
+                </tbody>
+              </table>
             </div>
           </form>
 
@@ -292,7 +292,7 @@
 
           jQuery.each(jsonInput, function (name, content) {
             content["name"] = name;
-            outputTable += "<tr onclick=\"downlinkModalShow('" + JSON.stringify(content).replace('"', '\\\'') + "', false);\"> ";
+            outputTable += "<tr onclick=\"downlinkModalShow('" + JSON.stringify(content).split('"').join('\\\'') + "', false);\"> ";
             outputTable += "<th scope=\"row\">" + name + "</th>";
             outputTable += "<td>" + content["radio"] + "</td>";
             outputTable += "<td>" + content["type"] + "</td>";
@@ -301,12 +301,13 @@
             outputTable += "<td>" + content["doppler"] + "</td>";
             outputTable += "<td>" + content["output_extension"] + "</td>";
             outputTable += "<td>" + content["processing_script"] + "</td>";
-            if (content["modem_audio_sample_rate"])
-              outputTable += "<td>" + "Audio samplerate : " + content["modem_audio_sample_rate"] + "</td>";
-            else if (content["modem_qpsk_symbol_rate"])
-              outputTable += "<td>" + "QPSK Symbolrate : " + content["modem_qpsk_symbol_rate"] + "</td>";
-            else
-              outputTable += "<td></td>";
+
+            outputTable += "<td>";
+            jQuery.each(content["parameters"], function (name, content) {
+              outputTable += name + " : " + content;
+            });
+            outputTable += "</td>";
+
             outputTable += "</tr>";
           });
 
@@ -319,41 +320,61 @@
     }
 
     function downlinkModalShow(downlink, newCfg) {
-      var jsonData = JSON.parse(downlink.replace('\'', '"'));
+      var jsonData = JSON.parse(downlink.split('\'').join('"'));
       document.getElementById("downlinkModalCenterTitle").innerHTML = jsonData["name"];
       document.getElementById("radioField").value = newCfg ? "" : jsonData["radio"];
-      document.getElementById("modemTypeField").value = newCfg ? "IQ" : jsonData["type"];
       document.getElementById("frequencyField").value = newCfg ? "" : jsonData["frequency"];
       document.getElementById("bandwidthField").value = newCfg ? "" : jsonData["bandwidth"];
       document.getElementById("extensionField").value = newCfg ? "" : jsonData["output_extension"];
       document.getElementById("scriptField").value = newCfg ? "" : jsonData["processing_script"];
       document.getElementById("dopplerField").checked = newCfg ? false : jsonData["doppler"];
 
-      if (jsonData["type"] == "FM") {
-        document.getElementById("optionAudioSamplerate").hidden = false;
-        document.getElementById("audioSamplerateField").value = newCfg ? "" : jsonData["modem_audio_sample_rate"];
-      } else
-        document.getElementById("optionAudioSamplerate").hidden = true;
-
-      if (jsonData["type"] == "QPSK") {
-        document.getElementById("optionQPSKSymbolrate").hidden = false;
-        document.getElementById("qpskSymbolrateField").value = newCfg ? "" : jsonData["modem_qpsk_symbol_rate"];
-      } else
-        document.getElementById("optionQPSKSymbolrate").hidden = true;
+      var outputTable = "";
+      jQuery.each(jsonData["parameters"], function (name, value) {
+        outputTable += "<tr class='parameters'>";
+        outputTable += "<th class='name' scope=\"row\">" + name + "</th>";
+        outputTable += "<td><input type='text' class='form-control' style='color:lightgray' class='value' value='" + value + "'></input></td>";
+        outputTable += "</tr>";
+      });
+      document.getElementById("modemParametersOptions").innerHTML = outputTable;
 
       document.getElementById("modemTypeField").onchange = function () {
-        if (document.getElementById("modemTypeField").value == "FM") {
-          document.getElementById("optionAudioSamplerate").hidden = false;
-          document.getElementById("audioSamplerateField").value = jsonData["modem_audio_sample_rate"] ? jsonData["modem_audio_sample_rate"] : "";
-        } else
-          document.getElementById("optionAudioSamplerate").hidden = true;
-
-        if (document.getElementById("modemTypeField").value == "QPSK") {
-          document.getElementById("optionQPSKSymbolrate").hidden = false;
-          document.getElementById("qpskSymbolrateField").value = jsonData["modem_qpsk_symbol_rate"] ? jsonData["modem_qpsk_symbol_rate"] : "";
-        } else
-          document.getElementById("optionQPSKSymbolrate").hidden = true;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            var outputTable = "";
+            console.log(this.responseText);
+            var table = JSON.parse(this.responseText)
+            jQuery.each(table, function (i) {
+              outputTable += "<tr class='parameters'>";
+              outputTable += "<th class='name' scope=\"row\">" + table[i] + "</th>";
+              outputTable += "<td><input type='text' class='form-control' style='color:lightgray' class='value' value='" + jsonData["parameters"][table[i]] + "'></input></td>";
+              outputTable += "</tr>";
+            });
+            document.getElementById("modemParametersOptions").innerHTML = outputTable;
+          }
+        };
+        xhttp.open("POST", "ajax/modemparameters", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("type=" + document.getElementById("modemTypeField").value);
       }
+
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          var outputOptions = "";
+          console.log(this.responseText);
+          var table = JSON.parse(this.responseText)
+          jQuery.each(table, function (i) {
+            outputOptions += "<option>" + table[i] + "</option>";
+          });
+          document.getElementById("modemTypeField").innerHTML = outputOptions;
+          document.getElementById("modemTypeField").value = newCfg ? "IQ" : jsonData["type"];
+        }
+      };
+      xhttp.open("POST", "ajax/modemlist", true);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhttp.send("type=" + document.getElementById("modemTypeField").value);
 
       $('#downlinkModal').modal();
     }
@@ -370,6 +391,19 @@
           downlinkTable(document.getElementById("noradField").value);
         }
       };
+
+      var table = document.getElementById('tablepara');
+
+      var jsonParameters = {};
+
+      for (var i = 1; i < table.rows.length; i++) {
+        if (table.rows[i].cells.length) {
+          var name = (table.rows[i].cells[0].textContent.trim());
+          var value = (table.rows[i].cells[1].getElementsByTagName('input')[0].value.trim());
+          jsonParameters[name] = value;
+        }
+      }
+
       xhttp.open("POST", "ajax/modifydownlink", true);
       xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xhttp.send(
@@ -382,8 +416,7 @@
         "&output_extension=" + document.getElementById("extensionField").value +
         "&script=" + document.getElementById("scriptField").value +
         "&doppler=" + document.getElementById("dopplerField").checked +
-        (document.getElementById("modemTypeField").value == "FM" ? "&audiorate=" + document.getElementById("audioSamplerateField").value : "") +
-        (document.getElementById("modemTypeField").value == "QPSK" ? "&symbolrate=" + document.getElementById("qpskSymbolrateField").value : "")
+        "&parameters=" + JSON.stringify(jsonParameters)
       );
     }
 

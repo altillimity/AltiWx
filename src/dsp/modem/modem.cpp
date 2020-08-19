@@ -103,7 +103,7 @@ void registerModems()
     altiwx::eventBus->fire_event<altiwx::events::RegisterModemsEvent>({modemRegistry});
 
     // Log them out
-    logger->debug("Register modems (" + std::to_string(modemRegistry.size()) + ") : ");
+    logger->debug("Registered modems (" + std::to_string(modemRegistry.size()) + ") : ");
     for (std::pair<const std::string, std::function<std::shared_ptr<Modem>()>> &it : modemRegistry)
         logger->debug(" - " + it.first);
 }
