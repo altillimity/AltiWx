@@ -110,10 +110,10 @@ void DSP::sdrThread()
     while (running)
     {
         // Read buffer
-        uint32_t length = device->readStream(device_stream, sdr_buffer_ptr, BUFFER_LENGTH, flags, time_ns, 1e5);
+        uint32_t length = device->readStream(device_stream, sdr_buffer_ptr, DSP_BUFFER_SIZE, flags, time_ns, 1e5);
 
         // Just in case
-        if (length > BUFFER_LENGTH)
+        if (length > DSP_BUFFER_SIZE)
         {
             modemsMutex.unlock();
             // logger->critical("SDR Buffer contained too many elements! Check your SDR!");

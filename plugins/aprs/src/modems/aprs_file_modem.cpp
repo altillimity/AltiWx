@@ -1,6 +1,7 @@
 #include "aprs_file_modem.h"
 #include <math.h>
 #include "logger/logger.h"
+#include "settings.h"
 
 std::vector<std::string> ModemAPRSFile::getParameters()
 {
@@ -20,6 +21,11 @@ void ModemAPRSFile::setParameters(long frequency, long bandwidth, std::unordered
     ax25Decoder = std::make_shared<afsk1200_impl>(audioRate_m, 1); // AFSK1200 Decoder
     outTextFile = std::ofstream(parameters["output_file"], std::ios::binary);
 
+    // Work buffers
+    bufferOutSize = ceil(audioResampRate * DSP_BUFFER_SIZE);
+    outputBuffer = new float[bufferOutSize];
+    demodBuffer = new float[DSP_BUFFER_SIZE];
+
     inAPRSBuffer = 0;
 }
 
@@ -29,6 +35,10 @@ void ModemAPRSFile::stop()
     processAFSK();
     // Just close the text file!
     outTextFile.close();
+
+    // Delete buffers
+    delete[] outputBuffer;
+    delete[] demodBuffer;
 }
 
 // Run the QFSk buffer through and write output
@@ -46,11 +56,6 @@ void ModemAPRSFile::processAFSK()
 
 void ModemAPRSFile::process(liquid_float_complex *buffer, unsigned int &length)
 {
-    // Buffers...
-    unsigned int bufferOutSize = ceil(audioResampRate * (float)length);
-    float outputBuffer[bufferOutSize];
-    float demodBuffer[length];
-
     freqdem_demodulate_block(demodulatorFM, &buffer[0], length, &demodBuffer[0]);                       // FM demodulation
     msresamp_rrrf_execute(audioResamp, &demodBuffer[0], (int)length, &outputBuffer[0], &bufferOutSize); // Audio resampling
 

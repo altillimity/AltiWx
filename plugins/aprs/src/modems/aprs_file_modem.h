@@ -23,6 +23,11 @@ protected:
     char fileOutputBuffer[AFSK_BUFFER_SIZE];
 
 protected:
+    unsigned int bufferOutSize;
+    float *outputBuffer;
+    float *demodBuffer;
+
+protected:
     void process(liquid_float_complex *buffer, unsigned int &length);
     void processAFSK();
 

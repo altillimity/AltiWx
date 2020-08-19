@@ -16,6 +16,12 @@ protected:
     float kf;
 
 protected:
+    // Buffers...
+    unsigned int bufferOutSize;
+    float *outputBuffer;
+    float *demodBuffer;
+
+protected:
     void process(liquid_float_complex *buffer, unsigned int &length);
 
 public:

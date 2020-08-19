@@ -103,7 +103,7 @@ void initWebServer()
     });
 
     // Return modem list
-    webRoot->add("ajax/modemlist", [](Onion::Request &req, Onion::Response &res) {
+    webRoot->add("ajax/modemlist", [](Onion::Request &, Onion::Response &res) {
         nlohmann::json jsonObj;
 
         for (std::pair<const std::string, std::function<std::shared_ptr<Modem>()>> &it : modemRegistry)

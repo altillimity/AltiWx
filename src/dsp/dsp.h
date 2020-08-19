@@ -8,8 +8,7 @@
 #include "libs/zmq.hpp"
 #include "scheduler/bosma/ctpl_stl.h"
 #include "config/config.h"
-
-#define BUFFER_LENGTH 8192
+#include "settings.h"
 
 // Class performing all the DSP work, currently only supporting rtl-sdr
 class DSP
@@ -23,7 +22,7 @@ private:
     std::string deviceString_m;
     int demodThreads_m;
     SDRConfig settings_m;
-    liquid_float_complex sdr_buffer[BUFFER_LENGTH];
+    liquid_float_complex sdr_buffer[DSP_BUFFER_SIZE];
     SoapySDR::Device *device;
     SoapySDR::Stream *device_stream;
     std::mutex dongleMutex;
