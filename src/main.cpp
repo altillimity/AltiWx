@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
         altiwx::eventBus->fire_event<altiwx::events::StartedEvent>({});
 
         //std::thread test([=] { processPass({21576, getTLEFromNORAD(21576), time(NULL), time(NULL) + 20, 10.0f, false, true}); });
-        //processPass({40069, getTLEFromNORAD(40069), time(NULL), time(NULL) + 20, 10.0f, false, true});
+        processPass({40069, getTLEFromNORAD(40069), time(NULL), time(NULL) + 1200, 10.0f, false, true});
 
         std::cin.get();
 
