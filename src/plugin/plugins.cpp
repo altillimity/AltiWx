@@ -3,6 +3,7 @@
 #include <dlfcn.h>
 #include <memory>
 #include "logger/logger.h"
+#include <filesystem>
 
 std::vector<std::shared_ptr<altiwx::Plugin>> plugins;
 
@@ -28,12 +29,41 @@ std::shared_ptr<altiwx::Plugin> loadPlugin(std::string plugin)
 
 void initPlugins()
 {
-    try
+    logger->info("Loading plugins...");
+
+    std::vector<std::string> pluginsToLoad;
+
+    std::filesystem::recursive_directory_iterator pluginsIterator("plugins");
+    std::error_code iteratorError;
+    while (pluginsIterator != std::filesystem::recursive_directory_iterator())
     {
-        plugins.push_back(loadPlugin("plugins/sample/libsamplePlugin.so"));
+        if (!std::filesystem::is_directory(pluginsIterator->path()))
+        {
+            if (pluginsIterator->path().filename().string().find(".so") != std::string::npos)
+            {
+                logger->debug("Found plugin " + pluginsIterator->path().relative_path().string());
+                pluginsToLoad.push_back(pluginsIterator->path().relative_path().string());
+            }
+        }
+
+        pluginsIterator.increment(iteratorError);
+        if (iteratorError)
+            logger->critical(iteratorError.message());
     }
-    catch (std::exception &e)
+
+    for (std::string plugin : pluginsToLoad)
     {
-        logger->critical(e.what());
+        try
+        {
+            plugins.push_back(loadPlugin(plugin));
+        }
+        catch (std::exception &e)
+        {
+            logger->critical(e.what());
+        }
     }
+
+    logger->info("Loaded plugins (" + std::to_string(plugins.size()) + ") :");
+    for (std::shared_ptr<altiwx::Plugin> &pl : plugins)
+        logger->info(" - " + pl->getID());
 }

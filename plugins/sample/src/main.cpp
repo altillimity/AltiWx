@@ -54,7 +54,7 @@ public:
     // Return the plugin ID
     std::string getID()
     {
-        return "sample_plugin";
+        return "sample";
     }
 
     // Plugin init, to register events, and everything else
