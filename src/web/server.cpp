@@ -148,7 +148,8 @@ void initWebServer()
             it->postProcessingScript = req.post()["script"];
             it->dopplerCorrection = req.post()["doppler"] == "true";
 
-            it->modemParameters = (std::unordered_map<std::string, std::string>)nlohmann::json::parse(req.post()["parameters"]);
+            nlohmann::json modemsParams = nlohmann::json::parse(req.post()["parameters"]);
+            it->modemParameters = (std::unordered_map<std::string, std::string>&)modemsParams;
         }
         else
         {
@@ -165,7 +166,8 @@ void initWebServer()
             cfgDownlink.postProcessingScript = req.post()["script"];
             cfgDownlink.dopplerCorrection = req.post()["doppler"] == "true";
 
-            it->modemParameters = (std::unordered_map<std::string, std::string>)nlohmann::json::parse(req.post()["parameters"]);
+            nlohmann::json modemsParams = nlohmann::json::parse(req.post()["parameters"]);
+            it->modemParameters = (std::unordered_map<std::string, std::string>&)modemsParams;
 
             cfg.downlinkConfigs.push_back(cfgDownlink);
         }
