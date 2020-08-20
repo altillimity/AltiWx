@@ -213,7 +213,7 @@ SatelliteConfig DatabaseManager::getSatellite(int norad)
                 downlinkConf.outputExtension = (std::string)downlink.value()["output_extension"];
                 downlinkConf.postProcessingScript = (std::string)downlink.value()["processing_script"];
 
-                downlinkConf.modemParameters = (std::unordered_map<std::string, std::string>&)downlink.value()["parameters"];
+                downlinkConf.modemParameters = downlink.value()["parameters"].get<std::unordered_map<std::string, std::string>>();
 
                 satellite.downlinkConfigs.push_back(downlinkConf);
             }
@@ -262,7 +262,7 @@ std::vector<SatelliteConfig> DatabaseManager::getAllSatellites()
                     downlinkConf.outputExtension = (std::string)downlink.value()["output_extension"];
                     downlinkConf.radio = (std::string)downlink.value()["processing_script"];
 
-                    downlinkConf.modemParameters = (std::unordered_map<std::string, std::string>&)downlink.value()["parameters"];
+                    downlinkConf.modemParameters = downlink.value()["parameters"].get<std::unordered_map<std::string, std::string>>();
 
                     satellite.downlinkConfigs.push_back(downlinkConf);
                 }
