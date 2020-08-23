@@ -18,22 +18,30 @@ void initLogger()
     // Prevent libraries or programs from showing unwanted logs
     freopen("/dev/null", "w", stderr);
 
-    // Initialize everything
-    console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    file_sink = std::make_shared<spdlog::sinks::daily_file_sink_mt>((std::string)LOG_FOLDER_PATH + "/logs.txt", 0, 0);
-    web_sink = std::make_shared<webSink_mt>();
-    logger = std::shared_ptr<spdlog::logger>(new spdlog::logger("AltiWx", {console_sink, file_sink, web_sink}));
+    try
+    {
+        // Initialize everything
+        console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        file_sink = std::make_shared<spdlog::sinks::daily_file_sink_mt>((std::string)LOG_FOLDER_PATH + "/logs.txt", 0, 0);
+        web_sink = std::make_shared<webSink_mt>();
+        logger = std::shared_ptr<spdlog::logger>(new spdlog::logger("AltiWx", {console_sink, file_sink, web_sink}));
 
-    // Use a custom, nicer log pattern. No color in the file
-    console_sink->set_pattern("[%D - %T] %^(%L) %v%$");
-    file_sink->set_pattern("[%D - %T] (%L) %v");
-    web_sink->set_pattern("[%D - %T] (%L) %v");
+        // Use a custom, nicer log pattern. No color in the file
+        console_sink->set_pattern("[%D - %T] %^(%L) %v%$");
+        file_sink->set_pattern("[%D - %T] (%L) %v");
+        web_sink->set_pattern("[%D - %T] (%L) %v");
 
-    // Default log level
-    file_sink->set_level(spdlog::level::trace);
-    console_sink->set_level(spdlog::level::trace);
-    web_sink->set_level(spdlog::level::debug);
-    logger->set_level(spdlog::level::trace);
+        // Default log level
+        file_sink->set_level(spdlog::level::trace);
+        console_sink->set_level(spdlog::level::trace);
+        web_sink->set_level(spdlog::level::debug);
+        logger->set_level(spdlog::level::trace);
+    }
+    catch (std::exception &e)
+    {
+        spdlog::error(e.what());
+        exit(1);
+    }
 }
 
 void setConsoleLevel(spdlog::level::level_enum level)

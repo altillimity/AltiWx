@@ -90,7 +90,10 @@ add_subdirectory(plugins)
 install(TARGETS altiwx DESTINATION bin)
 install(DIRECTORY web DESTINATION opt/altiwx)
 install(DIRECTORY scripts DESTINATION opt/altiwx)
-install(FILES config.yml DESTINATION etc/altiwx)
+install(FILES config.yml DESTINATION opt/altiwx)
+install(DIRECTORY DESTINATION opt/altiwx/logs)
+install(DIRECTORY DESTINATION opt/altiwx/plugins)
+INSTALL(FILES altiwx.service DESTINATION /lib/systemd/system)
 
 # Create uninstall target
 configure_file(
