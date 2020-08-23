@@ -36,17 +36,17 @@ void initWebServer()
     webRoot = std::make_shared<Onion::Url>(webServer.get());
 
     // Register static resources
-    webRoot->add("starter-template.css", Onion::ExportLocal("web/starter-template.css"));
-    webRoot->add("css/bootstrap-material-design.min.css", Onion::ExportLocal("web/css/bootstrap-material-design.min.css"));
-    webRoot->add("js/bootstrap-material-design.min.js", Onion::ExportLocal("web/js/bootstrap-material-design.min.js"));
-    webRoot->add("js/jquery-slim.min.js", Onion::ExportLocal("web/js/jquery-slim.min.js"));
-    webRoot->add("js/popper.min.js", Onion::ExportLocal("web/js/popper.min.js"));
+    webRoot->add("starter-template.css", Onion::ExportLocal((std::string)WEB_DATA_PATH + "/starter-template.css"));
+    webRoot->add("css/bootstrap-material-design.min.css", Onion::ExportLocal((std::string)WEB_DATA_PATH + "/css/bootstrap-material-design.min.css"));
+    webRoot->add("js/bootstrap-material-design.min.js", Onion::ExportLocal((std::string)WEB_DATA_PATH + "/js/bootstrap-material-design.min.js"));
+    webRoot->add("js/jquery-slim.min.js", Onion::ExportLocal((std::string)WEB_DATA_PATH + "/js/jquery-slim.min.js"));
+    webRoot->add("js/popper.min.js", Onion::ExportLocal((std::string)WEB_DATA_PATH + "/js/popper.min.js"));
 
     // Register static pages
-    webRoot->add("", Onion::ExportLocal("web/index.html"));
-    webRoot->add("index.html", Onion::ExportLocal("web/index.html"));
-    webRoot->add("logs.html", Onion::ExportLocal("web/logs.html"));
-    webRoot->add("satellites.html", Onion::ExportLocal("web/satellites.html"));
+    webRoot->add("", Onion::ExportLocal((std::string)WEB_DATA_PATH + "/index.html"));
+    webRoot->add("index.html", Onion::ExportLocal((std::string)WEB_DATA_PATH + "/index.html"));
+    webRoot->add("logs.html", Onion::ExportLocal((std::string)WEB_DATA_PATH + "/logs.html"));
+    webRoot->add("satellites.html", Onion::ExportLocal((std::string)WEB_DATA_PATH + "/satellites.html"));
 
     // Return logs
     webRoot->add("ajax/logs", [](Onion::Request &, Onion::Response &res) {
@@ -149,7 +149,7 @@ void initWebServer()
             it->dopplerCorrection = req.post()["doppler"] == "true";
 
             nlohmann::json modemsParams = nlohmann::json::parse(req.post()["parameters"]);
-            it->modemParameters = (std::unordered_map<std::string, std::string>&)modemsParams;
+            it->modemParameters = (std::unordered_map<std::string, std::string> &)modemsParams;
         }
         else
         {
@@ -167,7 +167,7 @@ void initWebServer()
             cfgDownlink.dopplerCorrection = req.post()["doppler"] == "true";
 
             nlohmann::json modemsParams = nlohmann::json::parse(req.post()["parameters"]);
-            it->modemParameters = (std::unordered_map<std::string, std::string>&)modemsParams;
+            it->modemParameters = (std::unordered_map<std::string, std::string> &)modemsParams;
 
             cfg.downlinkConfigs.push_back(cfgDownlink);
         }

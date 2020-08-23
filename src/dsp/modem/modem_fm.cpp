@@ -1,6 +1,5 @@
 #include "modem_fm.h"
 #include <math.h>
-#include "settings.h"
 
 std::vector<std::string> ModemFM::getParameters()
 {

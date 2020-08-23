@@ -8,7 +8,6 @@
 #include "libs/zmq.hpp"
 #include "scheduler/bosma/ctpl_stl.h"
 #include "config/config.h"
-#include "settings.h"
 
 // Class performing all the DSP work, currently only supporting rtl-sdr
 class DSP

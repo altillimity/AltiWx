@@ -67,6 +67,16 @@ target_include_directories(altiwx PUBLIC ${ONION_INCLUDE_DIR})
 target_link_libraries(altiwx PUBLIC stdc++fs)
 target_link_libraries(altiwx PUBLIC dl)
 
+# DSP Settings
+add_compile_definitions(DSP_BUFFER_SIZE=8192)
+
+# Paths
+add_compile_definitions(CONFIG_FILE_PATH="config.yml")
+add_compile_definitions(PLUGIN_FOLDER_PATH="plugins")
+add_compile_definitions(SCRIPTS_FOLDER_PATH="scripts")
+add_compile_definitions(LOG_FOLDER_PATH="logs")
+add_compile_definitions(WEB_DATA_PATH="web")
+
 set(SOAPY_VIRTUAL_DEVICE 1)
 
 # file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/scripts DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

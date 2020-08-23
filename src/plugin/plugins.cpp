@@ -33,7 +33,7 @@ void initPlugins()
 
     std::vector<std::string> pluginsToLoad;
 
-    std::filesystem::recursive_directory_iterator pluginsIterator("plugins");
+    std::filesystem::recursive_directory_iterator pluginsIterator(PLUGIN_FOLDER_PATH);
     std::error_code iteratorError;
     while (pluginsIterator != std::filesystem::recursive_directory_iterator())
     {

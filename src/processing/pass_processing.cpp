@@ -86,14 +86,16 @@ void processPass(SatellitePass pass)
             continue;
         }
 
+        std::string scriptFullPath = (std::string)SCRIPTS_FOLDER_PATH + (std::string) "/" + fileToProcess.script;
+
         // Check the script exists
-        if (!std::filesystem::exists("scripts/" + fileToProcess.script))
+        if (!std::filesystem::exists(scriptFullPath))
         {
-            logger->critical("Script " + (std::string) "scripts/" + fileToProcess.script + " does not exist!");
+            logger->critical("Script " + scriptFullPath + " does not exist!");
             continue;
         }
 
-        DownlinkProcessor currentProcessor(pass, satelliteConfig, fileToProcess.downlink, fileToProcess.filePath, fileToProcess.filename, "scripts/" + fileToProcess.script);
+        DownlinkProcessor currentProcessor(pass, satelliteConfig, fileToProcess.downlink, fileToProcess.filePath, fileToProcess.filename, scriptFullPath);
         currentProcessor.process();
     }
 }

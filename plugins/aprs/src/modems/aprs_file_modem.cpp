@@ -1,7 +1,6 @@
 #include "aprs_file_modem.h"
 #include <math.h>
 #include "logger/logger.h"
-#include "settings.h"
 
 std::vector<std::string> ModemAPRSFile::getParameters()
 {

@@ -20,7 +20,7 @@ void initLogger()
 
     // Initialize everything
     console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    file_sink = std::make_shared<spdlog::sinks::daily_file_sink_mt>("logs/logs.txt", 0, 0);
+    file_sink = std::make_shared<spdlog::sinks::daily_file_sink_mt>((std::string)LOG_FOLDER_PATH + "/logs.txt", 0, 0);
     web_sink = std::make_shared<webSink_mt>();
     logger = std::shared_ptr<spdlog::logger>(new spdlog::logger("AltiWx", {console_sink, file_sink, web_sink}));
 
@@ -36,7 +36,8 @@ void initLogger()
     logger->set_level(spdlog::level::trace);
 }
 
-void setConsoleLevel(spdlog::level::level_enum level) {
+void setConsoleLevel(spdlog::level::level_enum level)
+{
     // Just change out log level
     console_sink->set_level(level);
 }

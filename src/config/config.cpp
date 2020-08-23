@@ -12,7 +12,7 @@ void initConfig()
     logger->info("Initializing config...");
 
     // Default filename
-    std::string filename = "config.yml";
+    std::string filename = CONFIG_FILE_PATH;
 
     if (std::filesystem::exists(filename))
     {
