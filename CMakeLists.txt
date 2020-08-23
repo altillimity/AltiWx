@@ -1,17 +1,14 @@
 cmake_minimum_required (VERSION 3.0.0)
 cmake_policy(SET CMP0048 NEW)
-
 set(CMAKE_CXX_STANDARD 17)
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 project (altiwx VERSION 1.0.0)
 file(GLOB_RECURSE ALTIWX_CPPS src/*.cpp src/*.c)
-
 add_executable(altiwx ${ALTIWX_CPPS})
-
 target_include_directories(altiwx PUBLIC src)
 
+# Link libraries
 find_package(PkgConfig REQUIRED) 
 
 find_package(Liquid REQUIRED)
