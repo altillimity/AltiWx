@@ -71,11 +71,11 @@ target_link_libraries(altiwx PUBLIC dl)
 add_compile_definitions(DSP_BUFFER_SIZE=8192)
 
 # Paths
-add_compile_definitions(CONFIG_FILE_PATH="config.yml")
-add_compile_definitions(PLUGIN_FOLDER_PATH="plugins")
-add_compile_definitions(SCRIPTS_FOLDER_PATH="scripts")
-add_compile_definitions(LOG_FOLDER_PATH="logs")
-add_compile_definitions(WEB_DATA_PATH="web")
+add_compile_definitions(CONFIG_FILE_PATH="${CMAKE_INSTALL_PREFIX}/etc/altiwx/config.yml")
+add_compile_definitions(PLUGIN_FOLDER_PATH="${CMAKE_INSTALL_PREFIX}/opt/altiwx/plugins")
+add_compile_definitions(SCRIPTS_FOLDER_PATH="${CMAKE_INSTALL_PREFIX}/opt/altiwx/scripts")
+add_compile_definitions(LOG_FOLDER_PATH="${CMAKE_INSTALL_PREFIX}/opt/altiwx/logs")
+add_compile_definitions(WEB_DATA_PATH="${CMAKE_INSTALL_PREFIX}/opt/altiwx/web")
 
 set(SOAPY_VIRTUAL_DEVICE 1)
 
@@ -85,3 +85,19 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/web DESTINATION ${CMAKE_CURRENT_BINARY_DIR
 
 add_subdirectory(src-soapy)
 add_subdirectory(plugins)
+
+# Install AltiWx
+install(TARGETS altiwx DESTINATION bin)
+install(DIRECTORY web DESTINATION opt/altiwx)
+install(DIRECTORY scripts DESTINATION opt/altiwx)
+install(FILES config.yml DESTINATION etc/altiwx)
+
+# Create uninstall target
+configure_file(
+    ${CMAKE_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+@ONLY)
+
+add_custom_target(uninstall
+    ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+    )
