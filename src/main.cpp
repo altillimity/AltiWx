@@ -1,4 +1,5 @@
 #include "logger/logger.h"
+#include <csignal>
 #include "orbit/orbit_predictor.h"
 #include "orbit/tle_manager.h"
 #include "config/config.h"
@@ -19,6 +20,14 @@
 // API
 #include "api/altiwx/altiwx.h"
 #include "api/altiwx/events/events.h"
+
+bool shouldExit = false;
+
+void signalHandler(int signum)
+{
+    logger->critical("Exiting!!!!");
+    shouldExit = true;
+}
 
 int main(int argc, char *argv[])
 {
@@ -75,7 +84,12 @@ int main(int argc, char *argv[])
         //std::thread test([=] { processPass({21576, getTLEFromNORAD(21576), time(NULL), time(NULL) + 20, 10.0f, false, true}); });
         //processPass({40069, getTLEFromNORAD(40069), time(NULL), time(NULL) + 1200, 10.0f, false, true});
 
-        std::cin.get();
+        // Register our custom shutdown signal
+        signal(SIGINT, signalHandler);
+
+        // And wait
+        while (!shouldExit)
+            std::this_thread::sleep_for(std::chrono::seconds(1));
 
         // Stop communication manager
         communicationManager.stop();
