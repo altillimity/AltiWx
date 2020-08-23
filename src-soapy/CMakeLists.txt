@@ -2,6 +2,7 @@
 # Build Soapy SDR support module for virtual AltiWx device
 ########################################################################
 cmake_minimum_required(VERSION 2.8.7)
+cmake_policy(SET CMP0048 NEW)
 project(SoapyAltiWx CXX)
 
 find_package(SoapySDR "0.4.0" NO_MODULE REQUIRED)

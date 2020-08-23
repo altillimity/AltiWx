@@ -1,10 +1,11 @@
 cmake_minimum_required (VERSION 3.0.0)
+cmake_policy(SET CMP0048 NEW)
 
 set(CMAKE_CXX_STANDARD 17)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-project (altiwx)
+project (altiwx VERSION 1.0.0)
 file(GLOB_RECURSE ALTIWX_CPPS src/*.cpp src/*.c)
 
 add_executable(altiwx ${ALTIWX_CPPS})
@@ -66,6 +67,9 @@ target_include_directories(altiwx PUBLIC ${ONION_INCLUDE_DIR})
 
 target_link_libraries(altiwx PUBLIC stdc++fs)
 target_link_libraries(altiwx PUBLIC dl)
+
+# Version macreo
+add_compile_definitions(ALTIWX_VERSION="${PROJECT_VERSION}")
 
 # DSP Settings
 add_compile_definitions(DSP_BUFFER_SIZE=8192)
