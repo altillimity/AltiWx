@@ -72,7 +72,7 @@ add_compile_definitions(ALTIWX_VERSION="${PROJECT_VERSION}")
 add_compile_definitions(DSP_BUFFER_SIZE=8192)
 
 # Paths
-add_compile_definitions(CONFIG_FILE_PATH="${CMAKE_INSTALL_PREFIX}/etc/altiwx/config.yml")
+add_compile_definitions(CONFIG_FILE_PATH="${CMAKE_INSTALL_PREFIX}/opt/altiwx/config.yml")
 add_compile_definitions(PLUGIN_FOLDER_PATH="${CMAKE_INSTALL_PREFIX}/opt/altiwx/plugins")
 add_compile_definitions(SCRIPTS_FOLDER_PATH="${CMAKE_INSTALL_PREFIX}/opt/altiwx/scripts")
 add_compile_definitions(LOG_FOLDER_PATH="${CMAKE_INSTALL_PREFIX}/opt/altiwx/logs")
