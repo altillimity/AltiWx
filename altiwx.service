@@ -1,6 +1,7 @@
 [Unit]
 Description=AltiWx
-After=network.target
+Wants=postgresql.service
+After=network.target postgresql.service
 
 [Service]
 Type=simple
