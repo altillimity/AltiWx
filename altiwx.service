@@ -2,6 +2,7 @@
 Description=AltiWx
 Wants=postgresql.service
 After=network.target postgresql.service
+Before=SoapySDRServer.service
 
 [Service]
 Type=simple
