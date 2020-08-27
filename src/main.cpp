@@ -23,7 +23,7 @@
 
 bool shouldExit = false;
 
-void signalHandler(int signum)
+void signalHandler(int)
 {
     logger->critical("Exiting!!!!");
     shouldExit = true;
@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
 
         // Register our custom shutdown signal
         signal(SIGINT, signalHandler);
+        signal(SIGTERM, signalHandler);
 
         // And wait
         while (!shouldExit)
