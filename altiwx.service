@@ -1,7 +1,7 @@
 [Unit]
 Description=AltiWx
 Wants=postgresql.service
-After=network.target postgresql.service
+After=network-online.target postgresql.service
 Before=SoapySDRServer.service
 
 [Service]
