@@ -1,0 +1,38 @@
+cmake_minimum_required (VERSION 3.0.0)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+project (AltiWx)
+file(GLOB_RECURSE AltiWx_CPPS src/*.cpp src/*.c)
+
+if(APPLE)
+    include_directories(/usr/local/include)
+    link_directories(/usr/local/lib)
+endif()
+
+add_executable(AltiWx ${AltiWx_CPPS})
+target_include_directories(AltiWx PUBLIC src)
+
+# Libraries
+find_package(PkgConfig REQUIRED) 
+
+# Spdlog
+find_package(Spdlog REQUIRED)
+target_include_directories(AltiWx PUBLIC ${SPDLOG_INCLUDE_DIR})
+target_link_libraries(AltiWx PUBLIC Spdlog::Spdlog)
+
+# RTL-SDR
+find_package(RTLSDR REQUIRED)
+target_include_directories(AltiWx PUBLIC ${RTLSDR_INCLUDE_DIR})
+target_link_libraries(AltiWx PUBLIC ${RTLSDR_LIBRARIES})
+
+# Liquid-DSP
+find_package(LIQUID REQUIRED)
+target_include_directories(AltiWx PUBLIC ${LIQUID_INCLUDE_DIR})
+target_link_libraries(AltiWx PUBLIC ${LIQUID_LIBRARIES})
+
+# Threads
+find_package(Threads REQUIRED)
+target_link_libraries(AltiWx PUBLIC Threads::Threads)
