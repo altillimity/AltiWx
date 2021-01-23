@@ -1,0 +1,110 @@
+# How should this station be called?
+station_name: My Station
+
+# Location used for pass prediction, altitude is in meters
+station:
+  latitude: 0.0
+  longitude: 0.0
+  altitude: 0
+
+# How often should TLEs be checked for updates against Celestrak?
+tle_update: 0 0 * * *
+
+# Where to store collected data? (Eg, recordings, etc)
+data_directory: data
+
+# How detailed should logging be?
+# Available : trace, debug, info, warn, error, critical, off
+# In production you should at least keep info, but debug can provide some valuable informations
+log_level: debug
+
+# Configure your SDR here, with some optional settings such as PPM correction
+# The sample rate and frequency are in Hz, and the sample rate determines how much band you will be able to cover
+# The gain is an INTEGER! Do not use floats (eg, 33.8), this is not supported and will cause the config to fail
+radio:
+  frequency: 137500000
+  samplerate: 2400000
+  gain: 49
+  # ppm_correction: 0
+
+# All satellites you want to track
+satellites:
+  - norad: 40096 # METEOR-M 2
+    min_elevation: 0
+    priority: 1
+    downlinks:
+      - name: LRPT
+        frequency: 137100000
+        bandwidth: 140000
+        doppler: false
+        post_processing_script: none
+        output_extension: raw
+        type: IQ
+        parameters:
+          none: none
+  - norad: 25338 # NOAA 15
+    min_elevation: 0
+    priority: 1
+    downlinks:
+      - name: APT
+        frequency: 137620000
+        bandwidth: 50000
+        doppler: false
+        post_processing_script: none
+        output_extension: wav
+        type: FM
+        parameters:
+          audio_samplerate: 48000
+      - name: DSB
+        frequency: 137350000
+        bandwidth: 48000
+        doppler: false
+        post_processing_script: none
+        output_extension: raw
+        type: IQ
+        parameters:
+          none: none
+  - norad: 28654 # NOAA 18
+    min_elevation: 0
+    priority: 1
+    downlinks:
+      - name: APT
+        frequency: 137912500
+        bandwidth: 50000
+        doppler: false
+        post_processing_script: none
+        output_extension: wav
+        type: FM
+        parameters:
+          audio_samplerate: 48000
+      - name: DSB
+        frequency: 137350000
+        bandwidth: 48000
+        doppler: false
+        post_processing_script: none
+        output_extension: raw
+        type: IQ
+        parameters:
+          none: none
+  - norad: 33591 # NOAA 19
+    min_elevation: 0
+    priority: 1
+    downlinks:
+      - name: APT
+        frequency: 137100000
+        bandwidth: 50000
+        doppler: false
+        post_processing_script: none
+        output_extension: wav
+        type: FM
+        parameters:
+          audio_samplerate: 48000
+      - name: DSB
+        frequency: 137770000
+        bandwidth: 48000
+        doppler: false
+        post_processing_script: none
+        output_extension: raw
+        type: IQ
+        parameters:
+          none: none

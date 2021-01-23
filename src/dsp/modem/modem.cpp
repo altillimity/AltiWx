@@ -1,7 +1,7 @@
 #include "modem.h"
 #include "logger/logger.h"
 
-Modem::Modem(int frequency, int samplerate, int buffer_size) : d_frequency(frequency), d_samplerate(samplerate), d_buffer_size(buffer_size)
+Modem::Modem(int frequency, int samplerate, std::map<std::string, std::string> parameters, int buffer_size) : d_frequency(frequency), d_samplerate(samplerate), d_parameters(parameters), d_buffer_size(buffer_size)
 {
     input_buffer = new std::complex<float>[d_buffer_size];
     shifted_buffer = new std::complex<float>[d_buffer_size];
@@ -35,9 +35,12 @@ void Modem::start(long inputSamplerate, long inputFrequency)
 
 void Modem::stop()
 {
+    logger->info("Stopping modem...");
     should_run = false;
+    fifo.~Pipe();
     if (work_thread.joinable())
         work_thread.join();
+    logger->info("Stopped!");
 }
 
 void Modem::setFrequency(long frequency)
@@ -66,14 +69,17 @@ void Modem::push(std::complex<float> *buffer, int length)
 
 void Modem::workThread()
 {
-    int cnt;
+    int cnt = 0;
     unsigned int resamp_cnt;
     while (should_run)
     {
         cnt = fifo.pop(input_buffer, d_buffer_size);
 
         if (cnt <= 0)
-            return;
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            continue;
+        }
 
         modem_mutex.lock();
 
@@ -91,4 +97,27 @@ void Modem::workThread()
 
         modem_mutex.unlock();
     }
+}
+
+// Modem registery stuff
+#include "modem_iq.h"
+#include "modem_fm.h"
+
+std::map<std::string, std::function<std::shared_ptr<Modem>(int, int, std::map<std::string, std::string>, int)>> modem_registry;
+
+void registerModems()
+{
+    // Register internal modems
+    modem_registry.emplace(ModemIQ::getType(), ModemIQ::getInstance);
+    modem_registry.emplace(ModemFM::getType(), ModemFM::getInstance);
+
+    /*
+    // Let plugins do their thing
+    altiwx::eventBus->fire_event<altiwx::events::RegisterModemsEvent>({modem_registry});
+    */
+
+    // Log them out
+    logger->debug("Registered modems (" + std::to_string(modem_registry.size()) + ") : ");
+    for (std::pair<const std::string, std::function<std::shared_ptr<Modem>(int, int, std::map<std::string, std::string>, int)>> &it : modem_registry)
+        logger->debug(" - " + it.first);
 }

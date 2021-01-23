@@ -19,7 +19,7 @@ private:
     rtlsdr_dev *rtlsdr_device;
     std::mutex rtlsdr_mutex;
     std::thread rtlsdr_thread;
-    bool rtlsdr_should_run;
+    std::atomic<bool> rtlsdr_should_run;
 
     std::complex<float> *rtlsdr_read_buffer;
 

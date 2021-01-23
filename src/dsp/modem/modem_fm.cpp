@@ -1,11 +1,12 @@
 #include "modem_fm.h"
 
-ModemFM::ModemFM(int frequency, int samplerate, int audioSamplerate, std::string file, int buffer_size) : d_audio_samplerate(audioSamplerate), Modem(frequency, samplerate, buffer_size)
+ModemFM::ModemFM(int frequency, int samplerate, std::map<std::string, std::string> &parameters, int buffer_size) : d_audio_samplerate(std::stol(parameters["audio_samplerate"])),
+                                                                                                                   Modem(frequency, samplerate, parameters, buffer_size)
 {
     audio_buffer = new float[buffer_size];
     demod_buffer = new float[buffer_size];
 
-    tinywav_open_write(&output_wav, 1, d_audio_samplerate, TW_INT16, TW_INLINE, file.c_str());
+    tinywav_open_write(&output_wav, 1, d_audio_samplerate, TW_INT16, TW_INLINE, d_parameters["file"].c_str());
 
     float kf = 1.0f;
     fm_demodulator = freqdem_create(kf);
@@ -31,4 +32,14 @@ void ModemFM::work(std::complex<float> *buffer, int length)
     freqdem_demodulate_block(fm_demodulator, buffer, length, demod_buffer);
     msresamp_rrrf_execute(audio_resampler, demod_buffer, length, audio_buffer, &resampled_length);
     tinywav_write_f(&output_wav, audio_buffer, resampled_length);
+}
+
+std::string ModemFM::getType()
+{
+    return "FM";
+}
+
+std::shared_ptr<Modem> ModemFM::getInstance(int frequency, int samplerate, std::map<std::string, std::string> parameters, int buffer_size)
+{
+    return std::make_shared<ModemFM>(frequency, samplerate, parameters, buffer_size);
 }

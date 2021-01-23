@@ -54,6 +54,8 @@ void DeviceDSP::callback(unsigned char *buf, uint32_t &len)
         modem.second->push(rtlsdr_read_buffer, len / 2);
 
     modems_mutex.unlock();
+
+    //logger->info(len);
 }
 
 void DeviceDSP::_rtlsdr_callback(unsigned char *buf, uint32_t len, void *ctx)
@@ -69,7 +71,7 @@ void DeviceDSP::setFrequency(int frequency)
     {
         logger->critical("Could not set SDR frequency!");
     }
-    logger->info("Tuned SDR to " + std::to_string(d_frequency) + " Hz");
+    logger->info("Tuned SDR to " + std::to_string(rtlsdr_get_center_freq(rtlsdr_device)) + " Hz");
     rtlsdr_mutex.unlock();
 }
 
@@ -81,7 +83,7 @@ void DeviceDSP::setSamplerate(int samplerate)
     {
         logger->critical("Could not set SDR samplerate!");
     }
-    logger->info("Set SDR samplerate to " + std::to_string(d_samplerate) + " S/s");
+    logger->info("Set SDR samplerate to " + std::to_string(rtlsdr_get_sample_rate(rtlsdr_device)) + " S/s");
     rtlsdr_mutex.unlock();
 }
 
@@ -89,11 +91,15 @@ void DeviceDSP::setGain(int gain)
 {
     rtlsdr_mutex.lock();
     d_gain = gain;
-    if (rtlsdr_set_tuner_gain(rtlsdr_device, d_gain) != 0)
+    if (rtlsdr_set_tuner_gain_mode(rtlsdr_device, 1) != 0)
+    {
+        logger->critical("Could not set SDR gain mode!");
+    }
+    if (rtlsdr_set_tuner_gain(rtlsdr_device, d_gain * 10) != 0)
     {
         logger->critical("Could not set SDR gain!");
     }
-    logger->info("Set SDR gain to " + std::to_string(d_gain) + " dB");
+    logger->info("Set SDR gain to " + std::to_string(rtlsdr_get_tuner_gain(rtlsdr_device) / 10) + " dB");
     rtlsdr_mutex.unlock();
 }
 

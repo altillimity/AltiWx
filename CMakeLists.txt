@@ -36,3 +36,22 @@ target_link_libraries(AltiWx PUBLIC ${LIQUID_LIBRARIES})
 # Threads
 find_package(Threads REQUIRED)
 target_link_libraries(AltiWx PUBLIC Threads::Threads)
+
+# Predict
+pkg_check_modules(predict REQUIRED predict)
+target_include_directories(AltiWx PUBLIC ${PREDICT_INCLUDE_DIR})
+target_link_libraries(AltiWx PUBLIC predict)
+
+# Yaml-CPP
+find_package(yaml-cpp REQUIRED)
+target_include_directories(AltiWx PUBLIC ${YAML_CPP_INCLUDE_DIR})
+target_link_libraries(AltiWx PUBLIC ${YAML_CPP_LIBRARIES})
+
+# LibDSP
+find_library(DSP_LIBRARY dsp REQUIRED)
+target_link_libraries(AltiWx PUBLIC ${DSP_LIBRARY})
+
+# PyBind11
+find_package(pybind11 REQUIRED)
+target_link_libraries(AltiWx PUBLIC pybind11::embed)
+target_include_directories(AltiWx PUBLIC ${PYBIND11_INCLUDE_DIR})

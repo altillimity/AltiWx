@@ -5,6 +5,9 @@
 #include <dsp/pipe.h>
 #include <mutex>
 #include <thread>
+#include <map>
+#include <functional>
+#include <atomic>
 
 class Modem
 {
@@ -19,7 +22,7 @@ private:
 private:
     std::thread work_thread;
     std::mutex modem_mutex;
-    bool should_run;
+    std::atomic<bool> should_run;
 
 protected:
     int d_buffer_size;
@@ -28,6 +31,7 @@ protected:
     int d_samplerate;
     int d_samplerate_in;
     int d_frequency_in;
+    std::map<std::string, std::string> d_parameters;
 
 private:
     void workThread();
@@ -36,10 +40,18 @@ protected:
     virtual void work(std::complex<float> *buffer, int length) = 0;
 
 public:
-    Modem(int frequency, int samplerate, int buffer_size = 8192);
+    Modem(int frequency, int samplerate, std::map<std::string, std::string> parameters, int buffer_size);
     ~Modem();
     void start(long inputSamplerate, long inputFrequency);
     void stop();
     void setFrequency(long frequency);
     void push(std::complex<float> *buffer, int length);
+
+public:
+    static std::string getType();
+    static std::shared_ptr<Modem> getInstance(int frequency, int samplerate, std::map<std::string, std::string> parameters, int buffer_size);
 };
+
+extern std::map<std::string, std::function<std::shared_ptr<Modem>(int, int, std::map<std::string, std::string>, int)>> modem_registry;
+
+void registerModems();
