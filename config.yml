@@ -30,7 +30,7 @@ radio:
 # All satellites you want to track
 satellites:
   - norad: 40069 # METEOR-M 2
-    min_elevation: 0
+    min_elevation: 10
     priority: 1
     downlinks:
       - name: LRPTBB
@@ -56,7 +56,7 @@ satellites:
           rrc_taps: 31
           costas_bw: 0.005
   - norad: 25338 # NOAA 15
-    min_elevation: 0
+    min_elevation: 10
     priority: 1
     downlinks:
       - name: APT
@@ -78,7 +78,7 @@ satellites:
         parameters:
           none: none
   - norad: 28654 # NOAA 18
-    min_elevation: 0
+    min_elevation: 10
     priority: 1
     downlinks:
       - name: APT
@@ -100,7 +100,7 @@ satellites:
         parameters:
           none: none
   - norad: 33591 # NOAA 19
-    min_elevation: 0
+    min_elevation: 10
     priority: 1
     downlinks:
       - name: APT

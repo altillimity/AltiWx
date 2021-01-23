@@ -55,3 +55,8 @@ target_link_libraries(AltiWx PUBLIC ${DSP_LIBRARY})
 find_package(pybind11 REQUIRED)
 target_link_libraries(AltiWx PUBLIC pybind11::embed)
 target_include_directories(AltiWx PUBLIC ${PYBIND11_INCLUDE_DIR})
+
+# FMT
+find_package(fmt REQUIRED)
+target_include_directories(AltiWx PUBLIC ${fmt_INCLUDE_DIRS})
+target_link_libraries(AltiWx PUBLIC fmt::fmt)
