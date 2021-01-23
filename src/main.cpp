@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     // Schedule passes scheduling
     global_scheduler->every(std::chrono::system_clock::duration(std::chrono::seconds(24 * 60 * 60)), &SatellitePassManager::schedulePasses, &pass_manager);
 
-    //processSatellitePass({25338, time(NULL), time(NULL) + 10, 10.0f, NORTHBOUND}, device_dsp, tle_manager.getTLE(25338));
+    //processSatellitePass({40069, time(NULL), time(NULL) + 10, 10.0f, NORTHBOUND}, device_dsp, tle_manager.getTLE(40069));
 
     /*
     DeviceDSP device_dsp(2.4e6, 101e6, 49);

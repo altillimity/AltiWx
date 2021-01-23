@@ -29,11 +29,11 @@ radio:
 
 # All satellites you want to track
 satellites:
-  - norad: 40096 # METEOR-M 2
+  - norad: 40069 # METEOR-M 2
     min_elevation: 0
     priority: 1
     downlinks:
-      - name: LRPT
+      - name: LRPTBB
         frequency: 137100000
         bandwidth: 140000
         doppler: false
@@ -42,6 +42,19 @@ satellites:
         type: IQ
         parameters:
           none: none
+      - name: LRPT
+        frequency: 137100000
+        bandwidth: 140000
+        doppler: false
+        post_processing_script: none
+        output_extension: soft
+        type: QPSK
+        parameters:
+          agc_rate: 0.001
+          symbolrate: 72000
+          rrc_alpha: 0.5
+          rrc_taps: 31
+          costas_bw: 0.005
   - norad: 25338 # NOAA 15
     min_elevation: 0
     priority: 1

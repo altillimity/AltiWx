@@ -51,7 +51,7 @@ void Modem::setFrequency(long frequency)
 
     if (frequency != d_frequency_in)
     {
-        d_shift_frequency = d_frequency - d_frequency_in;
+        d_shift_frequency = -(d_frequency - d_frequency_in);
         nco_crcf_set_frequency(freq_shifter, (2.0 * M_PI) * (((double)abs(d_shift_frequency)) / ((double)d_samplerate_in)));
     }
     else
@@ -86,9 +86,9 @@ void Modem::workThread()
         if (d_shift_frequency != 0)
         {
             if (d_shift_frequency > 0)
-                nco_crcf_mix_block_down(freq_shifter, input_buffer, shifted_buffer, cnt);
-            else
                 nco_crcf_mix_block_up(freq_shifter, input_buffer, shifted_buffer, cnt);
+            else
+                nco_crcf_mix_block_down(freq_shifter, input_buffer, shifted_buffer, cnt);
         }
 
         msresamp_crcf_execute(freq_resampler, d_shift_frequency == 0 ? input_buffer : shifted_buffer, cnt, resamp_buffer, &resamp_cnt);
@@ -102,6 +102,7 @@ void Modem::workThread()
 // Modem registery stuff
 #include "modem_iq.h"
 #include "modem_fm.h"
+#include "modem_qpsk.h"
 
 std::map<std::string, std::function<std::shared_ptr<Modem>(int, int, std::map<std::string, std::string>, int)>> modem_registry;
 
@@ -110,6 +111,7 @@ void registerModems()
     // Register internal modems
     modem_registry.emplace(ModemIQ::getType(), ModemIQ::getInstance);
     modem_registry.emplace(ModemFM::getType(), ModemFM::getInstance);
+    modem_registry.emplace(ModemQPSK::getType(), ModemQPSK::getInstance);
 
     /*
     // Let plugins do their thing

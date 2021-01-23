@@ -43,7 +43,7 @@ public:
     Modem(int frequency, int samplerate, std::map<std::string, std::string> parameters, int buffer_size);
     ~Modem();
     void start(long inputSamplerate, long inputFrequency);
-    void stop();
+    virtual void stop();
     void setFrequency(long frequency);
     void push(std::complex<float> *buffer, int length);
 

@@ -3,7 +3,27 @@
 
 DeviceDSP::DeviceDSP(int samplerate, int frequency, int gain) : d_samplerate(samplerate), d_frequency(frequency), d_gain(gain), rtlsdr_should_run(false)
 {
-    rtlsdr_read_buffer = new std::complex<float>[BUFFER_SIZE * 100];
+    _lut_32f = new std::complex<float>[65535 + 1];
+
+    // Generate complex float conversion table
+    for (unsigned int i = 0; i <= 65535; i++)
+    {
+#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+        float re = ((i & 0xff) - 127.4f) * (1.0f / 128.0f);
+        float im = ((i >> 8) - 127.4f) * (1.0f / 128.0f);
+#else
+        float re = ((i >> 8) - 127.4f) * (1.0f / 128.0f);
+        float im = ((i & 0xff) - 127.4f) * (1.0f / 128.0f);
+#endif
+
+        std::complex<float> v32f, vs32f;
+
+        v32f.real(re);
+        v32f.imag(im);
+        _lut_32f[i] = v32f;
+    }
+
+    rtlsdr_read_buffer = new std::complex<float>[BUFFER_SIZE * 1000];
 
     logger->info("Attempting to open RTLSDR device...");
     if (rtlsdr_open(&rtlsdr_device, 0) != 0)
@@ -19,6 +39,7 @@ DeviceDSP::DeviceDSP(int samplerate, int frequency, int gain) : d_samplerate(sam
 DeviceDSP::~DeviceDSP()
 {
     delete[] rtlsdr_read_buffer;
+    delete[] _lut_32f;
 }
 
 void DeviceDSP::start()
@@ -44,9 +65,7 @@ void DeviceDSP::callback(unsigned char *buf, uint32_t &len)
 {
     // Convert to complex floats
     for (int i = 0; i < len / 2; ++i)
-    {
-        rtlsdr_read_buffer[i] = std::complex<float>(*((int8_t *)&buf[i * 2 + 0]), *((int8_t *)&buf[i * 2 + 1]));
-    }
+        rtlsdr_read_buffer[i] = _lut_32f[*((uint16_t *)&buf[2 * i])];
 
     modems_mutex.lock();
 
@@ -54,8 +73,6 @@ void DeviceDSP::callback(unsigned char *buf, uint32_t &len)
         modem.second->push(rtlsdr_read_buffer, len / 2);
 
     modems_mutex.unlock();
-
-    //logger->info(len);
 }
 
 void DeviceDSP::_rtlsdr_callback(unsigned char *buf, uint32_t len, void *ctx)

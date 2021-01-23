@@ -20,6 +20,7 @@ private:
     std::mutex rtlsdr_mutex;
     std::thread rtlsdr_thread;
     std::atomic<bool> rtlsdr_should_run;
+    std::complex<float> *_lut_32f; // Conversion table
 
     std::complex<float> *rtlsdr_read_buffer;
 
