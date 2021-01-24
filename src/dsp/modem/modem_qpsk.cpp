@@ -14,7 +14,7 @@ ModemQPSK::ModemQPSK(int frequency, int samplerate, std::map<std::string, std::s
     agc = std::make_shared<libdsp::AgcCC>(d_agc_rate, 1.0f, 1.0f, 65536);
     rrc = std::make_shared<libdsp::FIRFilterCCF>(1, libdsp::firgen::root_raised_cosine(1, samplerate, d_symbolrate, d_rrc_alpha, d_rrc_taps));
     pll = std::make_shared<libdsp::CostasLoop>(d_loop_bw, 4);
-    rec = std::make_shared<libdsp::ClockRecoveryMMCC>(samplerate / d_symbolrate, pow(8.7e-3, 2) / 4.0, 0.5f, 8.7e-3, 0.005f);
+    rec = std::make_shared<libdsp::ClockRecoveryMMCC>((float)samplerate / (float)d_symbolrate, pow(8.7e-3, 2) / 4.0, 0.5f, 8.7e-3, 0.005f);
 
     // Buffers
     agc_buffer = new std::complex<float>[buffer_size];

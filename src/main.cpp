@@ -1,7 +1,7 @@
 #include "logger/logger.h"
 #include "dsp/dsp.h"
 
-#include "dsp/modem/modem_fm.h"
+#include "dsp/modem/modem_qpsk.h"
 #include "orbit/tle_manager.h"
 #include "orbit/orbit_predictor.h"
 #include "scheduler/scheduler.h"
@@ -9,7 +9,7 @@
 #include "orbit/pass_manager.h"
 
 #include "processing/pass_processing.h"
-
+#include <fstream>
 int main(int argc, char *argv[])
 {
     // Start logger first

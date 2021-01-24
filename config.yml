@@ -50,7 +50,7 @@ satellites:
         output_extension: soft
         type: QPSK
         parameters:
-          agc_rate: 0.001
+          agc_rate: 0.1
           symbolrate: 72000
           rrc_alpha: 0.5
           rrc_taps: 31
