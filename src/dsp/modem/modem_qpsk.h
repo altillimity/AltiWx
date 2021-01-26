@@ -22,6 +22,7 @@ protected:
     float d_rrc_alpha;
     int d_rrc_taps;
     float d_loop_bw;
+    bool d_iq_invert;
 
     std::complex<float> *agc_buffer;
     std::complex<float> *rrc_buffer;

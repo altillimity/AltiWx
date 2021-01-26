@@ -53,11 +53,12 @@ satellites:
         output_extension: soft
         type: QPSK
         parameters:
-          agc_rate: 0.5
+          agc_rate: 0.1
           symbolrate: 72000
           rrc_alpha: 0.6
-          rrc_taps: 361
-          costas_bw: 0.004
+          rrc_taps: 31
+          costas_bw: 0.005
+          iq_invert: true
   - norad: 25338 # NOAA 15
     min_elevation: 10
     priority: 1

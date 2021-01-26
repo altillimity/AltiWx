@@ -6,7 +6,8 @@ ModemQPSK::ModemQPSK(int frequency, int samplerate, std::map<std::string, std::s
                                                                                                                        d_symbolrate(std::stoi(parameters["symbolrate"])),
                                                                                                                        d_rrc_alpha(std::stof(parameters["rrc_alpha"])),
                                                                                                                        d_rrc_taps(std::stoi(parameters["rrc_taps"])),
-                                                                                                                       d_loop_bw(std::stof(parameters["costas_bw"]))
+                                                                                                                       d_loop_bw(std::stof(parameters["costas_bw"])),
+                                                                                                                       d_iq_invert(parameters.count("iq_invert") > 0 ? (parameters["iq_invert"] == "true") : false)
 {
     output_file = std::ofstream(d_parameters["file"], std::ios::binary);
 
@@ -49,8 +50,8 @@ void ModemQPSK::work(std::complex<float> *buffer, int length)
 
     for (int i = 0; i < rec_out; i++)
     {
-        sym_buffer[i * 2 + 0] = clamp(rec_buffer[i].imag() * 100);
-        sym_buffer[i * 2 + 1] = clamp(rec_buffer[i].real() * 100);
+        sym_buffer[i * 2 + d_iq_invert] = clamp(rec_buffer[i].imag() * 100);
+        sym_buffer[i * 2 + (1 - d_iq_invert)] = clamp(rec_buffer[i].real() * 100);
     }
 
     output_file.write((char *)sym_buffer, rec_out * 2);
