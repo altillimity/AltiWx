@@ -43,6 +43,10 @@ void processSatellitePass(SatellitePass satPass, std::shared_ptr<DeviceDSP> dsp,
 
     SatelliteConfig satellite_config = configManager->getConfig().getSatelliteConfig(satPass.norad);
 
+    // Return the sdr!
+    long band = getBandForSatellite(satellite_config);
+    dsp->setFrequency(band);
+
     // Save every recorded file
     std::vector<ToProcess> filePaths;
 

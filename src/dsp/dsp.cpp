@@ -82,11 +82,13 @@ void DeviceDSP::_rtlsdr_callback(unsigned char *buf, uint32_t len, void *ctx)
 
 void DeviceDSP::setFrequency(int frequency)
 {
+    if (rtlsdr_should_run)
+        rtlsdr_cancel_async(rtlsdr_device);
     rtlsdr_mutex.lock();
     d_frequency = frequency;
-    if (rtlsdr_set_center_freq(rtlsdr_device, d_frequency) != 0)
+    while (rtlsdr_set_center_freq(rtlsdr_device, d_frequency) != 0)
     {
-        logger->critical("Could not set SDR frequency!");
+        logger->error("Could not set SDR frequency!");
     }
     logger->info("Tuned SDR to " + std::to_string(rtlsdr_get_center_freq(rtlsdr_device)) + " Hz");
     rtlsdr_mutex.unlock();

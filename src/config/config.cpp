@@ -96,3 +96,41 @@ SatelliteConfig ConfigData::getSatelliteConfig(int norad)
                                                              });
     return *it;
 }
+
+template <class InputIt, class T = typename std::iterator_traits<InputIt>::value_type>
+T most_common(InputIt begin, InputIt end)
+{
+    std::map<T, int> counts;
+    for (InputIt it = begin; it != end; ++it)
+    {
+        if (counts.find(*it) != counts.end())
+            ++counts[*it];
+        else
+            counts[*it] = 1;
+    }
+    return std::max_element(counts.begin(), counts.end(), [](const std::pair<T, int> &pair1, const std::pair<T, int> &pair2) { return pair1.second < pair2.second; })->first;
+}
+
+long getBandForDownlink(DownlinkConfig cfg)
+{
+    long band = 0;
+
+    for (long &freq : configManager->getConfig().radio_config.frequencies)
+    {
+        long minFreq = freq - (configManager->getConfig().radio_config.samplerate / 2);
+        long maxFreq = freq + (configManager->getConfig().radio_config.samplerate / 2);
+
+        if (minFreq <= cfg.frequency && cfg.frequency <= maxFreq)
+            band = freq;
+    }
+
+    return band;
+}
+
+long getBandForSatellite(SatelliteConfig cfg)
+{
+    std::vector<long> freqs;
+    for (DownlinkConfig downlink : cfg.downlinkConfigs)
+        freqs.push_back(getBandForDownlink(downlink));
+    return most_common(freqs.begin(), freqs.end());
+}

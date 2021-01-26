@@ -40,7 +40,7 @@ namespace YAML
         static Node encode(const RadioConfig &sdrConfig)
         {
             Node node;
-            node["frequency"] = (long)sdrConfig.frequency;
+            node["frequencies"] = (std::vector<long>)sdrConfig.frequencies;
             node["samplerate"] = (long)sdrConfig.samplerate;
             node["gain"] = (int)sdrConfig.gain;
             if (sdrConfig.ppm_enabled)
@@ -55,7 +55,7 @@ namespace YAML
                 return false;
             }
 
-            sdrConfig.frequency = node["frequency"].as<long>();
+            sdrConfig.frequencies = node["frequencies"].as<std::vector<long>>();
             sdrConfig.samplerate = node["samplerate"].as<long>();
             sdrConfig.gain = node["gain"].as<int>();
 

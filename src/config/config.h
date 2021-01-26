@@ -13,7 +13,7 @@
 struct RadioConfig
 {
     // General settings
-    long frequency;
+    std::vector<long> frequencies;
     long samplerate;
     int gain;
 
@@ -81,3 +81,7 @@ public:
 
 // Main config object
 extern std::shared_ptr<ConfigManager> configManager;
+
+// Utils
+long getBandForDownlink(DownlinkConfig cfg);
+long getBandForSatellite(SatelliteConfig cfg); // We currently assume 1 satellite = 1 band

@@ -14,6 +14,7 @@ endif()
 
 add_executable(AltiWx ${AltiWx_CPPS})
 target_include_directories(AltiWx PUBLIC src)
+target_link_libraries(AltiWx PUBLIC stdc++fs)
 
 # Libraries
 find_package(PkgConfig REQUIRED) 
