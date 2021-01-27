@@ -1,6 +1,6 @@
 #include "orbit_predictor.h"
 #include <math.h>
-
+#include "sun_predictor.h"
 #include "logger/logger.h"
 
 OrbitPredictor::OrbitPredictor(int norad, TLE tle, SatelliteStation station) : norad_m(norad), tle_m(tle), station_m(station)
@@ -48,7 +48,7 @@ SatellitePass OrbitPredictor::getNextPass(std::time_t time)
     }
 
     // Return SatellitePass
-    return {norad_m, aosTime, losTime, elevation, southboud ? SOUTHBOUND : NORTHBOUND};
+    return {norad_m, aosTime, losTime, elevation, southboud ? SOUTHBOUND : NORTHBOUND, getSunElevationAt(station_m, aosTime)};
 }
 
 SatellitePass OrbitPredictor::getNextPassOver(std::time_t time, float elevation)

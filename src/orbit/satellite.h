@@ -14,6 +14,7 @@ struct SatellitePass
     std::time_t aos, los;
     float elevation;
     pass_direction_t direction;
+    float sun_elevation;
 };
 
 struct SatelliteStation

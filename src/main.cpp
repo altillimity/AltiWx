@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
                                                      {"costas_bw", "0.005"},
                                                      {"iq_invert", "true"}};
 
-    std::ifstream meteorFile("/home/alan/Downloads/meteor2-felix.raw");
+    std::ifstream meteorFile("/home/alan/Downloads/piedfase-m2-2.raw");
     std::shared_ptr<ModemQPSK> qpsk = std::make_shared<ModemQPSK>(100, 140e3, parameters, 8192);
     qpsk->start(140e3, 100);
     std::complex<float> buffer[8192];
@@ -81,7 +81,6 @@ int main(int argc, char *argv[])
     }
     exit(0);
     */
-
     /*
     DeviceDSP device_dsp(2.4e6, 101e6, 49);
 

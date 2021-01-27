@@ -49,6 +49,7 @@ void ProcessingScript::process()
         altiWxModule.attr("northbound") = pybind11::cast(d_satellite_pass.direction == NORTHBOUND);
         altiWxModule.attr("southbound") = pybind11::cast(d_satellite_pass.direction == SOUTHBOUND);
         altiWxModule.attr("elevation") = pybind11::cast(d_satellite_pass.elevation);
+        altiWxModule.attr("sun_elevation") = pybind11::cast(d_satellite_pass.sun_elevation);
 
         // Logging
         logger->trace(script_content);
@@ -107,6 +108,7 @@ PYBIND11_EMBEDDED_MODULE(altiwx, m)
     m.attr("northbound") = false;
     m.attr("southbound") = false;
     m.attr("elevation") = 0;
+    m.attr("sun_elevation") = 0;
 
     // Functions
     m.def("trace", &trace);
