@@ -1,15 +1,14 @@
 #include "logger/logger.h"
 #include "dsp/dsp.h"
-
 #include "dsp/modem/modem_qpsk.h"
 #include "orbit/tle_manager.h"
 #include "orbit/orbit_predictor.h"
 #include "scheduler/scheduler.h"
 #include "config/config.h"
 #include "orbit/pass_manager.h"
-
 #include "processing/pass_processing.h"
 #include <fstream>
+
 int main(int argc, char *argv[])
 {
     // Start logger first
@@ -98,5 +97,5 @@ int main(int argc, char *argv[])
     //device_dsp.attachModem("3", std::make_shared<ModemFM>(101.1e6, 200e3, 48e3, "test3.wav"));
 
     while (1)
-        sleep(1);
+        std::this_thread::sleep_for(std::chrono::seconds(1)); 
 }
