@@ -9,6 +9,8 @@
 #include "processing/pass_processing.h"
 #include <fstream>
 
+#define ALTIWX_VERSION "0.0.1 BETA"
+
 int main(int argc, char *argv[])
 {
     // Start logger first
@@ -20,6 +22,8 @@ int main(int argc, char *argv[])
     logger->info(" / __ |/ / __/ /| |/ |/ /\\ \\ / ");
     logger->info("/_/ |_/_/\\__/_/ |__/|__//_\\_\\ ");
     logger->info("                                 ");
+    logger->info("Starting AltiWx v" + (std::string)ALTIWX_VERSION);
+    logger->info("");
 
     // Load config file
     initConfig();
@@ -34,7 +38,7 @@ int main(int argc, char *argv[])
     std::shared_ptr<DeviceDSP> device_dsp = std::make_shared<DeviceDSP>(configManager->getConfig().radio_config.samplerate,
                                                                         configManager->getConfig().radio_config.frequencies[0],
                                                                         configManager->getConfig().radio_config.gain);
-    device_dsp->start();
+    //device_dsp->start();
 
     // Start scheduler
     initScheduler();
@@ -97,5 +101,5 @@ int main(int argc, char *argv[])
     //device_dsp.attachModem("3", std::make_shared<ModemFM>(101.1e6, 200e3, 48e3, "test3.wav"));
 
     while (1)
-        std::this_thread::sleep_for(std::chrono::seconds(1)); 
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 }

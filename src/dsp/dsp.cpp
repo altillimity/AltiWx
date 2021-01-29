@@ -89,6 +89,7 @@ void DeviceDSP::setFrequency(int frequency)
     while (rtlsdr_set_center_freq(rtlsdr_device, d_frequency) != 0)
     {
         logger->error("Could not set SDR frequency!");
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     logger->info("Tuned SDR to " + std::to_string(rtlsdr_get_center_freq(rtlsdr_device)) + " Hz");
     rtlsdr_mutex.unlock();

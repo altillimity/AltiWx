@@ -143,12 +143,13 @@ namespace YAML
             node["post_processing_script"] = (std::string)downlinkConfig.post_processing_script;
             node["output_extension"] = (std::string)downlinkConfig.output_extension;
             node["type"] = (std::string)downlinkConfig.modem_type;
-            node["parameters"] = (std::map<std::string, std::string>)downlinkConfig.modem_parameters;
+            if (downlinkConfig.modem_parameters.size() > 0)
+                node["parameters"] = (std::map<std::string, std::string>)downlinkConfig.modem_parameters;
             return node;
         }
         static bool decode(const Node &node, DownlinkConfig &downlinkConfig)
         {
-            if (!node.IsMap() || node.size() < 8)
+            if (!node.IsMap() || node.size() < 7)
             {
                 return false;
             }
@@ -159,7 +160,8 @@ namespace YAML
             downlinkConfig.post_processing_script = node["post_processing_script"].as<std::string>();
             downlinkConfig.output_extension = node["output_extension"].as<std::string>();
             downlinkConfig.modem_type = node["type"].as<std::string>();
-            downlinkConfig.modem_parameters = node["parameters"].as<std::map<std::string, std::string>>();
+            if (node["parameters"].IsDefined())
+                downlinkConfig.modem_parameters = node["parameters"].as<std::map<std::string, std::string>>();
             return true;
         }
     };

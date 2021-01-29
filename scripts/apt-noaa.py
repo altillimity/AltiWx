@@ -7,7 +7,7 @@ output_file = altiwx.filename + ".png"
 
 outflag = ""
 if altiwx.southbound:
-    outflag = "-e f"
+    outflag = "-ef"
 
 command = "aptdec " + outflag + " -o '" + output_file + "' '" + altiwx.input_file + "'"
 altiwx.debug(command)

@@ -36,20 +36,11 @@ satellites:
     min_elevation: 10
     priority: 1
     downlinks:
-      - name: LRPTBB
-        frequency: 137100000
-        bandwidth: 140000
-        doppler: false
-        post_processing_script: none
-        output_extension: raw
-        type: IQ
-        parameters:
-          none: none
       - name: LRPT
         frequency: 137100000
         bandwidth: 140000
         doppler: false
-        post_processing_script: none
+        post_processing_script: lrpt-meteorm2.py
         output_extension: soft
         type: QPSK
         parameters:
@@ -147,29 +138,3 @@ satellites:
         type: FM
         parameters:
           audio_samplerate: 48000
-  - norad: 42778 # MAX VALLIER
-    min_elevation: 40
-    priority: 2
-    downlinks:
-      - name: TLM
-        frequency: 145890000
-        bandwidth: 400000
-        doppler: false
-        post_processing_script: none
-        output_extension: raw
-        type: IQ
-        parameters:
-          none: none
-  - norad: 44406 # LUCKY-7
-    min_elevation: 40
-    priority: 2
-    downlinks:
-      - name: TLM
-        frequency: 437525000
-        bandwidth: 400000
-        doppler: false
-        post_processing_script: none
-        output_extension: raw
-        type: IQ
-        parameters:
-          none: none
