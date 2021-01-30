@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     altiwx::eventBus->fire_event<altiwx::events::StartedEvent>({});
 
     //processSatellitePass({25544, time(NULL), time(NULL) + 10, 10.0f, NORTHBOUND}, device_dsp, tle_manager.getTLE(25544));
-    //processSatellitePass({28654, time(NULL), time(NULL) + 10, 10.0f, NORTHBOUND}, device_dsp, tle_manager.getTLE(28654));
+    processSatellitePass({28654, time(NULL), time(NULL) + 10, 10.0f, NORTHBOUND}, device_dsp, tle_manager.getTLE(28654));
 
     //logger->info(getBandForDownlink(configManager->getConfig().getSatelliteConfig(25544).downlinkConfigs[0]));
 
