@@ -7,7 +7,11 @@
 #include "config/config.h"
 #include "orbit/pass_manager.h"
 #include "processing/pass_processing.h"
+#include "plugin/plugins.h"
 #include <fstream>
+
+#include "api/altiwx/altiwx.h"
+#include "api/altiwx/events/events.h"
 
 #define ALTIWX_VERSION "0.0.1 BETA"
 
@@ -25,6 +29,9 @@ int main(int argc, char *argv[])
     logger->info("Starting AltiWx v" + (std::string)ALTIWX_VERSION);
     logger->info("");
 
+    // First load plugin
+    initPlugins();
+
     // Load config file
     initConfig();
 
@@ -38,7 +45,7 @@ int main(int argc, char *argv[])
     std::shared_ptr<DeviceDSP> device_dsp = std::make_shared<DeviceDSP>(configManager->getConfig().radio_config.samplerate,
                                                                         configManager->getConfig().radio_config.frequencies[0],
                                                                         configManager->getConfig().radio_config.gain);
-    //device_dsp->start();
+    device_dsp->start();
 
     // Start scheduler
     initScheduler();
@@ -58,6 +65,9 @@ int main(int argc, char *argv[])
 
     // Schedule passes scheduling
     global_scheduler->every(std::chrono::system_clock::duration(std::chrono::seconds(24 * 60 * 60)), &SatellitePassManager::schedulePasses, &pass_manager);
+
+    // Tell plugins we're done starting
+    altiwx::eventBus->fire_event<altiwx::events::StartedEvent>({});
 
     //processSatellitePass({25544, time(NULL), time(NULL) + 10, 10.0f, NORTHBOUND}, device_dsp, tle_manager.getTLE(25544));
     //processSatellitePass({28654, time(NULL), time(NULL) + 10, 10.0f, NORTHBOUND}, device_dsp, tle_manager.getTLE(28654));

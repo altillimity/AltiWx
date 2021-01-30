@@ -10,6 +10,8 @@ if(NOT MINGW)
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 endif()
 
+add_subdirectory(plugins)
+
 project (AltiWx)
 file(GLOB_RECURSE AltiWx_CPPS src/*.cpp src/*.c)
 
@@ -20,7 +22,7 @@ endif()
 
 add_executable(AltiWx ${AltiWx_CPPS})
 target_include_directories(AltiWx PUBLIC src)
-target_link_libraries(AltiWx PUBLIC stdc++fs)
+target_link_libraries(AltiWx PUBLIC stdc++fs dl)
 
 # Libraries
 find_package(PkgConfig REQUIRED) 
@@ -67,3 +69,8 @@ target_include_directories(AltiWx PUBLIC ${PYBIND11_INCLUDE_DIR})
 find_package(fmt REQUIRED)
 target_include_directories(AltiWx PUBLIC ${fmt_INCLUDE_DIRS})
 target_link_libraries(AltiWx PUBLIC fmt::fmt)
+
+# Mingw requires some manual stuff... There definitely is a better way to do it
+if(MINGW)
+    target_link_libraries(AltiWx PUBLIC yaml-cpp ws2_32)
+endif()

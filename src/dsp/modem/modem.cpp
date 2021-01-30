@@ -1,5 +1,7 @@
 #include "modem.h"
 #include "logger/logger.h"
+#include "api/altiwx/altiwx.h"
+#include "api/altiwx/events/events.h"
 
 Modem::Modem(int frequency, int samplerate, std::map<std::string, std::string> parameters, int buffer_size) : d_frequency(frequency), d_samplerate(samplerate), d_parameters(parameters), d_buffer_size(buffer_size)
 {
@@ -113,10 +115,8 @@ void registerModems()
     modem_registry.emplace(ModemFM::getType(), ModemFM::getInstance);
     modem_registry.emplace(ModemQPSK::getType(), ModemQPSK::getInstance);
 
-    /*
     // Let plugins do their thing
     altiwx::eventBus->fire_event<altiwx::events::RegisterModemsEvent>({modem_registry});
-    */
 
     // Log them out
     logger->debug("Registered modems (" + std::to_string(modem_registry.size()) + ") : ");
