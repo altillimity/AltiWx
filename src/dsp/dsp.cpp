@@ -85,6 +85,7 @@ void DeviceDSP::setFrequency(int frequency)
     if (rtlsdr_should_run)
         rtlsdr_cancel_async(rtlsdr_device);
     rtlsdr_mutex.lock();
+    modems_mutex.lock();
     d_frequency = frequency;
     while (rtlsdr_set_center_freq(rtlsdr_device, d_frequency) != 0)
     {
@@ -93,11 +94,13 @@ void DeviceDSP::setFrequency(int frequency)
     }
     logger->info("Tuned SDR to " + std::to_string(rtlsdr_get_center_freq(rtlsdr_device)) + " Hz");
     rtlsdr_mutex.unlock();
+    modems_mutex.unlock();
 }
 
 void DeviceDSP::setSamplerate(int samplerate)
 {
     rtlsdr_mutex.lock();
+    modems_mutex.lock();
     d_samplerate = samplerate;
     if (rtlsdr_set_sample_rate(rtlsdr_device, d_samplerate) != 0)
     {
@@ -105,11 +108,13 @@ void DeviceDSP::setSamplerate(int samplerate)
     }
     logger->info("Set SDR samplerate to " + std::to_string(rtlsdr_get_sample_rate(rtlsdr_device)) + " S/s");
     rtlsdr_mutex.unlock();
+    modems_mutex.unlock();
 }
 
 void DeviceDSP::setGain(int gain)
 {
     rtlsdr_mutex.lock();
+    modems_mutex.lock();
     d_gain = gain;
     if (rtlsdr_set_tuner_gain_mode(rtlsdr_device, 1) != 0)
     {
@@ -121,6 +126,7 @@ void DeviceDSP::setGain(int gain)
     }
     logger->info("Set SDR gain to " + std::to_string(rtlsdr_get_tuner_gain(rtlsdr_device) / 10) + " dB");
     rtlsdr_mutex.unlock();
+    modems_mutex.unlock();
 }
 
 void DeviceDSP::attachModem(std::string id, std::shared_ptr<Modem> modem)
