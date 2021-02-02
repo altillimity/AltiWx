@@ -4,6 +4,8 @@ Yet another automated satellite station software... With additional features suc
 
 **Note : This is still considered Beta, but it does not mean I do not encourage using it yet! This should work fine already, just don't expect a bug-free experience yet... If you do use it, please report bugs since I make sure everything works myself :)**
 
+**Note 2 : This currently only supports RTL-SDR, support for other SDRs is planned but I am still deciding how I will do it.**
+
 # What is this?
 
 So... What is this? This is a software I've decided to make after experimenting around with several automated satellite station solutions, mostly aimed at the NOAA APT and METEOR LRPT transmissions on VHF. I originally used software that wrapped around rtl_fm and other tools such as sox, predict, some APT decoder, etc to automatically record and decode passes. It worked great but something was bothering me, mostly the fact this same RTL-SDR has 2.4Mhz of usable bandwidth... So in theory the whole VHF weather band can fit right? And that's how the idea started.
