@@ -73,19 +73,12 @@ int main(int argc, char *argv[])
     //processSatellitePass({28654, time(NULL), time(NULL) + 10, 10.0f, NORTHBOUND}, device_dsp, tle_manager.getTLE(28654));
 
     //logger->info(getBandForDownlink(configManager->getConfig().getSatelliteConfig(25544).downlinkConfigs[0]));
-
     /*
-    std::map<std::string, std::string> parameters = {{"file", "meteor.soft"},
-                                                     {"agc_rate", "0.1"},
-                                                     {"symbolrate", "72000"},
-                                                     {"rrc_alpha", "0.6"},
-                                                     {"rrc_taps", "31"},
-                                                     {"costas_bw", "0.005"},
-                                                     {"iq_invert", "true"}};
+    std::map<std::string, std::string> parameters = {{"file", "dsb.bin"}};
 
-    std::ifstream meteorFile("/home/alan/Downloads/piedfase-m2-2.raw");
-    std::shared_ptr<ModemQPSK> qpsk = std::make_shared<ModemQPSK>(100, 140e3, parameters, 8192);
-    qpsk->start(140e3, 100);
+    std::ifstream meteorFile("/home/alan/NOAA 18_DSB_2021-1-20--20:07.raw");
+    std::shared_ptr<Modem> qpsk = modem_registry["NOAA_DSB"](100, 48e3, parameters, 8192);
+    qpsk->start(48e3, 100);
     std::complex<float> buffer[8192];
     while (!meteorFile.eof())
     {

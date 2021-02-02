@@ -178,9 +178,9 @@ satellites:
         frequency: 137770000
         bandwidth: 48000
         doppler: false
-        post_processing_script: none
+        post_processing_script: dsb-noaa.py
         output_extension: raw
-        type: IQ
+        type: NOAA_DSB
   - norad: 25544 # ISS
     min_elevation: 20
     priority: 1
