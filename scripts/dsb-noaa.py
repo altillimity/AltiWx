@@ -1,5 +1,6 @@
 import altiwx
 import subprocess
+import os
 
 altiwx.info("Processing NOAA DSB data...")
 
