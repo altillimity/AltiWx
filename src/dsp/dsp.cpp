@@ -23,7 +23,7 @@ DeviceDSP::DeviceDSP(int samplerate, int frequency, int gain) : d_samplerate(sam
         _lut_32f[i] = v32f;
     }
 
-    rtlsdr_read_buffer = new std::complex<float>[BUFFER_SIZE * 1000];
+    rtlsdr_read_buffer = new std::complex<float>[DSB_BUFFER_SIZE * 1000];
 
     logger->info("Attempting to open RTLSDR device...");
     if (rtlsdr_open(&rtlsdr_device, 0) != 0)

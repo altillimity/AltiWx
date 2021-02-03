@@ -7,7 +7,7 @@
 #include "modem/modem.h"
 #include <unordered_map>
 
-#define BUFFER_SIZE 8192
+#define DSB_BUFFER_SIZE 8192
 
 class DeviceDSP
 {

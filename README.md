@@ -75,6 +75,7 @@ mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j4
 sudo make install
+cd ../..
 rm -rf libpredict
 
 # Build and install libdsp
@@ -84,6 +85,7 @@ mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j4
 sudo make install
+cd ../..
 rm -rf libdsp
 
 # Build and install yaml-cpp
@@ -93,11 +95,12 @@ mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j4
 sudo make install
+cd ../..
 rm -rf yaml-cpp
 
 # Finally, build AltiWx
 git clone https://github.com/altillimity/AltiWx.git
-cd Altiwx
+cd AltiWx
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j4
