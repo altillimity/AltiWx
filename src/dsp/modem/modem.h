@@ -8,11 +8,12 @@
 #include <map>
 #include <functional>
 #include <atomic>
+#include "buffer.h"
 
 class Modem
 {
 private:
-    libdsp::Pipe<std::complex<float>> fifo;
+    dsp::RingBuffer<std::complex<float>> fifo;
     nco_crcf freq_shifter;
     msresamp_crcf freq_resampler;
     std::complex<float> *input_buffer;

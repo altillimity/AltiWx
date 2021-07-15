@@ -52,7 +52,7 @@ int DSBDeframer::getState()
     return state;
 }
 
-std::vector<std::array<uint8_t, FRAME_SIZE>> DSBDeframer::work(uint8_t *input, size_t size)
+std::vector<std::array<uint8_t, FRAME_SIZE>> DSBDeframer::work(uint8_t *input, int size)
 {
     // Output buffer
     std::vector<std::array<uint8_t, FRAME_SIZE>> frames;

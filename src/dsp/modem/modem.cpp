@@ -8,6 +8,7 @@ Modem::Modem(int frequency, int samplerate, std::map<std::string, std::string> p
     input_buffer = new std::complex<float>[d_buffer_size];
     shifted_buffer = new std::complex<float>[d_buffer_size];
     resamp_buffer = new std::complex<float>[d_buffer_size];
+    fifo.init(1e9);
 }
 
 Modem::~Modem()
@@ -39,7 +40,8 @@ void Modem::stop()
 {
     logger->info("Stopping modem...");
     should_run = false;
-    fifo.~Pipe();
+    fifo.clearWriteStop();
+    fifo.clearReadStop();
     if (work_thread.joinable())
         work_thread.join();
     logger->info("Stopped!");
@@ -66,7 +68,7 @@ void Modem::setFrequency(long frequency)
 
 void Modem::push(std::complex<float> *buffer, int length)
 {
-    fifo.push(buffer, length);
+    fifo.write(buffer, length);
 }
 
 void Modem::workThread()
@@ -75,7 +77,7 @@ void Modem::workThread()
     unsigned int resamp_cnt;
     while (should_run)
     {
-        cnt = fifo.pop(input_buffer, d_buffer_size);
+        cnt = fifo.read(input_buffer, d_buffer_size);
 
         if (cnt <= 0)
         {
