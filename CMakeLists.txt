@@ -70,7 +70,7 @@ target_include_directories(AltiWx PUBLIC ${PYBIND11_INCLUDE_DIR})
 # FMT
 find_package(fmt REQUIRED)
 target_include_directories(AltiWx PUBLIC ${fmt_INCLUDE_DIRS})
-target_link_libraries(AltiWx PUBLIC fmt::fmt)
+target_link_libraries(AltiWx PUBLIC fmt)
 
 # Mingw requires some manual stuff... There definitely is a better way to do it
 if(MINGW)

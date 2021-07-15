@@ -40,8 +40,8 @@ void Modem::stop()
 {
     logger->info("Stopping modem...");
     should_run = false;
-    fifo.clearWriteStop();
-    fifo.clearReadStop();
+    fifo.stopReader();
+    fifo.stopWriter();
     if (work_thread.joinable())
         work_thread.join();
     logger->info("Stopped!");
