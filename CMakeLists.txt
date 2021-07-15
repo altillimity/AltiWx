@@ -56,7 +56,7 @@ target_link_libraries(AltiWx PUBLIC predict)
 find_package(yaml-cpp REQUIRED)
 pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
 target_include_directories(AltiWx PUBLIC ${YAML_CPP_INCLUDE_DIR})
-target_link_libraries(AltiWx PUBLIC ${YAML_CPP_LIBRARIES})
+target_link_libraries(AltiWx PUBLIC yaml-cpp)
 
 # LibDSP
 find_library(DSP_LIBRARY dsp REQUIRED)
