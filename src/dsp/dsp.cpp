@@ -33,7 +33,7 @@ DeviceDSP::DeviceDSP(int samplerate, int frequency, int gain) : d_samplerate(sam
 
     setSamplerate(d_samplerate);
     setFrequency(d_frequency);
-    setGain(49);
+    setGain(d_gain);
 }
 
 DeviceDSP::~DeviceDSP()
