@@ -2,9 +2,9 @@
 
 Yet another automated satellite station software... With additional features such as the ability to receive multiples downlink at once with a single SDR, if it fits in the bandwidth!
 
-**Note : This is still considered Beta, but it does not mean I do not encourage using it yet! This should work fine already, just don't expect a bug-free experience yet... If you do use it, please report bugs since I make sure everything works myself :)**
+**Note 1: This is still considered Beta, but it does not mean I do not encourage using it yet! This should work fine already, just don't expect a bug-free experience yet... If you do use it, please report bugs since I make sure everything works myself :)**
 
-**Note 2 : This currently only supports RTL-SDR, support for other SDRs is planned but I am still deciding how I will do it.**
+**Note 2: This currently only supports RTL-SDR, support for other SDRs is planned but I am still deciding how I will do it.**
 
 # What is this?
 
@@ -66,14 +66,14 @@ About Raspberry PIs, the software should work fine on anything over a 3B, and de
 
 ```
 # Install build tools and dependencies present in the repo
-sudo apt install libspdlog-dev librtlsdr-dev libfmt-dev pybind11-dev python3-dev libliquid-dev cmake build-essential git
+sudo apt install libspdlog-dev librtlsdr-dev libfmt-dev pybind11-dev python3-dev libliquid-dev cmake build-essential git libvolk1-dev
 
 # Build and install libpredict
 git clone https://github.com/la1k/libpredict
 cd libpredict
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
-make -j4
+make -j3
 sudo make install
 cd ../..
 rm -rf libpredict
@@ -83,7 +83,7 @@ git clone https://github.com/altillimity/libdsp
 cd libdsp
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
-make -j4
+make -j3
 sudo make install
 cd ../..
 rm -rf libdsp
@@ -93,7 +93,7 @@ git clone https://github.com/jbeder/yaml-cpp
 cd yaml-cpp
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
-make -j4
+make -j3
 sudo make install
 cd ../..
 rm -rf yaml-cpp
@@ -103,7 +103,7 @@ git clone https://github.com/altillimity/AltiWx.git
 cd AltiWx
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
-make -j4
+make -j3
 ```
 
 ### Configuration
@@ -112,7 +112,7 @@ Once you got AltiWx built, you need to setup a few other things.
 
 In the folder you will be running AltiWx, you need to have a config.yml file (template in this repository).
 
-The general concept of the configuration file is the following, I won't go into details explaining it all since I (trully) hope the comments are good enough :
+The general concept of the configuration file is the following, I won't go into details explaining it all since I (truly) hope the comments are good enough :
 
 ```
 # How should this station be called?
@@ -260,7 +260,8 @@ AltiWx will require as dependencies :
 - [yaml-cpp](https://github.com/jbeder/yaml-cpp)
 - [libdsp](https://github.com/altillimity/libdsp)
 - [pybind11](https://github.com/pybind/pybind11)
-- [fmt](https://github.com/fmtlib/fmt)  
+- [fmt](https://github.com/fmtlib/fmt) 
+- [volk](https://github.com/gnuradio/volk) 
 
 But also uses the following libraries, included in the repository :
 - [tinywav](https://github.com/mhroth/tinywav)
