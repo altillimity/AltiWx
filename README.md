@@ -66,7 +66,7 @@ About Raspberry PIs, the software should work fine on anything over a 3B, and de
 
 ```
 # Install build tools and dependencies present in the repo
-sudo apt install libspdlog-dev librtlsdr-dev libfmt-dev pybind11-dev python3-dev libliquid-dev cmake build-essential git
+sudo apt install libvolk1-dev libspdlog-dev librtlsdr-dev libfmt-dev pybind11-dev python3-dev libliquid-dev cmake build-essential git
 
 # Build and install libpredict
 git clone https://github.com/la1k/libpredict
