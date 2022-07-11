@@ -8,10 +8,10 @@ TLE fetchCelestrakTLE(int norad)
 
     logger->info("Fetching TLE for NORAD " + std::to_string(norad));
 
-    httplib::Client http_client("http://www.celestrak.com");
+    httplib::Client http_client("http://www.celestrak.org");
     std::string fetch_url = "/satcat/tle.php?CATNR=" + std::to_string(norad);
 
-    logger->debug("Using URL - http://www.celestrak.com" + fetch_url);
+    logger->debug("Using URL - http://www.celestrak.org" + fetch_url);
 
     httplib::Result http_reply = http_client.Get(fetch_url.c_str());
 
