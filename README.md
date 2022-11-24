@@ -250,6 +250,29 @@ Data from AltiWx is passed through the altiwx module, which exposes the followin
 - altiwx.elevation, peak elevation of this pass
 - altiwx.sun_elevation, sun elevation angle at the moment of the pass
 
+## Systemd service
+
+A systemd service is way to automatically start and restart Altiwx after a crash or a reboot. Listed below is a sample service that is placed as `/etc/systemd/system/altiwx.service` in the system. 
+
+```
+[Unit]
+Description=Altiwx automated satellite station
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=pi
+# fill in the path to the Altiwx executable
+ExecStart=/home/pi/AltiWx/AltiWx
+# fill in the directory where the Altiwx executable is located in
+WorkingDirectory=/home/pi/AltiWx/
+
+[Install]
+WantedBy=multi-user.target
+```
+
 ## Dependencies
 
 AltiWx will require as dependencies :
