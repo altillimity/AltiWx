@@ -13,11 +13,13 @@ ProcessingScript::ProcessingScript(SatellitePass satellite_pass,
                                    TLE tle,
                                    std::string input_file,
                                    std::string filename,
+                                   std::string workdir,
                                    std::string script) : d_satellite_pass(satellite_pass),
                                                          d_satellite_config(satelliteConfig),
                                                          d_downlink_config(downlinkConfig),
                                                          d_input_file(input_file),
                                                          d_filename(filename),
+                                                         d_workdir(workdir),
                                                          d_script(script),
                                                          d_tle(tle)
 {
@@ -42,6 +44,7 @@ void ProcessingScript::process()
         // Set python variables;
         altiWxModule.attr("input_file") = pybind11::cast(d_input_file);
         altiWxModule.attr("filename") = pybind11::cast(d_filename);
+        altiWxModule.attr("workdir") = pybind11::cast(d_workdir);
         altiWxModule.attr("satellite_name") = pybind11::cast(d_tle.object_name);
         altiWxModule.attr("downlink_name") = pybind11::cast(d_downlink_config.name);
         altiWxModule.attr("samplerate") = pybind11::cast(d_downlink_config.bandwidth);
@@ -102,6 +105,7 @@ PYBIND11_EMBEDDED_MODULE(altiwx, m)
     // Variables
     m.attr("input_file") = "";
     m.attr("filename") = "";
+    m.attr("workdir") = "";
     m.attr("satellite_name") = "";
     m.attr("samplerate") = 0;
     m.attr("southbound") = 0;
