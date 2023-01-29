@@ -5,7 +5,11 @@ altiwx.info("Processing NOAA APT data...")
 
 output_file = altiwx.filename + ".png"
 
-command = "noaa-apt '" + altiwx.input_file + "' -R auto -c histogram -o '" + output_file + "'"
+outflag = ""
+if altiwx.northbound:
+    outflag = "-R yes"
+
+command = "noaa-apt '" + altiwx.input_file + "' " + outflag + " -c histogram -o '" + output_file + "'"
 altiwx.debug(command)
 subprocess.Popen([command], shell=1).wait()
 

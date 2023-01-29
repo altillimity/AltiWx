@@ -23,7 +23,7 @@ target_include_directories(AltiWx PUBLIC src)
 target_link_libraries(AltiWx PUBLIC stdc++fs dl)
 
 # Plugins
-add_subdirectory(plugins)
+add_subdirectory(altiwx_plugins)
 
 # Libraries
 find_package(PkgConfig REQUIRED) 

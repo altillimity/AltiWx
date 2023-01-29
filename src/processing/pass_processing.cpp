@@ -6,7 +6,8 @@
 #include "processing_script.h"
 
 // Generate output filename / path
-std::string generateFilepath(SatellitePass &satellitePass, SatelliteConfig &satelliteConfig, DownlinkConfig &downlinkConfig, TLE &tle)
+//std::string generateFilepath(SatellitePass &satellitePass, SatelliteConfig &satelliteConfig, DownlinkConfig &downlinkConfig, TLE &tle)
+std::pair<std::string, std::string> generateFilepath(SatellitePass &satellitePass, SatelliteConfig &satelliteConfig, DownlinkConfig &downlinkConfig, TLE &tle)
 {
     std::tm *timeReadable = gmtime(&satellitePass.aos);
 
@@ -25,12 +26,14 @@ std::string generateFilepath(SatellitePass &satellitePass, SatelliteConfig &sate
 
     std::filesystem::create_directories(workdDir);
 
-    return workdDir + "/" + utc_timestamp;
+    //return workdDir + "/" + utc_timestamp;
+    return std::make_pair(workdDir + "/" + utc_timestamp, workdDir);
 }
 
 struct ToProcess
 {
     std::string filename;
+    std::string workdir;
     std::string filePath;
     std::string script;
     DownlinkConfig downlink;
@@ -57,13 +60,15 @@ void processSatellitePass(SatellitePass satPass, std::shared_ptr<DeviceDSP> dsp,
         logger->debug("Adding recorder for " + downlinkConfig.name + " downlink on " + std::to_string(downlinkConfig.frequency) + " Hz");
 
         // Generate filename / path, store them and setup recorder
-        std::string filename = generateFilepath(satPass, satellite_config, downlinkConfig, tle);
+        std::pair<std::string, std::string> pgenFilepath = generateFilepath(satPass, satellite_config, downlinkConfig, tle);
+        std::string filename = pgenFilepath.first;
+        std::string workdir = pgenFilepath.second;
         std::string filepath = filename + "." + downlinkConfig.output_extension;
         logger->debug("Using file path " + filepath);
 
         std::shared_ptr<DownlinkRecorder> recorder = std::make_shared<DownlinkRecorder>(dsp, downlinkConfig, satellite_config, tle, filepath);
         downlink_recorders.push_back(recorder);
-        filePaths.push_back({filename, filepath, downlinkConfig.post_processing_script, downlinkConfig, downlinkConfig.bandwidth});
+        filePaths.push_back({filename, workdir, filepath, downlinkConfig.post_processing_script, downlinkConfig, downlinkConfig.bandwidth});
     }
 
     // Start recording all downlinks
@@ -104,7 +109,7 @@ void processSatellitePass(SatellitePass satPass, std::shared_ptr<DeviceDSP> dsp,
             continue;
         }
 
-        ProcessingScript currentProcessor(satPass, satellite_config, fileToProcess.downlink, tle, fileToProcess.filePath, fileToProcess.filename, scriptFullPath);
+        ProcessingScript currentProcessor(satPass, satellite_config, fileToProcess.downlink, tle, fileToProcess.filePath, fileToProcess.filename, fileToProcess.workdir, scriptFullPath);
         currentProcessor.process();
     }
 }
