@@ -44,7 +44,8 @@ int main(int argc, char *argv[])
     // Start SDR
     std::shared_ptr<DeviceDSP> device_dsp = std::make_shared<DeviceDSP>(configManager->getConfig().radio_config.samplerate,
                                                                         configManager->getConfig().radio_config.frequencies[0],
-                                                                        configManager->getConfig().radio_config.gain);
+                                                                        configManager->getConfig().radio_config.gain,
+                                                                        configManager->getConfig().radio_config.serial_number);
     device_dsp->start();
 
     // Start scheduler

@@ -43,6 +43,8 @@ namespace YAML
             node["frequencies"] = (std::vector<long>)sdrConfig.frequencies;
             node["samplerate"] = (long)sdrConfig.samplerate;
             node["gain"] = (int)sdrConfig.gain;
+            if (!sdrConfig.serial_number.empty())
+                node["serial_number"] = (std::string)sdrConfig.serial_number;
             if (sdrConfig.ppm_enabled)
                 node["ppm_correction"] = (double)sdrConfig.ppm;
             return node;
@@ -58,6 +60,12 @@ namespace YAML
             sdrConfig.frequencies = node["frequencies"].as<std::vector<long>>();
             sdrConfig.samplerate = node["samplerate"].as<long>();
             sdrConfig.gain = node["gain"].as<int>();
+            if (node["serial_number"].IsDefined())
+            {
+                sdrConfig.serial_number = node["serial_number"].as<std::string>();
+            }
+            else
+                sdrConfig.serial_number = "";
 
             if (node["ppm_correction"].IsDefined())
             {

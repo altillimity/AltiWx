@@ -1,7 +1,7 @@
 #include "dsp.h"
 #include "logger/logger.h"
 
-DeviceDSP::DeviceDSP(int samplerate, int frequency, int gain) : d_samplerate(samplerate), d_frequency(frequency), d_gain(gain), rtlsdr_should_run(false)
+DeviceDSP::DeviceDSP(int samplerate, int frequency, int gain, std::string serial_number) : d_samplerate(samplerate), d_frequency(frequency), d_gain(gain), d_serial_number(std::move(serial_number)), rtlsdr_should_run(false)
 {
     _lut_32f = new std::complex<float>[65535 + 1];
 
@@ -25,8 +25,31 @@ DeviceDSP::DeviceDSP(int samplerate, int frequency, int gain) : d_samplerate(sam
 
     rtlsdr_read_buffer = new std::complex<float>[DSB_BUFFER_SIZE * 1000];
 
+    int index;
+    if(!d_serial_number.empty())
+    {
+        index = rtlsdr_get_index_by_serial(d_serial_number.c_str());
+    }
+    else
+        index = -1;
+
+    switch(index)
+    {
+        case -1:
+            index = 0;
+            break;
+        case -2:
+            logger->critical("No RTL-SDR devices found!");
+            break;
+        case -3:
+            logger->critical("No RTL-SDR device found with matching serial number!");
+            break;
+        default:
+            break;
+    }
+
     logger->info("Attempting to open RTLSDR device...");
-    if (rtlsdr_open(&rtlsdr_device, 0) != 0)
+    if (rtlsdr_open(&rtlsdr_device, index) != 0)
     {
         logger->critical("Could not open SDR device!");
     }
