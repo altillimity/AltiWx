@@ -145,6 +145,7 @@ radio:
   samplerate: 1000000
   gain: 49
   # ppm_correction: 0
+  serial_number: 00000001
 
 # All satellites you want to track
 satellites:
