@@ -16,6 +16,7 @@ struct RadioConfig
     std::vector<long> frequencies;
     long samplerate;
     int gain;
+    std::string serial_number;
 
     // PPM Correction
     bool ppm_enabled;

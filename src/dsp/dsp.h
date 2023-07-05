@@ -15,6 +15,7 @@ private:
     int d_samplerate;
     int d_frequency;
     int d_gain;
+    std::string d_serial_number;
 
     rtlsdr_dev *rtlsdr_device;
     std::mutex rtlsdr_mutex;
@@ -32,7 +33,7 @@ private:
     static void _rtlsdr_callback(unsigned char *buf, uint32_t len, void *ctx);
 
 public:
-    DeviceDSP(int samplerate, int frequency, int gain);
+    DeviceDSP(int samplerate, int frequency, int gain, std::string serial);
     ~DeviceDSP();
 
     void start();
