@@ -131,3 +131,14 @@ satellites:
         type: FM
         parameters:
           audio_samplerate: 48000
+      - norad: 57166  # METEOR-M2 3
+        min_elevation: 10
+        priority: 1
+        downlinks:
+          - name: LRPT
+            frequency: 137100000
+            bandwidth: 140000
+            doppler: false
+            post_processing_script: lrpt-meteormn2_x-satdump.py
+            output_extension: wav
+            type: IQ
